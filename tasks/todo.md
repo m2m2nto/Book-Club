@@ -14,11 +14,10 @@
 ## Phase 2: Authentication & User Management
 - [ ] 2.1  Implement session and Passport.js infrastructure
 - [ ] 2.2  Implement Google OAuth login flow
-- [ ] 2.3  Implement Apple Sign In flow
-- [ ] 2.4  Admin user management API
-- [ ] 2.5  Seed script for initial admin user
-- [ ] 2.6  Login page and auth UI
-- [ ] 2.7  Admin user management UI
+- [ ] 2.3  Admin user management API
+- [ ] 2.4  Seed script for initial admin user
+- [ ] 2.5  Login page and auth UI
+- [ ] 2.6  Admin user management UI
 > **Checkpoint:** Admin logs in via Google, creates a user, that user logs in, non-admin blocked
 
 ## Phase 3: Book Management & Search

@@ -9,14 +9,14 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 | Phase | Name | Tasks | Checkpoint |
 |-------|------|-------|------------|
 | 1 | Project Scaffolding | 8 | `npm run dev` starts client + server, health check works |
-| 2 | Authentication & Users | 7 | Admin logs in via Google, creates user, role enforcement works |
+| 2 | Authentication & Users | 6 | Admin logs in via Google, creates user, role enforcement works |
 | 3 | Book Management & Search | 8 | Books with ratings, comments, Open Library search |
 | 4 | Wishlist & Book Surveys | 4 | Suggest → poll → ranked vote → winner to pipeline |
 | 5 | Meetings & RSVP | 6 | Date surveys, meeting scheduling, RSVP |
 | 6 | Email Reminders | 2 | Automated 7-day + 1-day reminders |
 | 7 | Dashboard, Stats & Polish | 7 | Feature-complete with E2E tests |
 
-**Total: 35 tasks across 7 phases.**
+**Total: 34 tasks across 7 phases.**
 
 ---
 
@@ -83,28 +83,22 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Only pre-registered emails allowed, store name + avatar from profile
 - **Verify:** Mock strategy test, session created for registered user
 
-### 2.3 — Apple Sign In flow
-- `passport-apple` strategy
-- `/auth/apple` + `/auth/apple/callback`
-- Same logic as Google: pre-registered emails only
-- **Verify:** Mock strategy test
-
-### 2.4 — Admin user management API
+### 2.3 — Admin user management API
 - `POST /api/users` (create by email), `GET /api/users`, `PATCH /api/users/:id`, `DELETE /api/users/:id`
 - All admin-only, input validation, duplicate email → 422
 - **Verify:** Integration tests: CRUD cycle, 403 for non-admin
 
-### 2.5 — Seed script for initial admin user
+### 2.4 — Seed script for initial admin user
 - `npm run db:seed` — creates admin from `ADMIN_EMAIL` env var, idempotent
 - **Verify:** Run twice, still one admin row
 
-### 2.6 — Login page and auth UI
-- `/login` page with Google + Apple buttons
+### 2.5 — Login page and auth UI
+- `/login` page with Google button
 - `useAuth` hook (calls `/auth/me`), `ProtectedRoute` wrapper
 - Nav shows user name/avatar, logout button
 - **Verify:** Unauthenticated → redirect to login, login → see nav, logout → back to login
 
-### 2.7 — Admin user management UI
+### 2.6 — Admin user management UI
 - `/admin/users` page: user table, "Add User" dialog, activate/deactivate toggle, delete with confirm
 - TanStack Query for data fetching
 - Hidden from non-admin nav
@@ -172,7 +166,8 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 
 ### 4.3 — Book survey API
 - Create from wishlist books, ranked multi-vote (3/2/1 pts scoring)
-- Re-vote replaces previous, deadline enforcement, close → winner to pipeline
+- Votes are immutable after submission, deadline enforcement, close → winner to pipeline
+- Tie handling requires admin selection of one winner from tied books
 - **Verify:** Full lifecycle integration test
 
 ### 4.4 — Book survey UI
@@ -201,7 +196,7 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - **Verify:** RSVP, change, list, reject on cancelled
 
 ### 5.4 — Date survey API
-- Create with 2+ dates, single vote, close + confirm → create meeting
+- Create with 2+ dates, multi-select availability voting, close + confirm → create meeting
 - **Verify:** Full lifecycle with meeting creation
 
 ### 5.5 — Meeting list and detail pages
@@ -226,8 +221,8 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 
 ### 6.2 — Cron scheduler for reminders
 - Daily job: 7-day reminder to all, 1-day to non-RSVPd
-- Deduplication via tracking table
-- **Verify:** Unit test with mocked dates, dedup verification
+- Respect reminder-only opt-out, use Europe/Luxembourg date rules, deduplication via tracking table
+- **Verify:** Unit test with mocked dates, opt-out coverage, dedup verification
 
 ---
 
@@ -246,7 +241,7 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - **Verify:** All sections populate correctly
 
 ### 7.3 — Stats API
-- Club: books/year, avg ratings, top commenter
+- Club: books/year, avg ratings
 - Personal: rating distribution, avg given, comment count
 - **Verify:** Integration test with seeded data
 
