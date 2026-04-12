@@ -1,101 +1,26 @@
-# Book Club Manager — Specification
+# Spec: Book Club Manager
 
-## 1. Objective
+## Objective
 
-A self-hosted web application for managing a small book club (up to 30 members). It tracks books read, lets members suggest and vote on future reads, handles meeting scheduling with date polls, and sends email reminders with RSVP confirmation.
+Build a self-hosted web application for managing a small book club of up to 30 members.
 
-**Target users:** A small group of friends/colleagues in a book club.
-**Roles:**
-- **Admin** — manages users, books, meetings, and surveys.
-- **User** — views books, submits ratings/comments, suggests books, votes in surveys, RSVPs to meetings.
+The app should let members:
+- sign in with Google SSO
+- view books the club has read or plans to read
+- suggest books for future reading
+- participate in book surveys and date surveys
+- RSVP to meetings
+- view summaries, dashboards, and personal reading stats
 
----
+The app should let admins:
+- bootstrap and manage users
+- manage books, meetings, and surveys
+- send reminder workflows
+- export the database for backup
 
-## 2. Features & Acceptance Criteria
+Success for v1 means a small club can run its full operating workflow in one place: user setup, book selection, meeting scheduling, reminders, RSVPs, and historical tracking.
 
-### 2.1 Authentication & User Management
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| A1 | Google SSO login | Users can sign in via Google OAuth 2.0. No self-registration. |
-| A2 | Apple SSO login | Users can sign in via Apple Sign In. No self-registration. |
-| A3 | Admin creates users | Admin adds a user by email. Only pre-registered emails can log in via SSO. |
-| A4 | Admin manages users | Admin can list, deactivate, and delete users. |
-| A5 | Role enforcement | Admin-only actions are blocked for regular users (API + UI). |
-
-### 2.2 Book Management
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| B1 | Book history | List of all books the club has read, ordered by date read, with cover, title, author. |
-| B2 | Book details | Each book page shows: title, author, cover image, date read, per-user ratings, notes, and comments. |
-| B3 | Admin adds/edits/deletes books | Admin can manage the book catalog (title, author, cover image URL, date read, status). |
-| B4 | Book statuses | A book is one of: `read`, `reading` (current), `pipeline` (selected for upcoming meeting), `wishlist`. |
-| B5 | Per-user ratings | Each user can rate a book (1-5 stars) once, and update their rating. |
-| B6 | Per-user notes & comments | Each user can leave notes (private) and comments (visible to all) on a book. |
-
-### 2.3 Book Wishlist & Book Survey
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| W1 | Any user suggests a book | Any member can add a book to the wishlist (title, author, optional description/link). |
-| W2 | Admin creates book survey | Admin selects N books from the wishlist and creates a poll with a configurable max votes (default: 1, up to 3). |
-| W3 | Ranked multi-vote | Members can vote for up to `maxVotes` books per survey, ranked by preference (1st choice = 3 pts, 2nd = 2, 3rd = 1). |
-| W4 | Book survey results | Results are visible to all after voting closes (or admin closes it). Winning book moves to `pipeline`. Ranked by weighted score. |
-| W5 | Survey deadline | Each survey has a closing date after which no more votes are accepted. |
-
-### 2.4 Meeting Management
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| M1 | Admin schedules a meeting | Admin sets date, time, location (physical or link), and associates a book. |
-| M2 | Meeting list | All members see upcoming and past meetings with date, book, and location. |
-| M3 | Meeting detail | Shows date, time, location, associated book, and RSVP status of all members. |
-| M4 | Date survey | Admin proposes 2+ date options. Members vote on their preferred/available dates. Admin confirms final date. |
-| M5 | Email reminder | ~7 days before a meeting, an email is sent to all members requesting RSVP confirmation. |
-| M6 | RSVP | Members confirm (yes/no/maybe) attendance. RSVP status visible on meeting detail. |
-| M7 | Reminder follow-up | Optional: 1 day before, a final reminder is sent to members who haven't RSVP'd. |
-
-### 2.5 Book Search (Open Library)
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| L1 | Book lookup | When adding a book (wishlist or catalog), user can search by title/author via Open Library API. |
-| L2 | Auto-fill fields | Selecting a search result auto-fills title, author, cover image URL, and description. |
-| L3 | Manual fallback | User can skip search and fill fields manually if the book isn't found. |
-
-### 2.6 Meeting Recap
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| R1 | Admin adds recap | After a meeting, admin can add a text summary/notes to the meeting record. |
-| R2 | Recap visible to all | Meeting recap is shown on the meeting detail page for all members. |
-
-### 2.7 Reading Stats
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| S1 | Club stats page | Shows: books read per year, average group rating per book, most active commenter. |
-| S2 | Personal stats | Each user sees: their rating distribution, number of books rated, average rating given. |
-| S3 | Computed from existing data | No new data entry required — stats derived from books, ratings, and comments tables. |
-
-### 2.8 Dashboard
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| D1 | Book of the month highlight | Dashboard banner shows current book with cover, title, and countdown to next meeting ("12 days left"). |
-| D2 | User dashboard | Shows: book highlight, next meeting, open surveys (book + date), pending RSVP. |
-| D3 | Admin dashboard | Same as user + quick links to create users, meetings, surveys. |
-
-### 2.9 Admin Utilities
-
-| # | Feature | Acceptance Criteria |
-|---|---------|-------------------|
-| U1 | Database export | Admin can download the full SQLite database file as a backup via a single button/endpoint. |
-
----
-
-## 3. Tech Stack
+## Tech Stack
 
 | Layer | Choice |
 |-------|--------|
@@ -104,26 +29,54 @@ A self-hosted web application for managing a small book club (up to 30 members).
 | Backend | Node.js, Express |
 | Database | SQLite (via better-sqlite3) |
 | ORM | Drizzle ORM |
-| Auth | Passport.js (Google OAuth 2.0 + Apple Sign In) |
+| Auth | Passport.js (Google OAuth 2.0 only in v1) |
 | Email | Nodemailer (SMTP configuration) |
-| Scheduler | node-cron (for email reminders) |
+| Scheduler | node-cron |
 | Monorepo | npm workspaces |
 | Runtime | Node.js 20+ |
+| Timezone | Europe/Luxembourg |
 
----
+## Commands
 
-## 4. Project Structure
+These are the intended repository commands to support during implementation:
 
+```bash
+npm install
+npm run dev
+npm run build
+npm run lint
+npm run format:check
+npm test
+npm run db:migrate
+npm run db:seed
+npm run e2e
 ```
+
+Package-level commands may include:
+
+```bash
+npm run dev --workspace @book-club/server
+npm run dev --workspace @book-club/client
+npm run test --workspace @book-club/server
+npm run test --workspace @book-club/client
+```
+
+## Project Structure
+
+```text
 book-club/
   package.json              # workspace root
+  SPEC.md                   # living specification
+  tasks/
+    plan.md                 # implementation plan
+    todo.md                 # task checklist
   packages/
     client/                 # React frontend
       src/
         components/         # Reusable UI components
         pages/              # Route pages
         hooks/              # Custom React hooks
-        lib/                # API client, utils
+        lib/                # API client, utilities
         App.tsx
         main.tsx
       index.html
@@ -131,191 +84,359 @@ book-club/
       package.json
     server/                 # Express backend
       src/
-        routes/             # Express route handlers
-        middleware/          # Auth, role guards
+        routes/             # Route handlers
+        middleware/         # Auth and role guards
         db/
-          schema.ts         # Drizzle schema
+          schema.ts         # Drizzle schema source of truth
           migrations/       # SQL migrations
-        services/           # Business logic (email, scheduling)
-        index.ts            # Entry point
+        services/           # Email, scheduling, business logic
+        index.ts            # Server entry point
       package.json
-    shared/                 # Shared types & constants
+    shared/                 # Shared types and constants
       src/
-        types.ts            # API request/response types
+        types.ts
         constants.ts
       package.json
 ```
 
----
+## Features & Acceptance Criteria
 
-## 5. Data Model (Key Entities)
+### Authentication & User Management
 
-```
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| A1 | Google SSO login | Users can sign in via Google OAuth 2.0. No self-registration. |
+| A2 | Apple Sign In | Deferred post-v1. Not implemented in v1. |
+| A3 | Initial admin bootstrap | One initial admin can be created via seed/bootstrap flow and can create additional admins or standard users. |
+| A4 | Admin creates users | Admin adds a user by email. Only pre-registered emails can log in via SSO. |
+| A5 | Admin manages users | Admin can list, deactivate, reactivate, and soft-delete users. |
+| A6 | Immediate access revocation | Deactivated or soft-deleted users are blocked from existing sessions immediately and cannot log in. |
+| A7 | Historical retention | Ratings, comments, votes, RSVPs, and related historical data remain after user soft-delete. |
+| A8 | Role enforcement | Admin-only actions are blocked for regular users in both API and UI. |
+
+### Book Management
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| B1 | Book history | List of all books the club has read, ordered by `dateRead`, with cover, title, and author. |
+| B2 | Book details | Each book page shows title, author, cover, description, Open Library ID when present, date read, ratings, notes, and comments. |
+| B3 | Admin adds/edits/deletes books | Admin can manage title, author, cover image URL, description, Open Library ID, date read, and status. |
+| B4 | Book statuses | Supported statuses are `wishlist`, `pipeline`, `reading`, and `read`. |
+| B5 | Status rules | Multiple books may be `reading` at once. Multiple books may be `pipeline` at once. |
+| B6 | Per-user ratings | Each user can rate a book from 1 to 5 once and later update the rating. |
+| B7 | Private notes | Each user can leave private notes visible only to that same user. Admins cannot see private notes. |
+| B8 | Public comments | Each user can leave public comments visible to all members. Comments are ordered oldest first. |
+| B9 | Comment moderation | Users can edit their own comments. Admins can delete any comment. |
+
+### Wishlist & Book Surveys
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| W1 | Wishlist suggestion | Any user can add a book to the wishlist with title, author, and optional description or external link. |
+| W2 | Admin creates book survey | Admin selects wishlist books and creates a poll with configurable `maxVotes` from 1 to 3. |
+| W3 | Ranked multi-vote | Members may vote for up to `maxVotes` books. Weighted scoring is 3 points for rank 1, 2 points for rank 2, and 1 point for rank 3. |
+| W4 | Partial rankings allowed | If `maxVotes` is greater than 1, a member may still submit only 1 or 2 ranked choices. |
+| W5 | Immutable votes | A member cannot change book survey votes after submission. |
+| W6 | Survey deadline | Each survey has a close date after which no more votes are accepted. |
+| W7 | Results visibility | Results are visible to all after the survey closes or an admin closes it manually. |
+| W8 | Tie handling | If there is a tie for top score, the admin manually selects the winner from tied books. This decision is recorded. |
+| W9 | Pipeline transition | The winning book moves to `pipeline` and is removed from `wishlist`. |
+
+### Meeting Management
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| M1 | Admin schedules a meeting | Admin sets date, time, location, and may associate a book. |
+| M2 | Book association optional | A meeting may exist without an associated book. |
+| M3 | One meeting ever per book | A given book may be associated with at most one meeting across the system. |
+| M4 | Meeting list | Members see upcoming and past meetings with date, book, and location. |
+| M5 | Meeting detail | Detail page shows date, time, location, book, RSVP state, and recap if present. |
+| M6 | Date survey | Admin proposes two or more dates. Members vote by selecting multiple acceptable dates. Voting is unranked. Admin confirms the final date. |
+| M7 | Date survey deadline | Each date survey has a close date after which no more votes are accepted. |
+| M8 | Meeting confirmation effect | When a meeting is confirmed with an associated book, that book status becomes `reading`. |
+| M9 | Recap | After a meeting, admin can add a text summary visible to all members. |
+
+### RSVP & Reminder Workflow
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| R1 | RSVP | Members can RSVP `yes`, `no`, or `maybe` before the reminder email is sent. |
+| R2 | RSVP updates | Members can change RSVP multiple times until the meeting date. |
+| R3 | RSVP closure | RSVPs are closed on the meeting date. |
+| R4 | Reminder emails | A reminder email is sent about 7 days before the meeting date, based on Luxembourg timezone and date only. |
+| R5 | Follow-up reminders | An optional reminder can be sent 1 day before to members who have not RSVP'd. |
+| R6 | Reminder recipients | Reminder emails include admins. |
+| R7 | Reminder opt-out | Users can opt out of reminder emails only; other app emails are unaffected. |
+
+### Open Library Search
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| L1 | Book lookup | Users can search Open Library by title or author when adding a book. |
+| L2 | Auto-fill | Selecting a result auto-fills title, author, cover URL, description, and Open Library ID when available. |
+| L3 | Manual fallback | User can skip search and fill fields manually. |
+| L4 | Import failure handling | If metadata import fails or is incomplete, the server logs a warning and the UI shows a non-blocking message so the admin can correct data manually. |
+| L5 | Description persistence | Imported descriptions are stored. |
+| L6 | Traceability | Imported Open Library IDs are stored. |
+
+### Reading Stats
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| S1 | Club stats page | Shows books read per year and average group rating per book. |
+| S2 | Personal stats | Each user sees rating distribution, number of books rated, and average rating given. |
+| S3 | Metric definitions | Average group rating uses submitted ratings only, ignoring missing ratings. Books per year is grouped by `dateRead` year. |
+| S4 | Computed metrics | Stats are computed from existing books, ratings, and comments data with no new data entry. |
+
+### Dashboard
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| D1 | Current book highlight | Dashboard shows current highlighted book with cover, title, and countdown to next meeting. |
+| D2 | User dashboard | Shows book highlight, next meeting, open surveys, and pending RSVP actions. |
+| D3 | Admin dashboard | Same as user dashboard plus quick links to admin actions. |
+
+### Admin Utilities
+
+| # | Feature | Acceptance Criteria |
+|---|---------|-------------------|
+| U1 | Database export | Admin can export the full SQLite database file, including sensitive and session/auth tables. |
+| U2 | Export confirmation | Export requires a confirmation step before download. |
+
+## Data Model
+
+```text
 User
-  id, email, name, avatarUrl, role (admin|user), active, createdAt
+  id, email, name, avatarUrl, role (admin|user), active, deletedAt, emailReminderOptOut,
+  createdAt, updatedAt
 
 Book
-  id, title, author, coverUrl, description, status (wishlist|pipeline|reading|read),
-  dateRead, suggestedBy (userId), createdAt
+  id, title, author, coverUrl, description, openLibraryId,
+  status (wishlist|pipeline|reading|read), dateRead, suggestedByUserId, createdAt, updatedAt
 
 Rating
   id, bookId, userId, score (1-5), createdAt, updatedAt
 
 Comment
-  id, bookId, userId, text, isPrivate (note vs comment), createdAt
+  id, bookId, userId, text, isPrivate, createdAt, updatedAt
 
 BookSurvey
-  id, title, maxVotes (1-3), closesAt, createdBy, status (open|closed), createdAt
+  id, title, maxVotes (1-3), closesAt, createdByUserId,
+  status (open|closed|tie-break-required), resolvedByUserId, resolvedBookId, createdAt, updatedAt
 
 BookSurveyOption
   id, surveyId, bookId
 
 BookSurveyVote
-  id, surveyOptionId, userId, rank (1-3), createdAt
-  UNIQUE(surveyId, userId, rank) — one vote per rank per user per survey
+  id, surveyId, surveyOptionId, userId, rank (1-3), createdAt
+  UNIQUE(surveyId, userId, rank)
 
 Meeting
-  id, date, time, location, bookId, status (scheduled|completed|cancelled), recap (text, nullable), createdAt
+  id, date, time, location, bookId nullable,
+  status (scheduled|completed|cancelled), recap nullable, createdAt, updatedAt
+  UNIQUE(bookId) where bookId is not null
 
 DateSurvey
-  id, meetingId (nullable until confirmed), closesAt, createdBy, status (open|closed)
+  id, meetingId nullable, closesAt, createdByUserId, status (open|closed), createdAt, updatedAt
 
 DateSurveyOption
   id, dateSurveyId, proposedDate
 
 DateSurveyVote
-  id, dateSurveyOptionId, userId, createdAt
-  UNIQUE(dateSurveyId, userId) — one vote per user per survey
+  id, dateSurveyId, dateSurveyOptionId, userId, createdAt
+  UNIQUE(dateSurveyId, dateSurveyOptionId, userId)
 
 RSVP
-  id, meetingId, userId, status (yes|no|maybe), respondedAt
+  id, meetingId, userId, status (yes|no|maybe), respondedAt, updatedAt
+  UNIQUE(meetingId, userId)
 ```
 
----
+## API Routes
 
-## 6. API Routes (Overview)
-
-```
+```text
 Auth
-  GET  /auth/google          — Initiate Google OAuth
-  GET  /auth/google/callback  — Google OAuth callback
-  GET  /auth/apple           — Initiate Apple Sign In
-  GET  /auth/apple/callback   — Apple Sign In callback
-  POST /auth/logout          — Log out
-  GET  /auth/me              — Get current user
+  GET  /auth/google
+  GET  /auth/google/callback
+  POST /auth/logout
+  GET  /auth/me
 
-Users (admin only, except GET /me)
+Users
   GET    /api/users
-  POST   /api/users           — { email, name, role }
+  POST   /api/users
   PATCH  /api/users/:id
-  DELETE /api/users/:id
+  DELETE /api/users/:id          # soft-delete
+  POST   /api/users/:id/reactivate
 
 Books
-  GET    /api/books            — List (filter by status)
+  GET    /api/books
   GET    /api/books/:id
-  POST   /api/books            — Admin: add book
-  PATCH  /api/books/:id        — Admin: edit book
-  DELETE /api/books/:id        — Admin: delete book
+  POST   /api/books
+  PATCH  /api/books/:id
+  DELETE /api/books/:id
 
 Wishlist
-  POST   /api/wishlist         — Any user suggests a book
-  GET    /api/wishlist         — List wishlist books
+  POST   /api/wishlist
+  GET    /api/wishlist
 
 Ratings
-  PUT    /api/books/:id/rating — Upsert user's rating
+  PUT    /api/books/:id/rating
   GET    /api/books/:id/ratings
 
 Comments
   POST   /api/books/:id/comments
   GET    /api/books/:id/comments
-  DELETE /api/books/:id/comments/:commentId  — Own or admin
+  PATCH  /api/books/:id/comments/:commentId
+  DELETE /api/books/:id/comments/:commentId
 
 Book Surveys
-  POST   /api/book-surveys           — Admin: create
+  POST   /api/book-surveys
   GET    /api/book-surveys
   GET    /api/book-surveys/:id
-  POST   /api/book-surveys/:id/vote  — User votes
-  PATCH  /api/book-surveys/:id/close — Admin: close survey
+  POST   /api/book-surveys/:id/vote
+  PATCH  /api/book-surveys/:id/close
+  PATCH  /api/book-surveys/:id/resolve-tie
 
 Meetings
-  POST   /api/meetings              — Admin: create
+  POST   /api/meetings
   GET    /api/meetings
   GET    /api/meetings/:id
-  PATCH  /api/meetings/:id          — Admin: edit
-  DELETE /api/meetings/:id          — Admin: cancel
+  PATCH  /api/meetings/:id
+  DELETE /api/meetings/:id
 
 Date Surveys
-  POST   /api/date-surveys           — Admin: create
+  POST   /api/date-surveys
   GET    /api/date-surveys/:id
   POST   /api/date-surveys/:id/vote
-  PATCH  /api/date-surveys/:id/close — Admin: close & confirm date
+  PATCH  /api/date-surveys/:id/close
 
 RSVPs
-  PUT    /api/meetings/:id/rsvp     — Upsert RSVP
+  PUT    /api/meetings/:id/rsvp
   GET    /api/meetings/:id/rsvps
 
 Book Search
-  GET    /api/books/search?q=       — Proxy to Open Library API, returns title/author/cover matches
+  GET    /api/books/search?q=
 
 Stats
-  GET    /api/stats/club            — Club-wide stats (books/year, avg ratings, top commenter)
-  GET    /api/stats/me              — Personal stats for current user
+  GET    /api/stats/club
+  GET    /api/stats/me
 
 Admin Utilities
-  GET    /api/admin/export-db       — Download SQLite database file (admin only)
+  GET    /api/admin/export-db
 ```
 
----
+## Code Style
 
-## 7. Code Style
+Use TypeScript everywhere in strict mode. Prefer small named exports, explicit input validation, and consistent API envelopes.
 
-- **TypeScript** everywhere (strict mode).
-- **ESLint** + **Prettier** for formatting.
-- Functional React components with hooks.
-- Named exports preferred.
-- API responses follow `{ data, error }` envelope.
-- HTTP error codes used correctly (401, 403, 404, 422).
+```ts
+export const getBookById = async (req: Request, res: Response) => {
+  const parsed = bookIdParamsSchema.safeParse(req.params);
 
----
+  if (!parsed.success) {
+    return res.status(422).json({
+      data: null,
+      error: { code: 'VALIDATION_ERROR', message: 'Invalid book id.' },
+    });
+  }
 
-## 8. Testing Strategy
+  const book = await bookService.getById(parsed.data.id, req.user!.id);
+
+  if (!book) {
+    return res.status(404).json({
+      data: null,
+      error: { code: 'NOT_FOUND', message: 'Book not found.' },
+    });
+  }
+
+  return res.json({ data: book, error: null });
+};
+```
+
+Conventions:
+- TypeScript strict mode only
+- ESLint + Prettier
+- Functional React components with hooks
+- Named exports preferred
+- API responses use `{ data, error }`
+- Use correct HTTP codes: `401`, `403`, `404`, `422`
+- Comments in UI are oldest first
+- Private-note access checks must be enforced server-side
+
+## Testing Strategy
 
 | Layer | Tool | Scope |
 |-------|------|-------|
-| Backend unit | Vitest | Services, utilities |
-| Backend integration | Vitest + supertest | API routes with in-memory SQLite |
-| Frontend unit | Vitest + React Testing Library | Components, hooks |
-| E2E | Playwright | Critical flows (login, rate book, vote, RSVP) |
+| Backend unit | Vitest | Services, utilities, scoring logic, reminder scheduling |
+| Backend integration | Vitest + supertest | API routes with SQLite test database |
+| Frontend unit | Vitest + React Testing Library | Components, hooks, forms, permission-based rendering |
+| E2E | Playwright | Critical flows: login, create user, add book, vote, schedule, RSVP |
 
----
+Required coverage areas:
+- auth and role enforcement
+- deactivated/soft-deleted user access blocking
+- private notes visibility
+- immutable book survey voting
+- multi-select date survey voting
+- reminder opt-out logic
+- tie-resolution flow for book surveys
+- book-to-meeting uniqueness
 
-## 9. Boundaries
+## Boundaries
 
-### Always Do
+### Always
 - Validate all inputs server-side.
-- Enforce role-based access on every API route.
-- Use parameterized queries (Drizzle handles this).
-- Return consistent error responses.
-- Use HTTPS in production.
+- Enforce role-based access on every protected API route.
+- Immediately block deactivated or soft-deleted users from active sessions.
+- Keep API responses consistent with the `{ data, error }` envelope.
+- Store reminder scheduling using Luxembourg timezone rules.
+- Preserve historical data when users are soft-deleted.
+- Log Open Library import issues on the server and surface a non-blocking UI message.
 
-### Ask First
-- Adding new roles beyond admin/user.
-- Changing the data model.
-- Adding new third-party integrations.
-- Any changes to the auth flow.
+### Ask first
+- Adding new roles beyond `admin` and `user`
+- Changing the core data model or unique constraints
+- Adding third-party services beyond Google OAuth, Open Library, SMTP, and current tooling
+- Changing auth flow or enabling self-registration
+- Expanding reminders beyond the defined email workflow
 
-### Never Do
-- Allow self-registration (admin-only user creation).
-- Store passwords (SSO only).
-- Implement chat, file sharing, or reading progress in v1.
-- Expose internal errors to the client.
+### Never
+- Allow self-registration
+- Store passwords in v1
+- Expose private notes to admins or other users
+- Physically delete user historical activity records when a user is soft-deleted
+- Expose internal stack traces or raw internal errors to clients
+- Implement chat, file sharing, or reading progress tracking in v1
 
----
+## Success Criteria
 
-## 10. Out of Scope (v1)
+The feature is complete when all of the following are true:
 
-- Chat / messaging
+1. A seeded initial admin can sign in with Google and create additional users.
+2. Non-registered users cannot log in.
+3. Deactivated and soft-deleted users are blocked immediately, including existing sessions.
+4. Users can suggest books, rate books, write private notes, and write public comments.
+5. Private notes are visible only to their author.
+6. Admins can create a ranked book survey from wishlist books, members can vote once, and tied surveys can be manually resolved by admin.
+7. Winning survey books move from `wishlist` to `pipeline`.
+8. Admins can create a multi-select date survey, confirm a final date, and create or update a meeting.
+9. A book can be attached to only one meeting ever.
+10. Confirming a meeting with a book sets that book to `reading`.
+11. Members can RSVP before reminders, update RSVP until the meeting date, and cannot RSVP after the date closes.
+12. Reminder emails run on the correct date in Europe/Luxembourg timezone, include admins, and respect reminder-only opt-out.
+13. Open Library search supports autofill, stores Open Library ID and description, and degrades gracefully when metadata is incomplete.
+14. Stats pages correctly show books per year and average group ratings.
+15. Admin can export the live SQLite database after a confirmation step, including sensitive/session tables.
+16. `npm run dev`, `npm run build`, `npm run lint`, `npm test`, and `npm run e2e` all succeed.
+
+## Open Questions
+
+None for v1 at this time. Apple Sign In is explicitly deferred post-v1.
+
+## Out of Scope
+
+- Apple Sign In in v1
+- Chat or messaging
 - File sharing
 - Reading progress tracking
-- Mobile native app (responsive web only)
-- Multi-club support (single club instance)
+- Native mobile app
+- Multi-club support
