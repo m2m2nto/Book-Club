@@ -1,0 +1,13 @@
+{
+  "name": "@book-club/shared",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "echo \"Shared build will be added in Task 1.5\"",
+    "test": "echo \"Shared tests will be added if needed\""
+  }
+}

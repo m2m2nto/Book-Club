@@ -1,7 +1,7 @@
 # Book Club Manager — Task Checklist
 
 ## Phase 1: Project Scaffolding
-- [ ] 1.1  Initialize monorepo and workspace structure
+- [x] 1.1  Initialize monorepo and workspace structure
 - [ ] 1.2  Configure ESLint, Prettier, and shared tooling
 - [ ] 1.3  Set up Express server with health endpoint
 - [ ] 1.4  Set up Vite React client with proxy and shell layout

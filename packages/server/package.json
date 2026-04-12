@@ -1,0 +1,11 @@
+{
+  "name": "@book-club/server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"Server build will be added in Task 1.3\"",
+    "dev": "echo \"Server dev server will be added in Task 1.3\"",
+    "test": "echo \"Server tests will be added in Task 1.7\""
+  }
+}

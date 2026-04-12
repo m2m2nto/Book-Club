@@ -1,0 +1,11 @@
+{
+  "name": "@book-club/client",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"Client build will be added in Task 1.4\"",
+    "dev": "echo \"Client dev server will be added in Task 1.4\"",
+    "test": "echo \"Client tests will be added in Task 1.7\""
+  }
+}
