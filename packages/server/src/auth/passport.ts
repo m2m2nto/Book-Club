@@ -23,12 +23,25 @@ passport.deserializeUser((id: number, done) => {
         avatarUrl: usersTable.avatarUrl,
         role: usersTable.role,
         active: usersTable.active,
+        deletedAt: usersTable.deletedAt,
       })
       .from(usersTable)
       .where(eq(usersTable.id, id))
       .get();
 
-    done(null, user ?? false);
+    if (!user || !user.active || user.deletedAt) {
+      done(null, false);
+      return;
+    }
+
+    done(null, {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      avatarUrl: user.avatarUrl,
+      role: user.role,
+      active: user.active,
+    });
   } catch (error) {
     done(error);
   }

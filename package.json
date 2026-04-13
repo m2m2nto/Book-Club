@@ -10,6 +10,7 @@
   "scripts": {
     "build": "echo \"Build scripts will be added in Task 1.3+\"",
     "db:migrate": "npm run db:migrate --workspace @book-club/server",
+    "db:seed": "npm run db:seed --workspace @book-club/server",
     "db:smoke": "npm run db:smoke --workspace @book-club/server",
     "dev": "concurrently \"npm run dev --workspace @book-club/server\" \"npm run dev --workspace @book-club/client\"",
     "lint": "eslint .",

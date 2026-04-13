@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
     "db:smoke": "tsx src/db/smoke.ts",
     "dev": "tsx watch src/index.ts",
     "test": "vitest run"
@@ -17,7 +18,8 @@
     "drizzle-orm": "^0.44.7",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
-    "passport": "^0.7.0"
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
@@ -25,6 +27,7 @@
     "@types/express-session": "^1.18.2",
     "@types/node": "^24.6.0",
     "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.16",
     "@types/supertest": "^6.0.3",
     "drizzle-kit": "^0.31.4",
     "supertest": "^7.1.4",

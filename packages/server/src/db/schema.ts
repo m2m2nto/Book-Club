@@ -10,6 +10,7 @@ export const usersTable = sqliteTable('users', {
     .notNull()
     .default('user'),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
+  deletedAt: text('deleted_at'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
