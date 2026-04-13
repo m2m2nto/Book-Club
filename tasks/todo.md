@@ -12,7 +12,7 @@
 > **Checkpoint:** `npm run dev` starts both servers, health check works end-to-end
 
 ## Phase 2: Authentication & User Management
-- [ ] 2.1  Implement session and Passport.js infrastructure
+- [x] 2.1  Implement session and Passport.js infrastructure
 - [ ] 2.2  Implement Google OAuth login flow
 - [ ] 2.3  Admin user management API
 - [ ] 2.4  Seed script for initial admin user
