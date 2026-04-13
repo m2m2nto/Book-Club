@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "build": "echo \"Build scripts will be added in Task 1.3+\"",
+    "db:migrate": "npm run db:migrate --workspace @book-club/server",
+    "db:smoke": "npm run db:smoke --workspace @book-club/server",
     "dev": "echo \"Dev scripts will be added in Task 1.8\"",
     "lint": "eslint .",
     "format": "prettier . --write",
