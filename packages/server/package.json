@@ -9,6 +9,7 @@
     "test": "echo \"Server tests will be added in Task 1.7\""
   },
   "dependencies": {
+    "@book-club/shared": "^0.1.0",
     "express": "^5.1.0"
   },
   "devDependencies": {

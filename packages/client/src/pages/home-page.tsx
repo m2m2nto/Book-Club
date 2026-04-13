@@ -1,17 +1,10 @@
+import type { ApiResponse } from '@book-club/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, ArrowRight, BadgeCheck, Clock3 } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
 
-type HealthResponse = {
-  data: {
-    status: string;
-  };
-  error: null | {
-    code: string;
-    message: string;
-  };
-};
+type HealthResponse = ApiResponse<{ status: string }>;
 
 const fetchHealth = async () => {
   const response = await fetch('/api/health');
