@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { env } from '../env.js';
 import * as schema from './schema.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 const defaultDatabasePath = path.resolve(__dirname, '../../data/book-club.db');
 
-export const databaseFilePath = process.env.DATABASE_URL ?? defaultDatabasePath;
+export const databaseFilePath = env.databaseUrl ?? defaultDatabasePath;
 
 fs.mkdirSync(path.dirname(databaseFilePath), { recursive: true });
 
