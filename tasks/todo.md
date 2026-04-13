@@ -4,7 +4,7 @@
 - [x] 1.1  Initialize monorepo and workspace structure
 - [x] 1.2  Configure ESLint, Prettier, and shared tooling
 - [x] 1.3  Set up Express server with health endpoint
-- [ ] 1.4  Set up Vite React client with proxy and shell layout
+- [x] 1.4  Set up Vite React client with proxy and shell layout
 - [ ] 1.5  Set up shared types package
 - [ ] 1.6  Set up Drizzle ORM and SQLite database
 - [ ] 1.7  Set up Vitest for backend and frontend
