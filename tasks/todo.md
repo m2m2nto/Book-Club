@@ -7,7 +7,7 @@
 - [x] 1.4  Set up Vite React client with proxy and shell layout
 - [x] 1.5  Set up shared types package
 - [x] 1.6  Set up Drizzle ORM and SQLite database
-- [ ] 1.7  Set up Vitest for backend and frontend
+- [x] 1.7  Set up Vitest for backend and frontend
 - [ ] 1.8  Add root dev script and environment configuration
 > **Checkpoint:** `npm run dev` starts both servers, health check works end-to-end
 

@@ -8,7 +8,7 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:smoke": "tsx src/db/smoke.ts",
     "dev": "tsx watch src/index.ts",
-    "test": "echo \"Server tests will be added in Task 1.7\""
+    "test": "vitest run"
   },
   "dependencies": {
     "@book-club/shared": "^0.1.0",
@@ -21,7 +21,9 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.6.0",
     "drizzle-kit": "^0.31.4",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

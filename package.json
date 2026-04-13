@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "test": "echo \"Test scripts will be added in Task 1.7\""
+    "test": "npm run test --workspace @book-club/server && npm run test --workspace @book-club/client"
   },
   "engines": {
     "node": ">=20"
