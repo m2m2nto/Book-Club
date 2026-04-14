@@ -1,11 +1,18 @@
 import express from 'express';
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createApp } from './app.js';
+import { db } from './db/client.js';
+import { usersTable } from './db/schema.js';
+import { resetDatabase } from './db/test-cleanup.js';
 import { requireAdmin, requireAuth } from './middleware/auth.js';
 
 describe('createApp', () => {
+  beforeEach(() => {
+    resetDatabase();
+  });
+
   it('returns a healthy response from /api/health', async () => {
     const app = createApp();
 
@@ -32,6 +39,37 @@ describe('createApp', () => {
         code: 'UNAUTHORIZED',
         message: 'Authentication required.',
       },
+    });
+  });
+
+  it('creates a session through /auth/test-login for an active user', async () => {
+    db.insert(usersTable)
+      .values({
+        email: 'member@example.com',
+        name: 'Member',
+        role: 'user',
+        active: true,
+      })
+      .run();
+
+    const app = createApp();
+    const agent = request.agent(app);
+
+    const loginResponse = await agent.get(
+      '/auth/test-login?email=member@example.com',
+    );
+
+    expect(loginResponse.status).toBe(302);
+    expect(loginResponse.headers.location).toBe('/');
+
+    const meResponse = await agent.get('/auth/me');
+
+    expect(meResponse.status).toBe(200);
+    expect(meResponse.body.data).toMatchObject({
+      email: 'member@example.com',
+      name: 'Member',
+      role: 'user',
+      active: true,
     });
   });
 });

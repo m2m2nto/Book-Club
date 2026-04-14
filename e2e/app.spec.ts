@@ -68,7 +68,9 @@ test('member can vote in a survey', async ({ page }) => {
 test('member can RSVP to a meeting', async ({ page }) => {
   await loginAs(page, 'admin@example.com');
   await page.goto('/meetings');
-  const meetingForm = page.locator('form').filter({ hasText: /create meeting/i });
+  const meetingForm = page
+    .locator('form')
+    .filter({ hasText: /create meeting/i });
   await meetingForm.getByLabel('date').fill('2099-12-20');
   await meetingForm.getByLabel('time').fill('19:00');
   await meetingForm.getByLabel('location').fill('Library');
