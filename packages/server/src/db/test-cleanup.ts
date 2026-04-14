@@ -10,11 +10,13 @@ import {
   dateSurveysTable,
   meetingsTable,
   ratingsTable,
+  reminderDeliveriesTable,
   rsvpsTable,
   usersTable,
 } from './schema.js';
 
 export const resetDatabase = () => {
+  db.delete(reminderDeliveriesTable).run();
   db.delete(rsvpsTable).run();
   db.delete(dateSurveyVotesTable).run();
   db.delete(dateSurveyOptionsTable).run();

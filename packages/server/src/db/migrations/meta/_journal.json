@@ -36,6 +36,13 @@
       "when": 1744430400000,
       "tag": "0004_meetings_date_surveys_rsvps",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1744434000000,
+      "tag": "0005_email_reminders",
+      "breakpoints": true
     }
   ]
 }

@@ -17,6 +17,9 @@ export const usersTable = sqliteTable('users', {
     .default('user'),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
   deletedAt: text('deleted_at'),
+  emailReminderOptOut: integer('email_reminder_opt_out', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -262,6 +265,30 @@ export const rsvpsTable = sqliteTable(
     meetingUserUnique: uniqueIndex('rsvp_meeting_user_unique').on(
       table.meetingId,
       table.userId,
+    ),
+  }),
+);
+
+export const reminderDeliveriesTable = sqliteTable(
+  'reminder_deliveries',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    meetingId: integer('meeting_id')
+      .notNull()
+      .references(() => meetingsTable.id),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id),
+    type: text('type', { enum: ['seven-day', 'one-day'] }).notNull(),
+    createdAt: text('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    reminderDeliveryUnique: uniqueIndex('reminder_delivery_unique').on(
+      table.meetingId,
+      table.userId,
+      table.type,
     ),
   }),
 );

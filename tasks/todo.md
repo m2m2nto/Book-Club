@@ -48,8 +48,8 @@
 > **Checkpoint:** Admin runs date poll → creates meeting → members RSVP
 
 ## Phase 6: Email Reminders
-- [ ] 6.1  Email service and templates
-- [ ] 6.2  Cron scheduler for email reminders
+- [x] 6.1  Email service and templates
+- [x] 6.2  Cron scheduler for email reminders
 > **Checkpoint:** Automated emails 7 days + 1 day before meetings
 
 ## Phase 7: Dashboard, Stats & Polish
