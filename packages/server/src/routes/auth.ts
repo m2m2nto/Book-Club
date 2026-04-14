@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@book-club/shared';
 import { eq } from 'drizzle-orm';
-import { Router } from 'express';
+import { Router, type Response } from 'express';
 
 import { passportInstance } from '../auth/passport.js';
 import { db } from '../db/client.js';
@@ -9,21 +9,44 @@ import { env } from '../env.js';
 
 const router = Router();
 
+const authUserColumns = {
+  id: usersTable.id,
+  email: usersTable.email,
+  name: usersTable.name,
+  avatarUrl: usersTable.avatarUrl,
+  role: usersTable.role,
+  active: usersTable.active,
+};
+
+const sendError = (
+  res: Response,
+  status: number,
+  code: string,
+  message: string,
+) => {
+  const response: ApiResponse<null> = {
+    data: null,
+    error: {
+      code,
+      message,
+    },
+  };
+
+  res.status(status).json(response);
+};
+
 router.get('/google', (req, res, next) => {
   if (
     !env.googleClientId ||
     !env.googleClientSecret ||
     !env.googleCallbackUrl
   ) {
-    const response: ApiResponse<null> = {
-      data: null,
-      error: {
-        code: 'GOOGLE_AUTH_NOT_CONFIGURED',
-        message: 'Google OAuth is not configured.',
-      },
-    };
-
-    res.status(503).json(response);
+    sendError(
+      res,
+      503,
+      'GOOGLE_AUTH_NOT_CONFIGURED',
+      'Google OAuth is not configured.',
+    );
     return;
   }
 
@@ -70,41 +93,18 @@ if (env.enableTestAuth || env.nodeEnv !== 'production') {
         : '';
 
     if (!email) {
-      const response: ApiResponse<null> = {
-        data: null,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Email is required.',
-        },
-      };
-
-      res.status(422).json(response);
+      sendError(res, 422, 'VALIDATION_ERROR', 'Email is required.');
       return;
     }
 
     const user = await db
-      .select({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        avatarUrl: usersTable.avatarUrl,
-        role: usersTable.role,
-        active: usersTable.active,
-      })
+      .select(authUserColumns)
       .from(usersTable)
       .where(eq(usersTable.email, email))
       .get();
 
     if (!user || !user.active) {
-      const response: ApiResponse<null> = {
-        data: null,
-        error: {
-          code: 'NOT_FOUND',
-          message: 'User not found.',
-        },
-      };
-
-      res.status(404).json(response);
+      sendError(res, 404, 'NOT_FOUND', 'User not found.');
       return;
     }
 
@@ -121,15 +121,7 @@ if (env.enableTestAuth || env.nodeEnv !== 'production') {
 
 router.get('/me', (req, res) => {
   if (!req.user) {
-    const response: ApiResponse<null> = {
-      data: null,
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required.',
-      },
-    };
-
-    res.status(401).json(response);
+    sendError(res, 401, 'UNAUTHORIZED', 'Authentication required.');
     return;
   }
 
