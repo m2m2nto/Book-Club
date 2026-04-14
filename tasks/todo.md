@@ -53,11 +53,11 @@
 > **Checkpoint:** Automated emails 7 days + 1 day before meetings
 
 ## Phase 7: Dashboard, Stats & Polish
-- [ ] 7.1  Dashboard API
-- [ ] 7.2  Dashboard UI (book of the month, cards, quick actions)
-- [ ] 7.3  Stats API (club + personal)
-- [ ] 7.4  Stats UI (charts, counters)
-- [ ] 7.5  Admin database export
-- [ ] 7.6  Playwright E2E test suite
-- [ ] 7.7  Navigation, responsive polish, and final integration
+- [x] 7.1  Dashboard API
+- [x] 7.2  Dashboard UI (book of the month, cards, quick actions)
+- [x] 7.3  Stats API (club + personal)
+- [x] 7.4  Stats UI (charts, counters)
+- [x] 7.5  Admin database export
+- [x] 7.6  Playwright E2E test suite
+- [x] 7.7  Navigation, responsive polish, and final integration
 > **Checkpoint:** Feature-complete, E2E tests pass, responsive on mobile

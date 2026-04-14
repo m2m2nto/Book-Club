@@ -14,4 +14,6 @@ export const env = {
   smtpUser: process.env.SMTP_USER,
   smtpPass: process.env.SMTP_PASS,
   smtpFrom: process.env.SMTP_FROM,
+  enableTestAuth:
+    process.env.ENABLE_TEST_AUTH === 'true' || process.env.NODE_ENV === 'test',
 };

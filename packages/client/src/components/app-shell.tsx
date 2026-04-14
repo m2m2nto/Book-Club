@@ -1,10 +1,13 @@
 import type { PropsWithChildren } from 'react';
+import { useState } from 'react';
 import {
   BookHeart,
   BookOpenText,
   CalendarDays,
+  ChartColumnBig,
   LayoutDashboard,
   LogOut,
+  Menu,
   ShieldCheck,
   Users,
   Vote,
@@ -20,6 +23,7 @@ const baseNavigation = [
   { to: '/wishlist', label: 'Wishlist', icon: BookHeart },
   { to: '/surveys', label: 'Surveys', icon: Vote },
   { to: '/meetings', label: 'Meetings', icon: CalendarDays },
+  { to: '/stats', label: 'Stats', icon: ChartColumnBig },
 ];
 
 type AppShellProps = PropsWithChildren & {
@@ -32,17 +36,36 @@ export const AppShell = ({
   currentUser = null,
   onLogout,
 }: AppShellProps) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const navigation = [
     ...baseNavigation,
     ...(currentUser?.role === 'admin'
-      ? [{ to: '/admin/users', label: 'Users', icon: Users }]
+      ? [
+          { to: '/admin/users', label: 'Users', icon: Users },
+          { to: '/admin/export', label: 'Export', icon: ShieldCheck },
+        ]
       : []),
   ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="mx-auto grid min-h-screen max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="rounded-3xl border border-slate-800 bg-panel p-5 shadow-glow">
+        <button
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-panel px-4 py-3 text-sm text-slate-200 lg:hidden"
+          onClick={() => setMenuOpen((current) => !current)}
+          type="button"
+        >
+          <Menu className="h-4 w-4" />
+          Menu
+        </button>
+
+        <aside
+          className={cn(
+            'rounded-3xl border border-slate-800 bg-panel p-5 shadow-glow',
+            menuOpen ? 'block' : 'hidden lg:block',
+          )}
+        >
           <div className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-violet-300">
               Book Club
@@ -92,6 +115,7 @@ export const AppShell = ({
               <NavLink
                 key={to}
                 to={to}
+                onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',

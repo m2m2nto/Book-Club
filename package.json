@@ -13,6 +13,8 @@
     "db:seed": "npm run db:seed --workspace @book-club/server",
     "db:smoke": "npm run db:smoke --workspace @book-club/server",
     "dev": "concurrently \"npm run dev --workspace @book-club/server\" \"npm run dev --workspace @book-club/client\"",
+    "dev:e2e": "npm run db:migrate && npm run db:seed:e2e --workspace @book-club/server && concurrently \"ENABLE_TEST_AUTH=true NODE_ENV=test CLIENT_URL=http://127.0.0.1:5173 npm run dev --workspace @book-club/server\" \"npm run dev --workspace @book-club/client -- --host 127.0.0.1\"",
+    "e2e": "bash -lc 'npm run dev:e2e > /tmp/bookclub-e2e.log 2>&1 & PID=$!; trap \"kill $PID\" EXIT; sleep 15; npx playwright test'",
     "lint": "eslint .",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
+    "@playwright/test": "^1.54.2",
     "concurrently": "^9.2.1",
     "eslint": "^9.24.0",
     "globals": "^16.0.0",
