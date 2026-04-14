@@ -21,14 +21,14 @@
 > **Checkpoint:** Admin logs in via Google, creates a user, that user logs in, non-admin blocked
 
 ## Phase 3: Book Management & Search
-- [ ] 3.1  Book database schema (books, ratings, comments)
-- [ ] 3.2  Book CRUD API
-- [ ] 3.3  Ratings API
-- [ ] 3.4  Comments API
-- [ ] 3.5  Open Library search proxy API
-- [ ] 3.6  Book list and detail pages (UI)
-- [ ] 3.7  Book rating and comment UI components
-- [ ] 3.8  Admin book management UI with Open Library search
+- [x] 3.1  Book database schema (books, ratings, comments)
+- [x] 3.2  Book CRUD API
+- [x] 3.3  Ratings API
+- [x] 3.4  Comments API
+- [x] 3.5  Open Library search proxy API
+- [x] 3.6  Book list and detail pages (UI)
+- [x] 3.7  Book rating and comment UI components
+- [x] 3.8  Admin book management UI with Open Library search
 > **Checkpoint:** Admin adds book via Open Library, users rate and comment
 
 ## Phase 4: Wishlist & Book Surveys

@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -6,7 +7,7 @@ import { db } from '../db/client.js';
 import { usersTable } from '../db/schema.js';
 import { usersRouter } from './users.js';
 
-const createAdminApp = () => {
+const createAdminApp = (adminId = 1) => {
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => {
@@ -19,7 +20,7 @@ const createAdminApp = () => {
 
     request.isAuthenticated = isAuthenticated;
     request.user = {
-      id: 1,
+      id: adminId,
       email: 'admin@example.com',
       name: 'Admin',
       avatarUrl: null,
@@ -38,7 +39,18 @@ describe('usersRouter', () => {
   });
 
   it('creates and lists users for an admin', async () => {
-    const app = createAdminApp();
+    const admin = db
+      .insert(usersTable)
+      .values({
+        email: 'admin@example.com',
+        name: 'Admin',
+        role: 'admin',
+        active: true,
+      })
+      .returning()
+      .get();
+
+    const app = createAdminApp(admin.id);
 
     const createResponse = await request(app).post('/api/users').send({
       email: 'member@example.com',
@@ -52,10 +64,26 @@ describe('usersRouter', () => {
     const listResponse = await request(app).get('/api/users');
 
     expect(listResponse.status).toBe(200);
-    expect(listResponse.body.data).toHaveLength(1);
+    expect(listResponse.body.data).toHaveLength(2);
+    expect(
+      listResponse.body.data.some(
+        (user: { email: string }) => user.email === 'member@example.com',
+      ),
+    ).toBe(true);
   });
 
   it('soft deletes a user and keeps the row present', async () => {
+    const admin = db
+      .insert(usersTable)
+      .values({
+        email: 'admin@example.com',
+        name: 'Admin',
+        role: 'admin',
+        active: true,
+      })
+      .returning()
+      .get();
+
     const inserted = db
       .insert(usersTable)
       .values({
@@ -67,12 +95,16 @@ describe('usersRouter', () => {
       .returning()
       .get();
 
-    const app = createAdminApp();
+    const app = createAdminApp(admin.id);
     const response = await request(app).delete(`/api/users/${inserted.id}`);
 
     expect(response.status).toBe(200);
 
-    const row = db.select().from(usersTable).get();
+    const row = db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, 'member@example.com'))
+      .get();
     expect(row?.deletedAt).not.toBeNull();
     expect(row?.active).toBe(false);
   });

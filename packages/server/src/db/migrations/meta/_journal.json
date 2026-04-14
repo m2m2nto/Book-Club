@@ -15,6 +15,13 @@
       "when": 1744419600000,
       "tag": "0001_user_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1744423200000,
+      "tag": "0002_books_ratings_comments",
+      "breakpoints": true
     }
   ]
 }

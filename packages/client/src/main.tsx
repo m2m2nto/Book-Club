@@ -6,6 +6,8 @@ import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { ProtectedLayout } from './components/protected-layout';
 import './index.css';
 import { AdminUsersPage } from './pages/admin-users-page';
+import { BookDetailPage } from './pages/book-detail-page';
+import { BooksPage } from './pages/books-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
 
@@ -28,7 +30,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/books" element={<PlaceholderPage title="Books" />} />
+            <Route path="/books" element={<BooksPage />} />
+            <Route path="/books/:id" element={<BookDetailPage />} />
             <Route
               path="/meetings"
               element={<PlaceholderPage title="Meetings" />}

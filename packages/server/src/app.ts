@@ -5,6 +5,7 @@ import { configureGoogleAuth } from './auth/google-auth.js';
 import { passportInstance } from './auth/passport.js';
 import { sessionMiddleware } from './auth/session.js';
 import { env } from './env.js';
+import { booksRouter } from './routes/books.js';
 import { usersRouter } from './routes/users.js';
 
 configureGoogleAuth();
@@ -98,6 +99,7 @@ export const createApp = () => {
   });
 
   app.use('/api/users', usersRouter);
+  app.use('/api/books', booksRouter);
 
   return app;
 };
