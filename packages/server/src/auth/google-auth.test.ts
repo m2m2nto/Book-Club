@@ -2,8 +2,16 @@ import type { Profile } from 'passport-google-oauth20';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { db } from '../db/client.js';
+import {
+  bookSurveyOptionsTable,
+  bookSurveyVotesTable,
+  bookSurveysTable,
+  booksTable,
+  commentsTable,
+  ratingsTable,
+  usersTable,
+} from '../db/schema.js';
 import { completeGoogleLogin } from './google-auth.js';
-import { usersTable } from '../db/schema.js';
 
 const buildProfile = (email: string, name = 'Test User'): Profile =>
   ({
@@ -30,6 +38,12 @@ const buildProfile = (email: string, name = 'Test User'): Profile =>
 
 describe('completeGoogleLogin', () => {
   beforeEach(() => {
+    db.delete(bookSurveyVotesTable).run();
+    db.delete(bookSurveyOptionsTable).run();
+    db.delete(bookSurveysTable).run();
+    db.delete(commentsTable).run();
+    db.delete(ratingsTable).run();
+    db.delete(booksTable).run();
     db.delete(usersTable).run();
   });
 

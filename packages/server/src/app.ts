@@ -5,8 +5,10 @@ import { configureGoogleAuth } from './auth/google-auth.js';
 import { passportInstance } from './auth/passport.js';
 import { sessionMiddleware } from './auth/session.js';
 import { env } from './env.js';
+import { bookSurveysRouter } from './routes/book-surveys.js';
 import { booksRouter } from './routes/books.js';
 import { usersRouter } from './routes/users.js';
+import { wishlistRouter } from './routes/wishlist.js';
 
 configureGoogleAuth();
 
@@ -100,6 +102,8 @@ export const createApp = () => {
 
   app.use('/api/users', usersRouter);
   app.use('/api/books', booksRouter);
+  app.use('/api/wishlist', wishlistRouter);
+  app.use('/api/book-surveys', bookSurveysRouter);
 
   return app;
 };

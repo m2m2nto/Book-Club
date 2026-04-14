@@ -4,6 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { db } from '../db/client.js';
 import {
+  bookSurveyOptionsTable,
+  bookSurveyVotesTable,
+  bookSurveysTable,
   booksTable,
   commentsTable,
   ratingsTable,
@@ -36,6 +39,9 @@ describe('booksRouter', () => {
   let memberTwo: Express.User;
 
   beforeEach(() => {
+    db.delete(bookSurveyVotesTable).run();
+    db.delete(bookSurveyOptionsTable).run();
+    db.delete(bookSurveysTable).run();
     db.delete(commentsTable).run();
     db.delete(ratingsTable).run();
     db.delete(booksTable).run();

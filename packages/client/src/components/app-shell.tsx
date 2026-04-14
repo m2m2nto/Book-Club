@@ -1,11 +1,13 @@
 import type { PropsWithChildren } from 'react';
 import {
+  BookHeart,
   BookOpenText,
   CalendarDays,
   LayoutDashboard,
   LogOut,
   ShieldCheck,
   Users,
+  Vote,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -15,6 +17,8 @@ import { cn } from '../lib/utils';
 const baseNavigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/books', label: 'Books', icon: BookOpenText },
+  { to: '/wishlist', label: 'Wishlist', icon: BookHeart },
+  { to: '/surveys', label: 'Surveys', icon: Vote },
   { to: '/meetings', label: 'Meetings', icon: CalendarDays },
 ];
 

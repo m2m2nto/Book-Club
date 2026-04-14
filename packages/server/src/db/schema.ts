@@ -99,9 +99,72 @@ export const commentsTable = sqliteTable(
   }),
 );
 
+export const bookSurveysTable = sqliteTable('book_surveys', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+  maxVotes: integer('max_votes').notNull().default(1),
+  closesAt: text('closes_at').notNull(),
+  createdByUserId: integer('created_by_user_id')
+    .notNull()
+    .references(() => usersTable.id),
+  status: text('status', {
+    enum: ['open', 'closed', 'tie-break-required'],
+  })
+    .notNull()
+    .default('open'),
+  resolvedByUserId: integer('resolved_by_user_id').references(
+    () => usersTable.id,
+  ),
+  resolvedBookId: integer('resolved_book_id').references(() => booksTable.id),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const bookSurveyOptionsTable = sqliteTable('book_survey_options', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  surveyId: integer('survey_id')
+    .notNull()
+    .references(() => bookSurveysTable.id),
+  bookId: integer('book_id')
+    .notNull()
+    .references(() => booksTable.id),
+});
+
+export const bookSurveyVotesTable = sqliteTable(
+  'book_survey_votes',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    surveyId: integer('survey_id')
+      .notNull()
+      .references(() => bookSurveysTable.id),
+    surveyOptionId: integer('survey_option_id')
+      .notNull()
+      .references(() => bookSurveyOptionsTable.id),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id),
+    rank: integer('rank').notNull(),
+    createdAt: text('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    surveyUserRankUnique: uniqueIndex('book_survey_vote_unique').on(
+      table.surveyId,
+      table.userId,
+      table.rank,
+    ),
+  }),
+);
+
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
 export type Book = typeof booksTable.$inferSelect;
 export type NewBook = typeof booksTable.$inferInsert;
 export type Rating = typeof ratingsTable.$inferSelect;
 export type Comment = typeof commentsTable.$inferSelect;
+export type BookSurvey = typeof bookSurveysTable.$inferSelect;

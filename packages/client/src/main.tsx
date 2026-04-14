@@ -10,6 +10,9 @@ import { BookDetailPage } from './pages/book-detail-page';
 import { BooksPage } from './pages/books-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
+import { SurveyDetailPage } from './pages/survey-detail-page';
+import { SurveysPage } from './pages/surveys-page';
+import { WishlistPage } from './pages/wishlist-page';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<HomePage />} />
             <Route path="/books" element={<BooksPage />} />
             <Route path="/books/:id" element={<BookDetailPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/surveys" element={<SurveysPage />} />
+            <Route path="/surveys/:id" element={<SurveyDetailPage />} />
             <Route
               path="/meetings"
               element={<PlaceholderPage title="Meetings" />}

@@ -32,10 +32,10 @@
 > **Checkpoint:** Admin adds book via Open Library, users rate and comment
 
 ## Phase 4: Wishlist & Book Surveys
-- [ ] 4.1  Wishlist API and UI
-- [ ] 4.2  Book survey database schema
-- [ ] 4.3  Book survey API (create, ranked vote, close, scoring)
-- [ ] 4.4  Book survey UI (voting interface, results)
+- [x] 4.1  Wishlist API and UI
+- [x] 4.2  Book survey database schema
+- [x] 4.3  Book survey API (create, ranked vote, close, scoring)
+- [x] 4.4  Book survey UI (voting interface, results)
 > **Checkpoint:** User suggests book → admin creates poll → members vote → winner to pipeline
 
 ## Phase 5: Meetings, Date Surveys & RSVP

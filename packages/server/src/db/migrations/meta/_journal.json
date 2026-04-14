@@ -22,6 +22,13 @@
       "when": 1744423200000,
       "tag": "0002_books_ratings_comments",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1744426800000,
+      "tag": "0003_book_surveys",
+      "breakpoints": true
     }
   ]
 }
