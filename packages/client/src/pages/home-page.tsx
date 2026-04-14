@@ -80,9 +80,9 @@ export const HomePage = () => {
             <Clock3 className="h-5 w-5" />
             <h3 className="font-medium text-white">Next up</h3>
           </div>
-          <p className="text-3xl font-semibold text-white">Shared types + DB</p>
+          <p className="text-3xl font-semibold text-white">Meetings + RSVP</p>
           <p className="mt-2 text-sm text-slate-400">
-            The next tasks wire in shared contracts and persistent storage.
+            Date polls, meeting scheduling, and RSVP tracking are ready next.
           </p>
         </article>
       </section>

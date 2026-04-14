@@ -8,22 +8,16 @@ import './index.css';
 import { AdminUsersPage } from './pages/admin-users-page';
 import { BookDetailPage } from './pages/book-detail-page';
 import { BooksPage } from './pages/books-page';
+import { DateSurveyDetailPage } from './pages/date-survey-detail-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
+import { MeetingDetailPage } from './pages/meeting-detail-page';
+import { MeetingsPage } from './pages/meetings-page';
 import { SurveyDetailPage } from './pages/survey-detail-page';
 import { SurveysPage } from './pages/surveys-page';
 import { WishlistPage } from './pages/wishlist-page';
 
 const queryClient = new QueryClient();
-
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/60 p-8 text-slate-300">
-    <h2 className="text-xl font-semibold text-white">{title}</h2>
-    <p className="mt-2 text-sm">
-      This area will be implemented in later tasks.
-    </p>
-  </div>
-);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -38,9 +32,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/surveys" element={<SurveysPage />} />
             <Route path="/surveys/:id" element={<SurveyDetailPage />} />
+            <Route path="/meetings" element={<MeetingsPage />} />
+            <Route path="/meetings/:id" element={<MeetingDetailPage />} />
             <Route
-              path="/meetings"
-              element={<PlaceholderPage title="Meetings" />}
+              path="/date-surveys/:id"
+              element={<DateSurveyDetailPage />}
             />
             <Route path="/admin/users" element={<AdminUsersPage />} />
           </Route>

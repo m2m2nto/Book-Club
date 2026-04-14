@@ -4,15 +4,8 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { db } from '../db/client.js';
-import {
-  bookSurveyOptionsTable,
-  bookSurveyVotesTable,
-  bookSurveysTable,
-  booksTable,
-  commentsTable,
-  ratingsTable,
-  usersTable,
-} from '../db/schema.js';
+import { resetDatabase } from '../db/test-cleanup.js';
+import { usersTable } from '../db/schema.js';
 import { usersRouter } from './users.js';
 
 const createAdminApp = (adminId = 1) => {
@@ -43,13 +36,7 @@ const createAdminApp = (adminId = 1) => {
 
 describe('usersRouter', () => {
   beforeEach(() => {
-    db.delete(bookSurveyVotesTable).run();
-    db.delete(bookSurveyOptionsTable).run();
-    db.delete(bookSurveysTable).run();
-    db.delete(commentsTable).run();
-    db.delete(ratingsTable).run();
-    db.delete(booksTable).run();
-    db.delete(usersTable).run();
+    resetDatabase();
   });
 
   it('creates and lists users for an admin', async () => {

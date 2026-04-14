@@ -4,13 +4,8 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { db } from '../db/client.js';
-import {
-  bookSurveyOptionsTable,
-  bookSurveyVotesTable,
-  bookSurveysTable,
-  booksTable,
-  usersTable,
-} from '../db/schema.js';
+import { resetDatabase } from '../db/test-cleanup.js';
+import { booksTable, usersTable } from '../db/schema.js';
 import { bookSurveysRouter } from './book-surveys.js';
 import { wishlistRouter } from './wishlist.js';
 
@@ -40,11 +35,7 @@ describe('wishlist and book surveys', () => {
   let memberTwo: Express.User;
 
   beforeEach(() => {
-    db.delete(bookSurveyVotesTable).run();
-    db.delete(bookSurveyOptionsTable).run();
-    db.delete(bookSurveysTable).run();
-    db.delete(booksTable).run();
-    db.delete(usersTable).run();
+    resetDatabase();
 
     const inserted = db
       .insert(usersTable)

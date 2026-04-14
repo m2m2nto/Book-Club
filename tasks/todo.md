@@ -39,12 +39,12 @@
 > **Checkpoint:** User suggests book → admin creates poll → members vote → winner to pipeline
 
 ## Phase 5: Meetings, Date Surveys & RSVP
-- [ ] 5.1  Meeting and date survey database schema
-- [ ] 5.2  Meeting CRUD API
-- [ ] 5.3  RSVP API
-- [ ] 5.4  Date survey API
-- [ ] 5.5  Meeting list and detail pages (UI)
-- [ ] 5.6  Date survey UI
+- [x] 5.1  Meeting and date survey database schema
+- [x] 5.2  Meeting CRUD API
+- [x] 5.3  RSVP API
+- [x] 5.4  Date survey API
+- [x] 5.5  Meeting list and detail pages (UI)
+- [x] 5.6  Date survey UI
 > **Checkpoint:** Admin runs date poll → creates meeting → members RSVP
 
 ## Phase 6: Email Reminders

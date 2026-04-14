@@ -161,6 +161,111 @@ export const bookSurveyVotesTable = sqliteTable(
   }),
 );
 
+export const meetingsTable = sqliteTable(
+  'meetings',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    date: text('date').notNull(),
+    time: text('time').notNull(),
+    location: text('location').notNull(),
+    bookId: integer('book_id').references(() => booksTable.id),
+    status: text('status', { enum: ['scheduled', 'completed', 'cancelled'] })
+      .notNull()
+      .default('scheduled'),
+    recap: text('recap'),
+    createdAt: text('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text('updated_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    meetingBookUnique: uniqueIndex('meetings_book_unique').on(table.bookId),
+  }),
+);
+
+export const dateSurveysTable = sqliteTable('date_surveys', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  meetingId: integer('meeting_id').references(() => meetingsTable.id),
+  title: text('title').notNull(),
+  closesAt: text('closes_at').notNull(),
+  createdByUserId: integer('created_by_user_id')
+    .notNull()
+    .references(() => usersTable.id),
+  status: text('status', { enum: ['open', 'closed'] })
+    .notNull()
+    .default('open'),
+  time: text('time').notNull(),
+  location: text('location').notNull(),
+  bookId: integer('book_id').references(() => booksTable.id),
+  confirmedOptionId: integer('confirmed_option_id'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const dateSurveyOptionsTable = sqliteTable('date_survey_options', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  dateSurveyId: integer('date_survey_id')
+    .notNull()
+    .references(() => dateSurveysTable.id),
+  proposedDate: text('proposed_date').notNull(),
+});
+
+export const dateSurveyVotesTable = sqliteTable(
+  'date_survey_votes',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    dateSurveyId: integer('date_survey_id')
+      .notNull()
+      .references(() => dateSurveysTable.id),
+    dateSurveyOptionId: integer('date_survey_option_id')
+      .notNull()
+      .references(() => dateSurveyOptionsTable.id),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id),
+    createdAt: text('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    surveyOptionUserUnique: uniqueIndex('date_survey_vote_unique').on(
+      table.dateSurveyId,
+      table.dateSurveyOptionId,
+      table.userId,
+    ),
+  }),
+);
+
+export const rsvpsTable = sqliteTable(
+  'rsvps',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    meetingId: integer('meeting_id')
+      .notNull()
+      .references(() => meetingsTable.id),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id),
+    status: text('status', { enum: ['yes', 'no', 'maybe'] }).notNull(),
+    respondedAt: text('responded_at'),
+    updatedAt: text('updated_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    meetingUserUnique: uniqueIndex('rsvp_meeting_user_unique').on(
+      table.meetingId,
+      table.userId,
+    ),
+  }),
+);
+
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
 export type Book = typeof booksTable.$inferSelect;
@@ -168,3 +273,5 @@ export type NewBook = typeof booksTable.$inferInsert;
 export type Rating = typeof ratingsTable.$inferSelect;
 export type Comment = typeof commentsTable.$inferSelect;
 export type BookSurvey = typeof bookSurveysTable.$inferSelect;
+export type Meeting = typeof meetingsTable.$inferSelect;
+export type DateSurvey = typeof dateSurveysTable.$inferSelect;

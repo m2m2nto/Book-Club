@@ -7,6 +7,8 @@ import { sessionMiddleware } from './auth/session.js';
 import { env } from './env.js';
 import { bookSurveysRouter } from './routes/book-surveys.js';
 import { booksRouter } from './routes/books.js';
+import { dateSurveysRouter } from './routes/date-surveys.js';
+import { meetingsRouter } from './routes/meetings.js';
 import { usersRouter } from './routes/users.js';
 import { wishlistRouter } from './routes/wishlist.js';
 
@@ -104,6 +106,8 @@ export const createApp = () => {
   app.use('/api/books', booksRouter);
   app.use('/api/wishlist', wishlistRouter);
   app.use('/api/book-surveys', bookSurveysRouter);
+  app.use('/api/meetings', meetingsRouter);
+  app.use('/api/date-surveys', dateSurveysRouter);
 
   return app;
 };
