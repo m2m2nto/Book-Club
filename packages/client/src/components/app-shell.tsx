@@ -49,10 +49,10 @@ export const AppShell = ({
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto grid min-h-screen max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+    <div className="min-h-screen text-[color:var(--color-text-primary)]">
+      <div className="page-shell grid min-h-screen gap-5 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8">
         <button
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-panel px-4 py-3 text-sm text-slate-200 lg:hidden"
+          className="inline-flex items-center gap-2 self-start rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)] shadow-[var(--shadow-soft)] lg:hidden"
           onClick={() => setMenuOpen((current) => !current)}
           type="button"
         >
@@ -62,45 +62,50 @@ export const AppShell = ({
 
         <aside
           className={cn(
-            'rounded-3xl border border-slate-800 bg-panel p-5 shadow-glow',
-            menuOpen ? 'block' : 'hidden lg:block',
+            'surface-base h-fit p-4 lg:sticky lg:top-6 lg:block',
+            menuOpen ? 'block' : 'hidden',
           )}
         >
-          <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-violet-300">
-              Book Club
+          <div className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-default)] px-4 py-5">
+            <p className="eyebrow text-[color:var(--color-text-muted)]">
+              Book Club Manager
             </p>
-            <h1 className="mt-2 text-2xl font-semibold text-white">Manager</h1>
-            <p className="mt-3 text-sm text-slate-400">
-              Organize reading lists, meetings, and votes in one place.
+            <h1 className="mt-3 font-editorial text-[2.2rem] leading-[0.95] tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+              A calmer club rhythm.
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-[color:var(--color-text-secondary)]">
+              Keep books, meetings, and shared decisions in one bright,
+              readable place.
             </p>
           </div>
 
           {currentUser ? (
-            <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+            <div className="mt-5 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-raised)] px-4 py-4">
               <div className="flex items-center gap-3">
                 {currentUser.avatarUrl ? (
                   <img
                     alt={currentUser.name}
-                    className="h-10 w-10 rounded-full object-cover"
+                    className="h-11 w-11 rounded-full object-cover"
                     src={currentUser.avatarUrl}
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-500/20 text-sm font-semibold text-violet-200">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--color-accent-primary-soft)] text-sm font-semibold text-[color:var(--color-text-accent)]">
                     {currentUser.name.slice(0, 1).toUpperCase()}
                   </div>
                 )}
-                <div>
-                  <p className="font-medium text-white">{currentUser.name}</p>
-                  <div className="mt-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
-                    <ShieldCheck className="h-3.5 w-3.5" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[color:var(--color-text-primary)]">
+                    {currentUser.name}
+                  </p>
+                  <div className="mt-1 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--color-text-accent)]" />
                     <span>{currentUser.role}</span>
                   </div>
                 </div>
               </div>
 
               <button
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-800"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={onLogout}
                 type="button"
               >
@@ -110,7 +115,7 @@ export const AppShell = ({
             </div>
           ) : null}
 
-          <nav className="space-y-2">
+          <nav className="mt-5 space-y-1.5">
             {navigation.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
@@ -118,21 +123,21 @@ export const AppShell = ({
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
+                    'group flex items-center gap-3 rounded-[var(--radius-lg)] px-3.5 py-3 text-sm font-medium transition-all duration-[var(--motion-duration-base)] ease-[var(--motion-ease-standard)]',
                     isActive
-                      ? 'bg-violet-500/15 text-violet-200'
-                      : 'text-slate-300 hover:bg-slate-900 hover:text-white',
+                      ? 'bg-[color:var(--color-accent-primary-soft)] text-[color:var(--color-text-accent)]'
+                      : 'text-[color:var(--color-text-secondary)] hover:-translate-y-0.5 hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]',
                   )
                 }
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4 transition-transform duration-[var(--motion-duration-fast)] group-hover:scale-105" />
                 <span>{label}</span>
               </NavLink>
             ))}
           </nav>
         </aside>
 
-        <main className="rounded-3xl border border-slate-800 bg-panelAlt/80 p-6 shadow-glow">
+        <main className="min-w-0 rounded-[var(--radius-xl)] border border-[color:var(--color-border-soft)] bg-white/50 p-5 lg:p-8">
           {children}
         </main>
       </div>
