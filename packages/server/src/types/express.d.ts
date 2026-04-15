@@ -14,6 +14,11 @@ declare module 'express-session' {
     passport?: {
       user: number;
     };
+    adminDbExportConfirmation?: {
+      token: string;
+      expiresAt: number;
+    };
+    csrfToken?: string;
   }
 }
 

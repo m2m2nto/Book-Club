@@ -72,6 +72,34 @@ describe('createApp', () => {
       active: true,
     });
   });
+
+  it('rejects state-changing requests without a CSRF token', async () => {
+    db.insert(usersTable)
+      .values({
+        email: 'member@example.com',
+        name: 'Member',
+        role: 'user',
+        active: true,
+      })
+      .run();
+
+    const app = createApp();
+    const agent = request.agent(app);
+
+    await agent.get('/auth/test-login?email=member@example.com');
+
+    const rejected = await agent.post('/auth/logout');
+    expect(rejected.status).toBe(403);
+    expect(rejected.body.error.code).toBe('CSRF_TOKEN_INVALID');
+
+    const csrfResponse = await agent.get('/auth/csrf');
+    expect(csrfResponse.status).toBe(200);
+
+    const accepted = await agent
+      .post('/auth/logout')
+      .set('x-csrf-token', csrfResponse.body.data.csrfToken);
+    expect(accepted.status).toBe(200);
+  });
 });
 
 describe('auth middleware', () => {

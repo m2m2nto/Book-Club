@@ -1,5 +1,6 @@
 import { and, asc, count, eq, sql } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
 import {
@@ -11,6 +12,19 @@ import {
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 
 const router = Router();
+
+const meetingIdParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+const createMeetingSchema = z.object({
+  date: z.string().trim().min(1).max(50),
+  time: z.string().trim().min(1).max(50),
+  location: z.string().trim().min(1).max(500),
+  bookId: z.union([z.coerce.number().int().positive(), z.null()]).optional(),
+});
+const rsvpBodySchema = z.object({
+  status: z.enum(['yes', 'no', 'maybe']),
+});
 
 const mapMeeting = (meetingId: number) => {
   const meeting = db
@@ -90,8 +104,8 @@ router.get('/', requireAuth, (_req, res) => {
 });
 
 router.get('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = meetingIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid meeting id.' },
@@ -99,7 +113,7 @@ router.get('/:id', requireAuth, (req, res) => {
     return;
   }
 
-  const meeting = mapMeeting(id);
+  const meeting = mapMeeting(parsedParams.data.id);
   if (!meeting) {
     res.status(404).json({
       data: null,
@@ -112,16 +126,9 @@ router.get('/:id', requireAuth, (req, res) => {
 });
 
 router.post('/', requireAdmin, (req, res) => {
-  const date = typeof req.body.date === 'string' ? req.body.date : '';
-  const time = typeof req.body.time === 'string' ? req.body.time : '';
-  const location =
-    typeof req.body.location === 'string' ? req.body.location.trim() : '';
-  const bookId =
-    req.body.bookId === null || req.body.bookId === undefined
-      ? null
-      : Number(req.body.bookId);
+  const parsedBody = createMeetingSchema.safeParse(req.body);
 
-  if (!date || !time || !location) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -132,14 +139,10 @@ router.post('/', requireAdmin, (req, res) => {
     return;
   }
 
+  const { date, time, location } = parsedBody.data;
+  const bookId = parsedBody.data.bookId ?? null;
+
   if (bookId !== null) {
-    if (!Number.isInteger(bookId)) {
-      res.status(422).json({
-        data: null,
-        error: { code: 'VALIDATION_ERROR', message: 'Invalid book id.' },
-      });
-      return;
-    }
 
     const book = db
       .select()
@@ -321,10 +324,10 @@ router.delete('/:id', requireAdmin, (req, res) => {
 });
 
 router.put('/:id/rsvp', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const status = typeof req.body.status === 'string' ? req.body.status : '';
+  const parsedParams = meetingIdParamsSchema.safeParse(req.params);
+  const parsedBody = rsvpBodySchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !['yes', 'no', 'maybe'].includes(status)) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -334,6 +337,9 @@ router.put('/:id/rsvp', requireAuth, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const { status } = parsedBody.data;
 
   const meeting = db
     .select()
@@ -413,14 +419,16 @@ router.put('/:id/rsvp', requireAuth, (req, res) => {
 });
 
 router.get('/:id/rsvps', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = meetingIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid meeting id.' },
     });
     return;
   }
+
+  const id = parsedParams.data.id;
 
   const rows = db
     .select({

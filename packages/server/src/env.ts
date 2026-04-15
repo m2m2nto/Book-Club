@@ -1,10 +1,19 @@
 import 'dotenv/config';
 
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+const sessionSecret =
+  process.env.SESSION_SECRET ??
+  (nodeEnv === 'production' ? undefined : 'development-session-secret');
+
+if (!sessionSecret) {
+  throw new Error('SESSION_SECRET must be configured in production.');
+}
+
 export const env = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   port: Number(process.env.PORT ?? 3000),
   databaseUrl: process.env.DATABASE_URL,
-  sessionSecret: process.env.SESSION_SECRET ?? 'development-session-secret',
+  sessionSecret,
   clientUrl: process.env.CLIENT_URL ?? 'http://localhost:5173',
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,

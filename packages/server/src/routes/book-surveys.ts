@@ -1,5 +1,6 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
 import {
@@ -11,6 +12,29 @@ import {
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 
 const router = Router();
+
+const surveyIdParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+const createBookSurveySchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  closesAt: z.string().trim().min(1).max(100),
+  maxVotes: z.coerce.number().int().min(1).max(3),
+  bookIds: z.array(z.coerce.number().int().positive()).min(1),
+});
+const surveyVoteSchema = z.object({
+  votes: z
+    .array(
+      z.object({
+        optionId: z.coerce.number().int().positive(),
+        rank: z.coerce.number().int().min(1).max(3),
+      }),
+    )
+    .min(1),
+});
+const resolveTieSchema = z.object({
+  bookId: z.coerce.number().int().positive(),
+});
 
 const mapSurvey = (surveyId: number) => {
   const survey = db
@@ -74,8 +98,8 @@ router.get('/', requireAuth, (_req, res) => {
 });
 
 router.get('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid survey id.' },
@@ -83,7 +107,7 @@ router.get('/:id', requireAuth, (req, res) => {
     return;
   }
 
-  const survey = mapSurvey(id);
+  const survey = mapSurvey(parsedParams.data.id);
   if (!survey) {
     res.status(404).json({
       data: null,
@@ -96,22 +120,27 @@ router.get('/:id', requireAuth, (req, res) => {
 });
 
 router.post('/', requireAdmin, (req, res) => {
-  const title = typeof req.body.title === 'string' ? req.body.title.trim() : '';
-  const closesAt =
-    typeof req.body.closesAt === 'string' ? req.body.closesAt : '';
-  const maxVotes = Number(req.body.maxVotes ?? 1);
-  const bookIds = Array.isArray(req.body.bookIds)
-    ? req.body.bookIds
-        .map((value: unknown) => Number(value))
-        .filter((value: number) => Number.isInteger(value))
-    : [];
+  const parsedBody = createBookSurveySchema.safeParse(req.body);
 
-  if (!title || !closesAt || maxVotes < 1 || maxVotes > 3 || !bookIds.length) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Title, closesAt, maxVotes, and bookIds are required.',
+      },
+    });
+    return;
+  }
+
+  const { title, closesAt, maxVotes, bookIds } = parsedBody.data;
+
+  if (new Set(bookIds).size !== bookIds.length) {
+    res.status(422).json({
+      data: null,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Survey book options must be unique.',
       },
     });
     return;
@@ -149,27 +178,17 @@ router.post('/', requireAdmin, (req, res) => {
     .get();
 
   db.insert(bookSurveyOptionsTable)
-    .values(bookIds.map((bookId: number) => ({ surveyId: survey.id, bookId })))
+    .values(bookIds.map((bookId) => ({ surveyId: survey.id, bookId })))
     .run();
 
   res.status(201).json({ data: mapSurvey(survey.id), error: null });
 });
 
 router.post('/:id/vote', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const votes = Array.isArray(req.body.votes)
-    ? req.body.votes
-        .map((vote: { optionId: unknown; rank: unknown }) => ({
-          optionId: Number(vote.optionId),
-          rank: Number(vote.rank),
-        }))
-        .filter(
-          (vote: { optionId: number; rank: number }) =>
-            Number.isInteger(vote.optionId) && Number.isInteger(vote.rank),
-        )
-    : [];
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  const parsedBody = surveyVoteSchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !votes.length) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -179,6 +198,9 @@ router.post('/:id/vote', requireAuth, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const votes = parsedBody.data.votes;
 
   const survey = db
     .select()
@@ -216,6 +238,21 @@ router.post('/:id/vote', requireAuth, (req, res) => {
       },
     });
     return;
+  }
+
+  const seenOptionIds = new Set<number>();
+  for (const vote of votes) {
+    if (seenOptionIds.has(vote.optionId)) {
+      res.status(422).json({
+        data: null,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Votes must not contain duplicate options.',
+        },
+      });
+      return;
+    }
+    seenOptionIds.add(vote.optionId);
   }
 
   const priorVote = db
@@ -268,7 +305,7 @@ router.post('/:id/vote', requireAuth, (req, res) => {
 
   db.insert(bookSurveyVotesTable)
     .values(
-      votes.map((vote: { optionId: number; rank: number }) => ({
+      votes.map((vote) => ({
         surveyId: id,
         surveyOptionId: vote.optionId,
         userId: req.user!.id,
@@ -281,8 +318,8 @@ router.post('/:id/vote', requireAuth, (req, res) => {
 });
 
 router.patch('/:id/close', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid survey id.' },
@@ -290,6 +327,7 @@ router.patch('/:id/close', requireAdmin, (req, res) => {
     return;
   }
 
+  const id = parsedParams.data.id;
   const survey = mapSurvey(id);
   if (!survey) {
     res.status(404).json({
@@ -334,10 +372,10 @@ router.patch('/:id/close', requireAdmin, (req, res) => {
 });
 
 router.patch('/:id/resolve-tie', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  const winningBookId = Number(req.body.bookId);
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  const parsedBody = resolveTieSchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !Number.isInteger(winningBookId)) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -347,6 +385,9 @@ router.patch('/:id/resolve-tie', requireAdmin, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const winningBookId = parsedBody.data.bookId;
 
   const survey = mapSurvey(id);
   if (!survey) {

@@ -1,15 +1,34 @@
 import { eq } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
-import { requireAdmin } from '../middleware/auth.js';
 import { usersTable } from '../db/schema.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
-const normalizeRole = (role: unknown) => {
-  return role === 'admin' ? 'admin' : role === 'user' ? 'user' : null;
-};
+const userIdParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+
+const userRoleSchema = z.enum(['admin', 'user']);
+
+const createUserSchema = z.object({
+  email: z.string().trim().email(),
+  name: z.string().trim().min(1).max(200),
+  role: userRoleSchema.default('user'),
+});
+
+const updateUserSchema = z
+  .object({
+    name: z.string().trim().min(1).max(200).optional(),
+    role: userRoleSchema.optional(),
+    active: z.boolean().optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: 'No valid fields to update.',
+  });
 
 router.use(requireAdmin);
 
@@ -34,14 +53,9 @@ router.get('/', (_req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const email =
-    typeof req.body.email === 'string'
-      ? req.body.email.trim().toLowerCase()
-      : '';
-  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
-  const role = normalizeRole(req.body.role ?? 'user');
+  const parsedBody = createUserSchema.safeParse(req.body);
 
-  if (!email || !name || !role) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -51,6 +65,9 @@ router.post('/', (req, res) => {
     });
     return;
   }
+
+  const email = parsedBody.data.email.toLowerCase();
+  const { name, role } = parsedBody.data;
 
   const existing = db
     .select()
@@ -104,10 +121,10 @@ router.post('/', (req, res) => {
 });
 
 router.patch('/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const updates: Record<string, unknown> = {};
+  const parsedParams = userIdParamsSchema.safeParse(req.params);
+  const parsedBody = updateUserSchema.safeParse(req.body);
 
-  if (!Number.isInteger(id)) {
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid user id.' },
@@ -115,28 +132,7 @@ router.patch('/:id', (req, res) => {
     return;
   }
 
-  if (typeof req.body.name === 'string' && req.body.name.trim()) {
-    updates.name = req.body.name.trim();
-  }
-
-  const role =
-    req.body.role !== undefined ? normalizeRole(req.body.role) : undefined;
-  if (role === null) {
-    res.status(422).json({
-      data: null,
-      error: { code: 'VALIDATION_ERROR', message: 'Invalid role.' },
-    });
-    return;
-  }
-  if (role) {
-    updates.role = role;
-  }
-
-  if (typeof req.body.active === 'boolean') {
-    updates.active = req.body.active;
-  }
-
-  if (!Object.keys(updates).length) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -145,6 +141,15 @@ router.patch('/:id', (req, res) => {
       },
     });
     return;
+  }
+
+  const { id } = parsedParams.data;
+  const updates: Record<string, unknown> = {};
+
+  if (parsedBody.data.name !== undefined) updates.name = parsedBody.data.name;
+  if (parsedBody.data.role !== undefined) updates.role = parsedBody.data.role;
+  if (parsedBody.data.active !== undefined) {
+    updates.active = parsedBody.data.active;
   }
 
   const target = db
@@ -171,9 +176,9 @@ router.patch('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  const id = Number(req.params.id);
+  const parsedParams = userIdParamsSchema.safeParse(req.params);
 
-  if (!Number.isInteger(id)) {
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid user id.' },
@@ -181,6 +186,7 @@ router.delete('/:id', (req, res) => {
     return;
   }
 
+  const { id } = parsedParams.data;
   const target = db
     .select()
     .from(usersTable)
@@ -206,9 +212,9 @@ router.delete('/:id', (req, res) => {
 });
 
 router.post('/:id/reactivate', (req, res) => {
-  const id = Number(req.params.id);
+  const parsedParams = userIdParamsSchema.safeParse(req.params);
 
-  if (!Number.isInteger(id)) {
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid user id.' },
@@ -216,6 +222,7 @@ router.post('/:id/reactivate', (req, res) => {
     return;
   }
 
+  const { id } = parsedParams.data;
   const target = db
     .select()
     .from(usersTable)

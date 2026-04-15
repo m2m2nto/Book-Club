@@ -1,5 +1,6 @@
 import { and, asc, avg, desc, eq, sql } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
 import {
@@ -12,16 +13,36 @@ import { requireAdmin, requireAuth } from '../middleware/auth.js';
 
 const router = Router();
 
-const validStatuses = ['wishlist', 'pipeline', 'reading', 'read'] as const;
-
-type BookStatus = (typeof validStatuses)[number];
-
-const normalizeStatus = (value: unknown): BookStatus | null => {
-  return typeof value === 'string' &&
-    validStatuses.includes(value as BookStatus)
-    ? (value as BookStatus)
-    : null;
-};
+const bookStatusSchema = z.enum(['wishlist', 'pipeline', 'reading', 'read']);
+const bookIdParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+const commentParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  commentId: z.coerce.number().int().positive(),
+});
+const statusQuerySchema = z.object({
+  status: bookStatusSchema.optional(),
+});
+const searchQuerySchema = z.object({
+  q: z.string().trim().min(1).max(200),
+});
+const createBookSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  author: z.string().trim().min(1).max(200),
+  status: bookStatusSchema,
+  coverUrl: z.union([z.string().trim().url(), z.literal(''), z.null()]).optional(),
+  description: z.union([z.string().trim().max(5000), z.literal(''), z.null()]).optional(),
+  openLibraryId: z.union([z.string().trim().max(200), z.literal(''), z.null()]).optional(),
+  dateRead: z.union([z.string().trim().max(50), z.literal(''), z.null()]).optional(),
+});
+const ratingBodySchema = z.object({
+  score: z.number().int().min(1).max(5),
+});
+const commentBodySchema = z.object({
+  text: z.string().trim().min(1).max(5000),
+  isPrivate: z.boolean().optional().default(false),
+});
 
 const mapBookDetail = (bookId: number, viewerId: number) => {
   const book = db
@@ -96,15 +117,17 @@ const mapBookDetail = (bookId: number, viewerId: number) => {
 };
 
 router.get('/', requireAuth, (req, res) => {
-  const status = req.query.status ? normalizeStatus(req.query.status) : null;
+  const parsedQuery = statusQuerySchema.safeParse(req.query);
 
-  if (req.query.status && !status) {
+  if (!parsedQuery.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid book status.' },
     });
     return;
   }
+
+  const status = parsedQuery.data.status ?? null;
 
   const query = db
     .select({
@@ -139,14 +162,16 @@ router.get('/', requireAuth, (req, res) => {
 });
 
 router.get('/search', requireAuth, async (req, res) => {
-  const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-  if (!q) {
+  const parsedQuery = searchQuerySchema.safeParse(req.query);
+  if (!parsedQuery.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Query is required.' },
     });
     return;
   }
+
+  const q = parsedQuery.data.q;
 
   const cached = searchCache.get(q.toLowerCase());
   if (cached && cached.expiresAt > Date.now()) {
@@ -201,8 +226,8 @@ router.get('/search', requireAuth, async (req, res) => {
 });
 
 router.get('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = bookIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid book id.' },
@@ -210,7 +235,7 @@ router.get('/:id', requireAuth, (req, res) => {
     return;
   }
 
-  const book = mapBookDetail(id, req.user!.id);
+  const book = mapBookDetail(parsedParams.data.id, req.user!.id);
   if (!book) {
     res.status(404).json({
       data: null,
@@ -223,12 +248,9 @@ router.get('/:id', requireAuth, (req, res) => {
 });
 
 router.post('/', requireAdmin, (req, res) => {
-  const status = normalizeStatus(req.body.status);
-  const title = typeof req.body.title === 'string' ? req.body.title.trim() : '';
-  const author =
-    typeof req.body.author === 'string' ? req.body.author.trim() : '';
+  const parsedBody = createBookSchema.safeParse(req.body);
 
-  if (!title || !author || !status) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -242,23 +264,13 @@ router.post('/', requireAdmin, (req, res) => {
   const created = db
     .insert(booksTable)
     .values({
-      title,
-      author,
-      coverUrl:
-        typeof req.body.coverUrl === 'string'
-          ? req.body.coverUrl.trim() || null
-          : null,
-      description:
-        typeof req.body.description === 'string'
-          ? req.body.description.trim() || null
-          : null,
-      openLibraryId:
-        typeof req.body.openLibraryId === 'string'
-          ? req.body.openLibraryId.trim() || null
-          : null,
-      status,
-      dateRead:
-        typeof req.body.dateRead === 'string' ? req.body.dateRead : null,
+      title: parsedBody.data.title,
+      author: parsedBody.data.author,
+      coverUrl: parsedBody.data.coverUrl?.trim() || null,
+      description: parsedBody.data.description?.trim() || null,
+      openLibraryId: parsedBody.data.openLibraryId?.trim() || null,
+      status: parsedBody.data.status,
+      dateRead: parsedBody.data.dateRead?.trim() || null,
       suggestedByUserId: req.user!.id,
     })
     .returning()
@@ -268,8 +280,8 @@ router.post('/', requireAdmin, (req, res) => {
 });
 
 router.patch('/:id', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = bookIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid book id.' },
@@ -277,6 +289,7 @@ router.patch('/:id', requireAdmin, (req, res) => {
     return;
   }
 
+  const id = parsedParams.data.id;
   const updates: Record<string, unknown> = {};
   if (typeof req.body.title === 'string' && req.body.title.trim())
     updates.title = req.body.title.trim();
@@ -291,15 +304,15 @@ router.patch('/:id', requireAdmin, (req, res) => {
   if (typeof req.body.dateRead === 'string')
     updates.dateRead = req.body.dateRead || null;
   if (req.body.status !== undefined) {
-    const status = normalizeStatus(req.body.status);
-    if (!status) {
+    const parsedStatus = bookStatusSchema.safeParse(req.body.status);
+    if (!parsedStatus.success) {
       res.status(422).json({
         data: null,
         error: { code: 'VALIDATION_ERROR', message: 'Invalid book status.' },
       });
       return;
     }
-    updates.status = status;
+    updates.status = parsedStatus.data;
   }
 
   if (!Object.keys(updates).length) {
@@ -366,15 +379,10 @@ router.delete('/:id', requireAdmin, (req, res) => {
 });
 
 router.put('/:id/rating', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const score = Number(req.body.score);
+  const parsedParams = bookIdParamsSchema.safeParse(req.params);
+  const parsedBody = ratingBodySchema.safeParse({ score: Number(req.body.score) });
 
-  if (
-    !Number.isInteger(id) ||
-    !Number.isInteger(score) ||
-    score < 1 ||
-    score > 5
-  ) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -384,6 +392,9 @@ router.put('/:id/rating', requireAuth, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const score = parsedBody.data.score;
 
   const book = db.select().from(booksTable).where(eq(booksTable.id, id)).get();
   if (!book) {
@@ -454,11 +465,10 @@ router.get('/:id/ratings', requireAuth, (req, res) => {
 });
 
 router.post('/:id/comments', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const text = typeof req.body.text === 'string' ? req.body.text.trim() : '';
-  const isPrivate = Boolean(req.body.isPrivate);
+  const parsedParams = bookIdParamsSchema.safeParse(req.params);
+  const parsedBody = commentBodySchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !text) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -468,6 +478,9 @@ router.post('/:id/comments', requireAuth, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const { text, isPrivate } = parsedBody.data;
 
   const book = db.select().from(booksTable).where(eq(booksTable.id, id)).get();
   if (!book) {

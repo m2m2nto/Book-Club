@@ -96,7 +96,11 @@ export const sendEmail = async ({
   text: string;
 }) => {
   if (env.nodeEnv !== 'production') {
-    console.log('[email:dev]', { to, subject, text });
+    console.log('[email:dev]', {
+      toDomain: to.includes('@') ? to.split('@')[1] : 'unknown',
+      subject,
+      textPreview: `${text.slice(0, 80)}${text.length > 80 ? '…' : ''}`,
+    });
     return { delivered: false, mode: 'dev-log' as const };
   }
 

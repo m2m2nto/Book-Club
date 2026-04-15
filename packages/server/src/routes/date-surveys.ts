@@ -1,5 +1,6 @@
 import { and, asc, count, desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
 import {
@@ -12,6 +13,24 @@ import {
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 
 const router = Router();
+
+const surveyIdParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+const createDateSurveySchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  closesAt: z.string().trim().min(1).max(100),
+  dates: z.array(z.string().trim().min(1).max(50)).min(2),
+  time: z.string().trim().min(1).max(50),
+  location: z.string().trim().min(1).max(500),
+  bookId: z.union([z.coerce.number().int().positive(), z.null()]).optional(),
+});
+const voteDateSurveySchema = z.object({
+  optionIds: z.array(z.coerce.number().int().positive()).min(1),
+});
+const closeDateSurveySchema = z.object({
+  optionId: z.coerce.number().int().positive(),
+});
 
 const mapDateSurvey = (surveyId: number) => {
   const survey = db
@@ -58,15 +77,16 @@ router.get('/', requireAuth, (_req, res) => {
 });
 
 router.get('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  if (!parsedParams.success) {
     res.status(422).json({
       data: null,
       error: { code: 'VALIDATION_ERROR', message: 'Invalid date survey id.' },
     });
     return;
   }
-  const survey = mapDateSurvey(id);
+
+  const survey = mapDateSurvey(parsedParams.data.id);
   if (!survey) {
     res.status(404).json({
       data: null,
@@ -78,24 +98,9 @@ router.get('/:id', requireAuth, (req, res) => {
 });
 
 router.post('/', requireAdmin, (req, res) => {
-  const title = typeof req.body.title === 'string' ? req.body.title.trim() : '';
-  const closesAt =
-    typeof req.body.closesAt === 'string' ? req.body.closesAt : '';
-  const dates = Array.isArray(req.body.dates)
-    ? req.body.dates.filter(
-        (value: unknown): value is string =>
-          typeof value === 'string' && value.length > 0,
-      )
-    : [];
-  const time = typeof req.body.time === 'string' ? req.body.time : '';
-  const location =
-    typeof req.body.location === 'string' ? req.body.location.trim() : '';
-  const bookId =
-    req.body.bookId === null || req.body.bookId === undefined
-      ? null
-      : Number(req.body.bookId);
+  const parsedBody = createDateSurveySchema.safeParse(req.body);
 
-  if (!title || !closesAt || !time || !location || dates.length < 2) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -107,14 +112,22 @@ router.post('/', requireAdmin, (req, res) => {
     return;
   }
 
+  const { title, closesAt, time, location } = parsedBody.data;
+  const dates = parsedBody.data.dates.map((date) => date.trim());
+  const bookId = parsedBody.data.bookId ?? null;
+
+  if (new Set(dates).size !== dates.length) {
+    res.status(422).json({
+      data: null,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Date survey options must be unique.',
+      },
+    });
+    return;
+  }
+
   if (bookId !== null) {
-    if (!Number.isInteger(bookId)) {
-      res.status(422).json({
-        data: null,
-        error: { code: 'VALIDATION_ERROR', message: 'Invalid book id.' },
-      });
-      return;
-    }
     const book = db
       .select()
       .from(booksTable)
@@ -145,7 +158,7 @@ router.post('/', requireAdmin, (req, res) => {
 
   db.insert(dateSurveyOptionsTable)
     .values(
-      dates.map((proposedDate: string) => ({
+      dates.map((proposedDate) => ({
         dateSurveyId: survey.id,
         proposedDate,
       })),
@@ -156,19 +169,29 @@ router.post('/', requireAdmin, (req, res) => {
 });
 
 router.post('/:id/vote', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const optionIds = Array.isArray(req.body.optionIds)
-    ? req.body.optionIds
-        .map((value: unknown) => Number(value))
-        .filter((value: number) => Number.isInteger(value))
-    : [];
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  const parsedBody = voteDateSurveySchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !optionIds.length) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Date survey id and selected options are required.',
+      },
+    });
+    return;
+  }
+
+  const id = parsedParams.data.id;
+  const optionIds = parsedBody.data.optionIds;
+
+  if (new Set(optionIds).size !== optionIds.length) {
+    res.status(422).json({
+      data: null,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Selected options must be unique.',
       },
     });
     return;
@@ -208,9 +231,7 @@ router.post('/:id/vote', requireAuth, (req, res) => {
     .all()
     .map((row) => row.id);
 
-  if (
-    optionIds.some((optionId: number) => !validOptionIds.includes(optionId))
-  ) {
+  if (optionIds.some((optionId) => !validOptionIds.includes(optionId))) {
     res.status(422).json({
       data: null,
       error: {
@@ -232,7 +253,7 @@ router.post('/:id/vote', requireAuth, (req, res) => {
 
   db.insert(dateSurveyVotesTable)
     .values(
-      optionIds.map((optionId: number) => ({
+      optionIds.map((optionId) => ({
         dateSurveyId: id,
         dateSurveyOptionId: optionId,
         userId: req.user!.id,
@@ -244,10 +265,10 @@ router.post('/:id/vote', requireAuth, (req, res) => {
 });
 
 router.patch('/:id/close', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  const selectedOptionId = Number(req.body.optionId);
+  const parsedParams = surveyIdParamsSchema.safeParse(req.params);
+  const parsedBody = closeDateSurveySchema.safeParse(req.body);
 
-  if (!Number.isInteger(id) || !Number.isInteger(selectedOptionId)) {
+  if (!parsedParams.success || !parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -257,6 +278,9 @@ router.patch('/:id/close', requireAdmin, (req, res) => {
     });
     return;
   }
+
+  const id = parsedParams.data.id;
+  const selectedOptionId = parsedBody.data.optionId;
 
   const survey = mapDateSurvey(id);
   if (!survey) {

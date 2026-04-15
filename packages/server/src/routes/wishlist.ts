@@ -1,11 +1,20 @@
 import { eq } from 'drizzle-orm';
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { db } from '../db/client.js';
 import { booksTable } from '../db/schema.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
+
+const createWishlistBookSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  author: z.string().trim().min(1).max(200),
+  description: z.union([z.string().trim().max(5000), z.literal(''), z.null()]).optional(),
+  coverUrl: z.union([z.string().trim().url(), z.literal(''), z.null()]).optional(),
+  openLibraryId: z.union([z.string().trim().max(200), z.literal(''), z.null()]).optional(),
+});
 
 router.use(requireAuth);
 
@@ -20,11 +29,9 @@ router.get('/', (_req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const title = typeof req.body.title === 'string' ? req.body.title.trim() : '';
-  const author =
-    typeof req.body.author === 'string' ? req.body.author.trim() : '';
+  const parsedBody = createWishlistBookSchema.safeParse(req.body);
 
-  if (!title || !author) {
+  if (!parsedBody.success) {
     res.status(422).json({
       data: null,
       error: {
@@ -38,20 +45,11 @@ router.post('/', (req, res) => {
   const created = db
     .insert(booksTable)
     .values({
-      title,
-      author,
-      description:
-        typeof req.body.description === 'string'
-          ? req.body.description.trim() || null
-          : null,
-      coverUrl:
-        typeof req.body.coverUrl === 'string'
-          ? req.body.coverUrl.trim() || null
-          : null,
-      openLibraryId:
-        typeof req.body.openLibraryId === 'string'
-          ? req.body.openLibraryId.trim() || null
-          : null,
+      title: parsedBody.data.title,
+      author: parsedBody.data.author,
+      description: parsedBody.data.description?.trim() || null,
+      coverUrl: parsedBody.data.coverUrl?.trim() || null,
+      openLibraryId: parsedBody.data.openLibraryId?.trim() || null,
       status: 'wishlist',
       suggestedByUserId: req.user!.id,
     })

@@ -1,13 +1,18 @@
 import type { ApiResponse } from '@book-club/shared';
 import { eq } from 'drizzle-orm';
 import { Router, type Response } from 'express';
+import { z } from 'zod';
 
 import { passportInstance } from '../auth/passport.js';
 import { db } from '../db/client.js';
 import { usersTable } from '../db/schema.js';
 import { env } from '../env.js';
+import { csrfTokenHandler } from '../middleware/csrf.js';
 
 const router = Router();
+const testLoginQuerySchema = z.object({
+  email: z.string().trim().email(),
+});
 
 const authUserColumns = {
   id: usersTable.id,
@@ -52,6 +57,7 @@ router.get('/google', (req, res, next) => {
 
   passportInstance.authenticate('google', {
     scope: ['profile', 'email'],
+    state: true,
   })(req, res, next);
 });
 
@@ -60,6 +66,7 @@ router.get(
   passportInstance.authenticate('google', {
     failureRedirect: `${env.clientUrl}/login?error=auth_failed`,
     session: true,
+    state: true,
   }),
   (_req, res) => {
     res.redirect(env.clientUrl);
@@ -85,17 +92,16 @@ router.post('/logout', (req, res, next) => {
   });
 });
 
-if (env.enableTestAuth || env.nodeEnv !== 'production') {
+if (env.enableTestAuth) {
   router.get('/test-login', async (req, res, next) => {
-    const email =
-      typeof req.query.email === 'string'
-        ? req.query.email.trim().toLowerCase()
-        : '';
+    const parsedQuery = testLoginQuerySchema.safeParse(req.query);
 
-    if (!email) {
-      sendError(res, 422, 'VALIDATION_ERROR', 'Email is required.');
+    if (!parsedQuery.success) {
+      sendError(res, 422, 'VALIDATION_ERROR', 'A valid email is required.');
       return;
     }
+
+    const email = parsedQuery.data.email.toLowerCase();
 
     const user = await db
       .select(authUserColumns)
@@ -118,6 +124,8 @@ if (env.enableTestAuth || env.nodeEnv !== 'production') {
     });
   });
 }
+
+router.get('/csrf', csrfTokenHandler);
 
 router.get('/me', (req, res) => {
   if (!req.user) {
