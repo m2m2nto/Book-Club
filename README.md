@@ -110,7 +110,8 @@ npm run db:smoke
 
 ## Notes
 
-- The specification lives in `SPEC.md`.
+- The product specification lives in `SPEC.md`.
+- The UX/UI reference spec lives in `UX_UI_SPEC.md`.
 - The implementation plan lives in `tasks/plan.md`.
 - The task checklist lives in `tasks/todo.md`.
 - Launch readiness and rollback notes live in `LAUNCH.md`.

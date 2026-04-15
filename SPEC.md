@@ -4,6 +4,8 @@
 
 Build a self-hosted web application for managing a small book club of up to 30 members.
 
+This file defines product behavior and acceptance criteria. Visual and interaction standards for future features live in `UX_UI_SPEC.md`.
+
 The app should let members:
 - sign in with Google SSO
 - view books the club has read or plans to read
