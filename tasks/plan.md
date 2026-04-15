@@ -281,6 +281,14 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Run a real-browser member journey pass and address any obvious feedback/discoverability issues for rating, commenting, voting, and RSVPing
 - **Verify:** Member-facing actions feel responsive and self-explanatory in a real-browser walkthrough
 
+### 7.11 — Airy Editorial redesign system and phased page implementation
+- Translate `UX_UI_SPEC.md` into concrete theme tokens for color, type, spacing, radius, shadow, and motion
+- Rework the app shell and login experience first so the new direction is visible globally
+- Implement shared primitives for page headers, surfaces, buttons, inputs, badges, toasts, and route transitions
+- Apply the new system page-by-page starting with dashboard, books, and book detail, then surveys, meetings, wishlist, and admin utility pages
+- Keep admin/data-heavy pages lighter and calmer without sacrificing clarity or trust
+- **Verify:** Major screens visibly align with the Airy Editorial direction, maintain usability, and pass lint/build/E2E after each phase
+
 ---
 
 ## Architecture Decisions
