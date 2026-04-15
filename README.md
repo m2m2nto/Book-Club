@@ -96,9 +96,11 @@ npm test
 ```bash
 npm install
 npm run dev
+npm run build
 npm run lint
 npm run format:check
 npm test
+npm run e2e
 npm run db:migrate
 npm run db:smoke
 ```

@@ -50,6 +50,9 @@ test('member can vote in a survey', async ({ page }) => {
   await page.getByText('Foundation').click();
   await page.getByText('Kindred').click();
   await page.getByRole('button', { name: /create survey/i }).click();
+  await expect(
+    page.getByRole('link', { name: /Next Book Vote/i }).first(),
+  ).toBeVisible();
 
   await loginAs(page, 'member@example.com');
   await page.goto('/surveys');
@@ -75,6 +78,9 @@ test('member can RSVP to a meeting', async ({ page }) => {
   await meetingForm.getByLabel('time').fill('19:00');
   await meetingForm.getByLabel('location').fill('Library');
   await meetingForm.getByRole('button', { name: /create meeting/i }).click();
+  await expect(
+    page.getByRole('link', { name: /General meeting/i }).first(),
+  ).toBeVisible();
 
   await loginAs(page, 'member@example.com');
   await page.goto('/meetings');

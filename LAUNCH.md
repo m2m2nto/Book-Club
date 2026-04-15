@@ -2,40 +2,40 @@
 
 ## Status
 
-**Current recommendation: do not deploy to production yet.**
+**Current recommendation: not fully production-ready yet, but the previous release blockers are closed.**
 
-The application is significantly more hardened and now passes lint, typecheck, package builds, unit/integration tests, and high/critical audit checks. However, the current end-to-end suite is still failing, and the root `npm run build` script is only a placeholder rather than a real release build.
+The application now passes lint, the real root build, package builds, unit/integration tests, end-to-end tests, and high/critical audit checks. Remaining work is operational rather than build/test correctness: production logging/error reporting configuration, explicit production CORS confirmation if deployed cross-origin, and final staging verification.
 
 ## Verification Summary
 
 ### Passing
 
 - `npm run lint`
+- `npm run build`
 - `npm run build --workspace @book-club/server`
 - `npm run build --workspace @book-club/client`
 - `npm test`
+- `npm run e2e`
 - `npm audit --audit-level=high` → no high/critical findings
 - Health check available at `/api/health`
 
-### Failing / Blocked
+### Remaining Non-Code Blockers
 
-- `npm run e2e`
-  - `login page renders` passes
-  - remaining flows fail because the expected UI controls/pages are not present or not wired as the Playwright tests expect
-- Root `npm run build`
-  - currently prints a placeholder message instead of running the actual workspace builds
+- production logging/error reporting destination still needs to be configured
+- explicit production CORS/origin policy still needs confirmation if deployed cross-origin
+- final staging smoke test still needs to be performed
 
 ## Pre-Launch Checklist
 
 ### Code Quality
 
 - [x] All unit/integration tests pass
-- [ ] E2E tests pass
+- [x] E2E tests pass
 - [x] Lint passes
+- [x] Root build passes
 - [x] Server typecheck/build passes
 - [x] Client production build passes
 - [x] Code reviewed and security-hardened
-- [ ] Root build command should be updated to run real builds
 
 ### Security
 
@@ -51,14 +51,15 @@ The application is significantly more hardened and now passes lint, typecheck, p
 ### Infrastructure
 
 - [x] Health check exists
+- [x] Root build is now suitable for the deployment procedure
 - [ ] Production env vars must be verified at deploy time
 - [ ] Logging/error reporting destination still needs to be configured for production
-- [ ] Deployment procedure should use package-level builds until root build is fixed
+- [ ] Final staging smoke test still needs to be performed
 
 ### Documentation
 
 - [x] Launch readiness and rollback plan documented here
-- [ ] README should be updated to reflect the real production build commands
+- [x] README updated to reflect the real build and e2e commands
 
 ## Known Remaining Risk
 
@@ -75,16 +76,13 @@ Recommended follow-up:
 - evaluate upgrading `drizzle-kit` in a dedicated dependency update change
 - retest migrations and local database workflows after upgrade
 
-## Why E2E is currently blocked
+## E2E Notes
 
-The Playwright suite expects user-facing forms and flows that are not yet available in the current UI implementation, including:
-- admin user creation form labels and controls
-- book creation controls on the books page
-- survey creation UI fields
-- meeting creation form and RSVP flow wiring
-- some seeded content/links expected by tests
-
-This appears to be a product completeness gap rather than a new regression from the hardening work.
+The Playwright suite now passes. The fixes required:
+- deterministic E2E startup ports
+- avoiding shell/runtime drift during E2E startup
+- waiting for async create flows to finish before switching users in Playwright
+- rebuilding the native SQLite dependency for the local runtime
 
 ## Release Recommendation
 
@@ -96,20 +94,17 @@ This appears to be a product completeness gap rather than a new regression from 
 
 ### Required before production launch
 
-1. Fix or align the E2E suite with the implemented UI
-2. Replace the root `npm run build` placeholder with a real monorepo build command
-3. Confirm production logging/error reporting destination
-4. Confirm production CORS/origin policy
-5. Run a final staging smoke test with production-like environment settings
+1. Confirm production logging/error reporting destination
+2. Confirm production CORS/origin policy
+3. Run a final staging smoke test with production-like environment settings
 
 ## Deployment Commands
 
-Until the root build script is fixed, use:
+Use:
 
 ```bash
 npm run lint
-npm run build --workspace @book-club/server
-npm run build --workspace @book-club/client
+npm run build
 npm test
 npm run e2e
 ```
@@ -168,4 +163,4 @@ b9cc95d
 
 ## Conclusion
 
-The codebase is **materially closer to launch-ready** after the security and validation work, but it should **not be called production-ready yet** until the E2E and root-build gaps are closed.
+The previous code/test release blockers are now closed. The codebase still needs final production operations setup and staging verification before it should be called fully production-ready.
