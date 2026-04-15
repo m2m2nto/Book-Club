@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import {
   useCancelMeeting,
@@ -12,6 +13,7 @@ import {
 export const MeetingDetailPage = () => {
   const { id } = useParams();
   const meetingId = Number(id);
+  const { showToast } = useToast();
   const authQuery = useAuth();
   const meetingQuery = useMeeting(meetingId);
   const saveRsvpMutation = useSaveRsvp(meetingId);
@@ -66,7 +68,26 @@ export const MeetingDetailPage = () => {
               <button
                 key={status}
                 className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800"
-                onClick={() => saveRsvpMutation.mutate(status)}
+                onClick={() =>
+                  saveRsvpMutation.mutate(status, {
+                    onSuccess: () => {
+                      showToast({
+                        title: `Saved your RSVP as “${status}”.`,
+                        variant: 'success',
+                      });
+                    },
+                    onError: (error) => {
+                      showToast({
+                        title: 'Could not save your RSVP.',
+                        description:
+                          error instanceof Error
+                            ? error.message
+                            : 'Please try again.',
+                        variant: 'error',
+                      });
+                    },
+                  })
+                }
                 type="button"
               >
                 {status}
@@ -149,7 +170,27 @@ export const MeetingDetailPage = () => {
             <button
               className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               onClick={() =>
-                updateMeetingMutation.mutate({ recap, status: 'completed' })
+                updateMeetingMutation.mutate(
+                  { recap, status: 'completed' },
+                  {
+                    onSuccess: () => {
+                      showToast({
+                        title: 'Saved the recap and marked the meeting completed.',
+                        variant: 'success',
+                      });
+                    },
+                    onError: (error) => {
+                      showToast({
+                        title: 'Could not save the recap.',
+                        description:
+                          error instanceof Error
+                            ? error.message
+                            : 'Please try again.',
+                        variant: 'error',
+                      });
+                    },
+                  },
+                )
               }
               type="button"
             >
@@ -157,7 +198,24 @@ export const MeetingDetailPage = () => {
             </button>
             <button
               className="rounded-xl border border-rose-600/40 px-4 py-2 text-sm text-rose-300 hover:bg-rose-500/10"
-              onClick={() => cancelMeetingMutation.mutate()}
+              onClick={() =>
+                cancelMeetingMutation.mutate(undefined, {
+                  onSuccess: () => {
+                    showToast({
+                      title: 'Cancelled the meeting.',
+                      variant: 'success',
+                    });
+                  },
+                  onError: (error) => {
+                    showToast({
+                      title: 'Could not cancel the meeting.',
+                      description:
+                        error instanceof Error ? error.message : 'Please try again.',
+                      variant: 'error',
+                    });
+                  },
+                })
+              }
               type="button"
             >
               Cancel meeting

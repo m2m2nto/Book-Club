@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { ErrorBoundary } from './components/error-boundary';
 import { ProtectedLayout } from './components/protected-layout';
+import { ToastProvider } from './components/ui/toast-provider';
 import './index.css';
 import { AdminUsersPage } from './pages/admin-users-page';
 import { BookDetailPage } from './pages/book-detail-page';
@@ -26,31 +27,33 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/books" element={<BooksPage />} />
-              <Route path="/books/:id" element={<BookDetailPage />} />
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/surveys" element={<SurveysPage />} />
-              <Route path="/surveys/:id" element={<SurveyDetailPage />} />
-              <Route path="/meetings" element={<MeetingsPage />} />
-              <Route path="/meetings/:id" element={<MeetingDetailPage />} />
-              <Route
-                path="/date-surveys/:id"
-                element={<DateSurveyDetailPage />}
-              />
-              <Route path="/stats" element={<StatsPage />} />
-              <Route path="/admin/users" element={<AdminUsersPage />} />
-              <Route path="/admin/export" element={<AdminExportPage />} />
-            </Route>
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route element={<ProtectedLayout />}>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/books" element={<BooksPage />} />
+                <Route path="/books/:id" element={<BookDetailPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/surveys" element={<SurveysPage />} />
+                <Route path="/surveys/:id" element={<SurveyDetailPage />} />
+                <Route path="/meetings" element={<MeetingsPage />} />
+                <Route path="/meetings/:id" element={<MeetingDetailPage />} />
+                <Route
+                  path="/date-surveys/:id"
+                  element={<DateSurveyDetailPage />}
+                />
+                <Route path="/stats" element={<StatsPage />} />
+                <Route path="/admin/users" element={<AdminUsersPage />} />
+                <Route path="/admin/export" element={<AdminExportPage />} />
+              </Route>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </ToastProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );

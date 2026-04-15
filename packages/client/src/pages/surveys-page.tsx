@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import { useWishlist } from '../hooks/use-surveys';
 import { useCreateSurvey, useBookSurveys } from '../hooks/use-surveys';
 
 export const SurveysPage = () => {
   const authQuery = useAuth();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const isAdmin = authQuery.data?.role === 'admin';
   const surveysQuery = useBookSurveys();
   const wishlistQuery = useWishlist();
@@ -15,7 +18,6 @@ export const SurveysPage = () => {
   const [title, setTitle] = useState('Next Book Vote');
   const [closesAt, setClosesAt] = useState('');
   const [maxVotes, setMaxVotes] = useState(1);
-  const [feedback, setFeedback] = useState<string | null>(null);
 
   const wishlistBooks = useMemo(
     () => wishlistQuery.data ?? [],
@@ -39,14 +41,28 @@ export const SurveysPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
-              setFeedback(null);
               createSurveyMutation.mutate(
                 { title, closesAt, maxVotes, bookIds: selectedBookIds },
                 {
-                  onSuccess: () => {
-                    setFeedback(`Created survey “${title}”.`);
+                  onSuccess: (createdSurvey) => {
+                    showToast({
+                      title: `Created survey “${createdSurvey.title}”.`,
+                      variant: 'success',
+                      actionLabel: 'Open Survey',
+                      onAction: () => navigate(`/surveys/${createdSurvey.id}`),
+                    });
                     setSelectedBookIds([]);
                     setClosesAt('');
+                  },
+                  onError: (error) => {
+                    showToast({
+                      title: 'Could not create the survey.',
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : 'Please try again.',
+                      variant: 'error',
+                    });
                   },
                 },
               );
@@ -115,16 +131,6 @@ export const SurveysPage = () => {
                 </p>
               )}
             </div>
-            {feedback ? (
-              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                {feedback}
-              </p>
-            ) : null}
-            {createSurveyMutation.error instanceof Error ? (
-              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-                {createSurveyMutation.error.message}
-              </p>
-            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"

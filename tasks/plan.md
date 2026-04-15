@@ -275,6 +275,12 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Normalize admin form labels and action copy for consistency
 - **Verify:** Real-browser admin first-steps walkthrough feels smooth and discoverable
 
+### 7.10 — Shared toast system and member UX polish
+- Add a reusable client-side toast/notification system for save success and failure feedback
+- Add contextual post-create actions like “Open survey” or “Open meeting” after successful admin create flows
+- Run a real-browser member journey pass and address any obvious feedback/discoverability issues for rating, commenting, voting, and RSVPing
+- **Verify:** Member-facing actions feel responsive and self-explanatory in a real-browser walkthrough
+
 ---
 
 ## Architecture Decisions

@@ -92,7 +92,7 @@ export const useCreateMeeting = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
-      apiFetch('/api/meetings', {
+      apiFetch<MeetingDetail>('/api/meetings', {
         method: 'POST',
         body: JSON.stringify(payload),
       }),
@@ -150,7 +150,7 @@ export const useCreateDateSurvey = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
-      apiFetch('/api/date-surveys', {
+      apiFetch<DateSurvey>('/api/date-surveys', {
         method: 'POST',
         body: JSON.stringify(payload),
       }),

@@ -152,7 +152,10 @@ export const useCreateBook = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
-      apiFetch('/api/books', { method: 'POST', body: JSON.stringify(payload) }),
+      apiFetch<BookListItem>('/api/books', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['books'] });
     },

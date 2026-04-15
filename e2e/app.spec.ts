@@ -19,7 +19,9 @@ test('admin can create a user', async ({ page }) => {
   await page.getByLabel('Name').fill('Created User');
   await page.getByLabel('Email').fill('created@example.com');
   await page.getByRole('button', { name: /add user/i }).click();
-  await expect(page.getByText('created@example.com')).toBeVisible();
+  await expect(
+    page.getByText('created@example.com', { exact: true }),
+  ).toBeVisible();
 });
 
 test('admin can add a book', async ({ page }) => {

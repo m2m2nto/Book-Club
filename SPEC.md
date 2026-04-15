@@ -196,6 +196,7 @@ book-club/
 | D2 | User dashboard | Shows book highlight, next meeting, open surveys, and pending RSVP actions. |
 | D3 | Admin dashboard | Same as user dashboard plus quick links to admin actions. |
 | D4 | Admin first-steps guidance | Admin dashboard includes a lightweight getting-started checklist or guidance state that helps first-time admins invite users, add books, create surveys, and schedule meetings. |
+| D5 | Member action feedback | Member-facing actions like rating, voting, RSVPing, and posting comments provide visible success/error feedback so users know their action was saved. |
 
 ### Admin Utilities
 
@@ -365,7 +366,10 @@ Conventions:
 - Private-note access checks must be enforced server-side
 - State-changing client requests use CSRF protection when cookie-based auth is active
 - Admin creation flows should provide visible success/error feedback rather than relying only on list refreshes
+- Member save actions should provide immediate visible feedback as well
+- Use shared toast/banner patterns rather than ad hoc copy where possible
 - Form labels and action copy should use consistent title casing across the admin workflow
+- After successful create actions, prefer offering a contextual next step (for example opening the created record)
 
 ## Testing Strategy
 
@@ -435,6 +439,8 @@ The feature is complete when all of the following are true:
 15. Admin can export the live SQLite database after a confirmation step, including sensitive/session tables.
 16. `npm run dev`, `npm run build`, `npm run lint`, `npm test`, and `npm run e2e` all succeed.
 17. The primary admin first-run flow is usable end-to-end: invite a user, add a book, create a survey, schedule a meeting, and export a backup with visible success feedback.
+18. Core admin create flows offer contextual next steps after success (for example opening the created survey or meeting).
+19. Core member actions like rating, voting, RSVPing, and commenting provide clear success/error feedback in the UI.
 
 ## Open Questions
 

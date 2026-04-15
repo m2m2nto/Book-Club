@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import { apiFetch } from '../lib/api';
 
@@ -21,12 +22,12 @@ const usersQueryKey = ['admin', 'users'] as const;
 export const AdminUsersPage = () => {
   const authQuery = useAuth();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     email: '',
     name: '',
     role: 'user' as 'admin' | 'user',
   });
-  const [message, setMessage] = useState<string | null>(null);
 
   const usersQuery = useQuery({
     queryKey: usersQueryKey,
@@ -44,9 +45,13 @@ export const AdminUsersPage = () => {
         method: 'POST',
         body: JSON.stringify(form),
       }),
-    onSuccess: async () => {
+    onSuccess: async (createdUser) => {
       setForm({ email: '', name: '', role: 'user' });
-      setMessage('User saved successfully.');
+      showToast({
+        title: `Invited ${createdUser.email}.`,
+        description: 'They can now sign in with Google.',
+        variant: 'success',
+      });
       await refreshUsers();
     },
   });
@@ -104,8 +109,16 @@ export const AdminUsersPage = () => {
           className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
           onSubmit={(event) => {
             event.preventDefault();
-            setMessage(null);
-            createUserMutation.mutate();
+            createUserMutation.mutate(undefined, {
+              onError: (error) => {
+                showToast({
+                  title: 'Could not add the user.',
+                  description:
+                    error instanceof Error ? error.message : 'Please try again.',
+                  variant: 'error',
+                });
+              },
+            });
           }}
         >
           <div>
@@ -165,14 +178,6 @@ export const AdminUsersPage = () => {
             {createUserMutation.isPending ? 'Saving...' : 'Add user'}
           </button>
 
-          {message ? (
-            <p className="text-sm text-emerald-300">{message}</p>
-          ) : null}
-          {createUserMutation.error instanceof Error ? (
-            <p className="text-sm text-rose-300">
-              {createUserMutation.error.message}
-            </p>
-          ) : null}
         </form>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">

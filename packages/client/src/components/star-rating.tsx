@@ -12,6 +12,7 @@ export const StarRating = ({ value, onChange }: StarRatingProps) => {
     <div className="flex items-center gap-1">
       {Array.from({ length: 5 }, (_, index) => index + 1).map((score) => (
         <button
+          aria-label={`Rate ${score} star${score === 1 ? '' : 's'}`}
           key={score}
           className="rounded-md p-1"
           onClick={() => onChange?.(score)}

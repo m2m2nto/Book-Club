@@ -65,7 +65,7 @@ export const useCreateWishlistBook = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
-      apiFetch('/api/wishlist', {
+      apiFetch<WishlistBook>('/api/wishlist', {
         method: 'POST',
         body: JSON.stringify(payload),
       }),
@@ -93,7 +93,7 @@ export const useCreateSurvey = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
-      apiFetch('/api/book-surveys', {
+      apiFetch<BookSurvey>('/api/book-surveys', {
         method: 'POST',
         body: JSON.stringify(payload),
       }),

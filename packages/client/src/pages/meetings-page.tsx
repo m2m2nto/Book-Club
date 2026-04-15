@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import { useBooks } from '../hooks/use-books';
 import {
@@ -12,14 +13,14 @@ import {
 
 export const MeetingsPage = () => {
   const authQuery = useAuth();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const booksQuery = useBooks();
   const meetingsQuery = useMeetings();
   const dateSurveysQuery = useDateSurveys();
   const createMeetingMutation = useCreateMeeting();
   const createDateSurveyMutation = useCreateDateSurvey();
   const isAdmin = authQuery.data?.role === 'admin';
-  const [meetingFeedback, setMeetingFeedback] = useState<string | null>(null);
-  const [dateSurveyFeedback, setDateSurveyFeedback] = useState<string | null>(null);
 
   const [meetingForm, setMeetingForm] = useState({
     date: '',
@@ -72,7 +73,6 @@ export const MeetingsPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
-              setMeetingFeedback(null);
               createMeetingMutation.mutate(
                 {
                   ...meetingForm,
@@ -81,15 +81,28 @@ export const MeetingsPage = () => {
                     : null,
                 },
                 {
-                  onSuccess: () => {
-                    setMeetingFeedback(
-                      `Created meeting for ${meetingForm.date} at ${meetingForm.time}.`,
-                    );
+                  onSuccess: (createdMeeting) => {
+                    showToast({
+                      title: `Created meeting for ${meetingForm.date} at ${meetingForm.time}.`,
+                      variant: 'success',
+                      actionLabel: 'Open Meeting',
+                      onAction: () => navigate(`/meetings/${createdMeeting.id}`),
+                    });
                     setMeetingForm({
                       date: '',
                       time: '',
                       location: '',
                       bookId: '',
+                    });
+                  },
+                  onError: (error) => {
+                    showToast({
+                      title: 'Could not create the meeting.',
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : 'Please try again.',
+                      variant: 'error',
                     });
                   },
                 },
@@ -143,16 +156,6 @@ export const MeetingsPage = () => {
                 ))}
               </select>
             </label>
-            {meetingFeedback ? (
-              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                {meetingFeedback}
-              </p>
-            ) : null}
-            {createMeetingMutation.error instanceof Error ? (
-              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-                {createMeetingMutation.error.message}
-              </p>
-            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"
@@ -165,7 +168,6 @@ export const MeetingsPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
-              setDateSurveyFeedback(null);
               createDateSurveyMutation.mutate(
                 {
                   title: dateSurveyForm.title,
@@ -178,10 +180,14 @@ export const MeetingsPage = () => {
                   dates: dateSurveyForm.dates.filter(Boolean),
                 },
                 {
-                  onSuccess: () => {
-                    setDateSurveyFeedback(
-                      `Created date survey “${dateSurveyForm.title}”.`,
-                    );
+                  onSuccess: (createdDateSurvey) => {
+                    showToast({
+                      title: `Created date survey “${dateSurveyForm.title}”.`,
+                      variant: 'success',
+                      actionLabel: 'Open Date Survey',
+                      onAction: () =>
+                        navigate(`/date-surveys/${createdDateSurvey.id}`),
+                    });
                     setDateSurveyForm({
                       title: 'Next meeting date poll',
                       closesAt: '',
@@ -189,6 +195,16 @@ export const MeetingsPage = () => {
                       location: '',
                       bookId: '',
                       dates: ['', ''],
+                    });
+                  },
+                  onError: (error) => {
+                    showToast({
+                      title: 'Could not create the date survey.',
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : 'Please try again.',
+                      variant: 'error',
                     });
                   },
                 },
@@ -286,16 +302,6 @@ export const MeetingsPage = () => {
                 </label>
               ))}
             </div>
-            {dateSurveyFeedback ? (
-              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                {dateSurveyFeedback}
-              </p>
-            ) : null}
-            {createDateSurveyMutation.error instanceof Error ? (
-              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-                {createDateSurveyMutation.error.message}
-              </p>
-            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"

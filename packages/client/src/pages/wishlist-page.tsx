@@ -1,9 +1,11 @@
 import { useState } from 'react';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useSearchBooks } from '../hooks/use-books';
 import { useCreateWishlistBook, useWishlist } from '../hooks/use-surveys';
 
 export const WishlistPage = () => {
+  const { showToast } = useToast();
   const wishlistQuery = useWishlist();
   const createMutation = useCreateWishlistBook();
   const [search, setSearch] = useState('');
@@ -36,7 +38,11 @@ export const WishlistPage = () => {
           onSubmit={(event) => {
             event.preventDefault();
             createMutation.mutate(form, {
-              onSuccess: () => {
+              onSuccess: (createdBook) => {
+                showToast({
+                  title: `Added “${createdBook.title}” to the wishlist.`,
+                  variant: 'success',
+                });
                 setForm({
                   title: '',
                   author: '',
@@ -45,6 +51,14 @@ export const WishlistPage = () => {
                   openLibraryId: '',
                 });
                 setSearch('');
+              },
+              onError: (error) => {
+                showToast({
+                  title: 'Could not add the wishlist suggestion.',
+                  description:
+                    error instanceof Error ? error.message : 'Please try again.',
+                  variant: 'error',
+                });
               },
             });
           }}
@@ -84,9 +98,14 @@ export const WishlistPage = () => {
             </div>
           ) : null}
 
-          {['title', 'author', 'coverUrl', 'openLibraryId'].map((field) => (
+          {[
+            ['title', 'Title'],
+            ['author', 'Author'],
+            ['coverUrl', 'Cover URL'],
+            ['openLibraryId', 'Open Library ID'],
+          ].map(([field, label]) => (
             <label className="block text-sm text-slate-300" key={field}>
-              {field}
+              {label}
               <input
                 className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
                 value={form[field as keyof typeof form]}

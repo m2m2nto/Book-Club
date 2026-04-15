@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../hooks/use-auth';
+import { useToast } from '../components/ui/toast-provider';
 import {
   type BookStatus,
   useBooks,
@@ -19,9 +20,10 @@ const statuses: Array<{ label: string; value?: BookStatus }> = [
 
 export const BooksPage = () => {
   const authQuery = useAuth();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const [status, setStatus] = useState<BookStatus | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
-  const [feedback, setFeedback] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: '',
     author: '',
@@ -74,10 +76,14 @@ export const BooksPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
-              setFeedback(null);
               createBookMutation.mutate(form, {
-                onSuccess: () => {
-                  setFeedback(`Saved “${form.title}” to the library.`);
+                onSuccess: (createdBook) => {
+                  showToast({
+                    title: `Saved “${createdBook.title}” to the library.`,
+                    variant: 'success',
+                    actionLabel: 'Open Book',
+                    onAction: () => navigate(`/books/${createdBook.id}`),
+                  });
                   setForm({
                     title: '',
                     author: '',
@@ -86,6 +92,16 @@ export const BooksPage = () => {
                     openLibraryId: '',
                     status: 'wishlist',
                     dateRead: '',
+                  });
+                },
+                onError: (error) => {
+                  showToast({
+                    title: 'Could not save the book.',
+                    description:
+                      error instanceof Error
+                        ? error.message
+                        : 'Please try again.',
+                    variant: 'error',
                   });
                 },
               });
@@ -190,17 +206,6 @@ export const BooksPage = () => {
                   ))}
               </select>
             </label>
-
-            {feedback ? (
-              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                {feedback}
-              </p>
-            ) : null}
-            {createBookMutation.error instanceof Error ? (
-              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-                {createBookMutation.error.message}
-              </p>
-            ) : null}
 
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"

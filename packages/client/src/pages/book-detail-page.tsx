@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { StarRating } from '../components/star-rating';
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import {
   type BookStatus,
@@ -17,6 +18,7 @@ import {
 export const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const authQuery = useAuth();
   const bookId = Number(id);
   const bookQuery = useBook(bookId);
@@ -121,7 +123,27 @@ export const BookDetailPage = () => {
               </div>
               <StarRating
                 value={currentUserRating}
-                onChange={(score) => saveRatingMutation.mutate(score)}
+                onChange={(score) =>
+                  saveRatingMutation.mutate(score, {
+                    onSuccess: () => {
+                      showToast({
+                        title: 'Saved your rating.',
+                        description: `Your ${score}-star rating is now recorded.`,
+                        variant: 'success',
+                      });
+                    },
+                    onError: (error) => {
+                      showToast({
+                        title: 'Could not save your rating.',
+                        description:
+                          error instanceof Error
+                            ? error.message
+                            : 'Please try again.',
+                        variant: 'error',
+                      });
+                    },
+                  })
+                }
               />
             </div>
           </div>
@@ -163,7 +185,23 @@ export const BookDetailPage = () => {
                   onSubmit={(event) => {
                     event.preventDefault();
                     updateBookMutation.mutate(bookForm, {
-                      onSuccess: () => setEditBookMode(false),
+                      onSuccess: () => {
+                        showToast({
+                          title: 'Saved your book changes.',
+                          variant: 'success',
+                        });
+                        setEditBookMode(false);
+                      },
+                      onError: (error) => {
+                        showToast({
+                          title: 'Could not save the book changes.',
+                          description:
+                            error instanceof Error
+                              ? error.message
+                              : 'Please try again.',
+                          variant: 'error',
+                        });
+                      },
                     });
                   }}
                 >
@@ -233,7 +271,23 @@ export const BookDetailPage = () => {
                       className="rounded-xl border border-rose-600/40 px-4 py-2 text-sm text-rose-300 hover:bg-rose-500/10"
                       onClick={() =>
                         deleteBookMutation.mutate(undefined, {
-                          onSuccess: () => navigate('/books'),
+                          onSuccess: () => {
+                            showToast({
+                              title: 'Deleted the book.',
+                              variant: 'success',
+                            });
+                            navigate('/books');
+                          },
+                          onError: (error) => {
+                            showToast({
+                              title: 'Could not delete the book.',
+                              description:
+                                error instanceof Error
+                                  ? error.message
+                                  : 'Please try again.',
+                              variant: 'error',
+                            });
+                          },
                         })
                       }
                       type="button"
@@ -283,8 +337,24 @@ export const BookDetailPage = () => {
                 { text: commentText, isPrivate },
                 {
                   onSuccess: () => {
+                    showToast({
+                      title: isPrivate
+                        ? 'Saved your private note.'
+                        : 'Posted your comment.',
+                      variant: 'success',
+                    });
                     setCommentText('');
                     setIsPrivate(false);
+                  },
+                  onError: (error) => {
+                    showToast({
+                      title: 'Could not save your note.',
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : 'Please try again.',
+                      variant: 'error',
+                    });
                   },
                 },
               );
@@ -347,7 +417,24 @@ export const BookDetailPage = () => {
                         <button
                           className="rounded-lg border border-rose-600/40 px-2 py-1 text-xs text-rose-300"
                           onClick={() =>
-                            deleteCommentMutation.mutate(comment.id)
+                            deleteCommentMutation.mutate(comment.id, {
+                              onSuccess: () => {
+                                showToast({
+                                  title: 'Deleted the comment.',
+                                  variant: 'success',
+                                });
+                              },
+                              onError: (error) => {
+                                showToast({
+                                  title: 'Could not delete the comment.',
+                                  description:
+                                    error instanceof Error
+                                      ? error.message
+                                      : 'Please try again.',
+                                  variant: 'error',
+                                });
+                              },
+                            })
                           }
                           type="button"
                         >
@@ -363,7 +450,25 @@ export const BookDetailPage = () => {
                         event.preventDefault();
                         updateCommentMutation.mutate(
                           { commentId: comment.id, text: editText },
-                          { onSuccess: () => setEditCommentId(null) },
+                          {
+                            onSuccess: () => {
+                              showToast({
+                                title: 'Updated your comment.',
+                                variant: 'success',
+                              });
+                              setEditCommentId(null);
+                            },
+                            onError: (error) => {
+                              showToast({
+                                title: 'Could not update the comment.',
+                                description:
+                                  error instanceof Error
+                                    ? error.message
+                                    : 'Please try again.',
+                                variant: 'error',
+                              });
+                            },
+                          },
                         );
                       }}
                     >

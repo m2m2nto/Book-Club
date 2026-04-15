@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import {
   useBookSurvey,
@@ -12,6 +13,7 @@ import {
 export const SurveyDetailPage = () => {
   const { id } = useParams();
   const surveyId = Number(id);
+  const { showToast } = useToast();
   const authQuery = useAuth();
   const surveyQuery = useBookSurvey(surveyId);
   const voteMutation = useVoteSurvey(surveyId);
@@ -40,7 +42,23 @@ export const SurveyDetailPage = () => {
       optionId,
       rank: index + 1,
     }));
-    voteMutation.mutate(votes);
+    voteMutation.mutate(votes, {
+      onSuccess: () => {
+        showToast({
+          title: 'Submitted your vote.',
+          description: 'Your ranked choices have been locked in.',
+          variant: 'success',
+        });
+      },
+      onError: (error) => {
+        showToast({
+          title: 'Could not submit your vote.',
+          description:
+            error instanceof Error ? error.message : 'Please try again.',
+          variant: 'error',
+        });
+      },
+    });
   };
 
   const topScore = survey.options[0]?.score ?? 0;
@@ -128,7 +146,26 @@ export const SurveyDetailPage = () => {
                 tiedOptions.some((item) => item.bookId === option.bookId) ? (
                   <button
                     className="w-full rounded-xl bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-400"
-                    onClick={() => resolveTieMutation.mutate(option.bookId)}
+                    onClick={() =>
+                      resolveTieMutation.mutate(option.bookId, {
+                        onSuccess: () => {
+                          showToast({
+                            title: `Picked “${option.title}” as the winner.`,
+                            variant: 'success',
+                          });
+                        },
+                        onError: (error) => {
+                          showToast({
+                            title: 'Could not resolve the tie.',
+                            description:
+                              error instanceof Error
+                                ? error.message
+                                : 'Please try again.',
+                            variant: 'error',
+                          });
+                        },
+                      })
+                    }
                     type="button"
                   >
                     Pick as winner
@@ -153,7 +190,24 @@ export const SurveyDetailPage = () => {
         {isAdmin && survey.status === 'open' ? (
           <button
             className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800"
-            onClick={() => closeMutation.mutate()}
+            onClick={() =>
+              closeMutation.mutate(undefined, {
+                onSuccess: () => {
+                  showToast({
+                    title: 'Closed the survey.',
+                    variant: 'success',
+                  });
+                },
+                onError: (error) => {
+                  showToast({
+                    title: 'Could not close the survey.',
+                    description:
+                      error instanceof Error ? error.message : 'Please try again.',
+                    variant: 'error',
+                  });
+                },
+              })
+            }
             type="button"
           >
             Close survey

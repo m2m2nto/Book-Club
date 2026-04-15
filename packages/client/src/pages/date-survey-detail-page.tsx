@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
+import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
 import {
   useCloseDateSurvey,
@@ -11,6 +12,7 @@ import {
 export const DateSurveyDetailPage = () => {
   const { id } = useParams();
   const surveyId = Number(id);
+  const { showToast } = useToast();
   const authQuery = useAuth();
   const surveyQuery = useDateSurvey(surveyId);
   const voteMutation = useVoteDateSurvey(surveyId);
@@ -90,7 +92,26 @@ export const DateSurveyDetailPage = () => {
             {isAdmin && survey.status === 'open' ? (
               <button
                 className="mt-3 w-full rounded-xl bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-400"
-                onClick={() => closeMutation.mutate(option.id)}
+                onClick={() =>
+                  closeMutation.mutate(option.id, {
+                    onSuccess: () => {
+                      showToast({
+                        title: `Confirmed ${option.proposedDate} as the meeting date.`,
+                        variant: 'success',
+                      });
+                    },
+                    onError: (error) => {
+                      showToast({
+                        title: 'Could not confirm that date.',
+                        description:
+                          error instanceof Error
+                            ? error.message
+                            : 'Please try again.',
+                        variant: 'error',
+                      });
+                    },
+                  })
+                }
                 type="button"
               >
                 Confirm this date
@@ -103,7 +124,24 @@ export const DateSurveyDetailPage = () => {
       {survey.status === 'open' ? (
         <button
           className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
-          onClick={() => voteMutation.mutate(activeSelection)}
+          onClick={() =>
+            voteMutation.mutate(activeSelection, {
+              onSuccess: () => {
+                showToast({
+                  title: 'Saved your availability.',
+                  variant: 'success',
+                });
+              },
+              onError: (error) => {
+                showToast({
+                  title: 'Could not save your availability.',
+                  description:
+                    error instanceof Error ? error.message : 'Please try again.',
+                  variant: 'error',
+                });
+              },
+            })
+          }
           type="button"
         >
           Submit availability
