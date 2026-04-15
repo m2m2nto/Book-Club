@@ -287,6 +287,7 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Implement shared primitives for page headers, surfaces, buttons, inputs, badges, toasts, and route transitions
 - Apply the new system page-by-page starting with dashboard, books, and book detail, then surveys, meetings, wishlist, and admin utility pages
 - Keep admin/data-heavy pages lighter and calmer without sacrificing clarity or trust
+- Phase 1 implementation plan and target files are documented in `tasks/airy-editorial-phase-1.md`
 - **Verify:** Major screens visibly align with the Airy Editorial direction, maintain usability, and pass lint/build/E2E after each phase
 
 ---
