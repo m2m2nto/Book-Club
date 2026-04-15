@@ -1,13 +1,45 @@
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '../hooks/use-auth';
+import { useBooks } from '../hooks/use-books';
 import { useDashboard } from '../hooks/use-dashboard';
+import { useMeetings } from '../hooks/use-meetings';
+import { useBookSurveys } from '../hooks/use-surveys';
 
 export const DashboardPage = () => {
   const authQuery = useAuth();
   const dashboardQuery = useDashboard();
+  const booksQuery = useBooks();
+  const surveysQuery = useBookSurveys();
+  const meetingsQuery = useMeetings();
 
   const dashboard = dashboardQuery.data;
+  const adminChecklist = [
+    {
+      label: 'Invite at least one member',
+      done: (dashboard?.adminSummary?.users ?? 0) > 1,
+      href: '/admin/users',
+      help: 'Add your first non-admin club member.',
+    },
+    {
+      label: 'Add your first book',
+      done: (booksQuery.data?.length ?? 0) > 0,
+      href: '/books',
+      help: 'Start the library with a wishlist or reading title.',
+    },
+    {
+      label: 'Create a survey',
+      done: (surveysQuery.data?.length ?? 0) > 0,
+      href: '/surveys',
+      help: 'Turn wishlist books into a vote.',
+    },
+    {
+      label: 'Schedule a meeting',
+      done: (meetingsQuery.data?.length ?? 0) > 0,
+      href: '/meetings',
+      help: 'Put the next date on the calendar.',
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -121,26 +153,66 @@ export const DashboardPage = () => {
       </section>
 
       {dashboard?.adminSummary ? (
-        <section className="grid gap-4 md:grid-cols-3">
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-            <p className="text-sm text-slate-500">Users</p>
-            <p className="mt-2 text-3xl font-semibold text-white">
-              {dashboard.adminSummary.users}
-            </p>
-          </article>
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-            <p className="text-sm text-slate-500">Meetings</p>
-            <p className="mt-2 text-3xl font-semibold text-white">
-              {dashboard.adminSummary.meetings}
-            </p>
-          </article>
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-            <p className="text-sm text-slate-500">Open surveys</p>
-            <p className="mt-2 text-3xl font-semibold text-white">
-              {dashboard.adminSummary.openSurveys}
-            </p>
-          </article>
-        </section>
+        <>
+          <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-white">
+                  Admin getting started
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Follow these first steps to get the club up and running.
+                </p>
+              </div>
+              <p className="text-sm text-slate-500">
+                {adminChecklist.filter((item) => item.done).length}/
+                {adminChecklist.length} complete
+              </p>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {adminChecklist.map((item) => (
+                <Link
+                  key={item.label}
+                  className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 hover:bg-slate-900"
+                  to={item.href}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-white">{item.label}</p>
+                      <p className="mt-1 text-sm text-slate-400">{item.help}</p>
+                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.2em] ${item.done ? 'bg-emerald-500/10 text-emerald-300' : 'bg-slate-800 text-slate-300'}`}
+                    >
+                      {item.done ? 'Done' : 'Next'}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="grid gap-4 md:grid-cols-3">
+            <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+              <p className="text-sm text-slate-500">Users</p>
+              <p className="mt-2 text-3xl font-semibold text-white">
+                {dashboard.adminSummary.users}
+              </p>
+            </article>
+            <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+              <p className="text-sm text-slate-500">Meetings</p>
+              <p className="mt-2 text-3xl font-semibold text-white">
+                {dashboard.adminSummary.meetings}
+              </p>
+            </article>
+            <article className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+              <p className="text-sm text-slate-500">Open surveys</p>
+              <p className="mt-2 text-3xl font-semibold text-white">
+                {dashboard.adminSummary.openSurveys}
+              </p>
+            </article>
+          </section>
+        </>
       ) : null}
     </div>
   );

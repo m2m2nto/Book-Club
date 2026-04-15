@@ -15,6 +15,7 @@ export const SurveysPage = () => {
   const [title, setTitle] = useState('Next Book Vote');
   const [closesAt, setClosesAt] = useState('');
   const [maxVotes, setMaxVotes] = useState(1);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const wishlistBooks = useMemo(
     () => wishlistQuery.data ?? [],
@@ -38,10 +39,12 @@ export const SurveysPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
+              setFeedback(null);
               createSurveyMutation.mutate(
                 { title, closesAt, maxVotes, bookIds: selectedBookIds },
                 {
                   onSuccess: () => {
+                    setFeedback(`Created survey “${title}”.`);
                     setSelectedBookIds([]);
                     setClosesAt('');
                   },
@@ -82,7 +85,8 @@ export const SurveysPage = () => {
               </select>
             </label>
             <div className="space-y-2 rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
-              {wishlistBooks.map((book) => (
+              {wishlistBooks.length ? (
+                wishlistBooks.map((book) => (
                 <label
                   className="flex items-start gap-3 text-sm text-slate-300"
                   key={book.id}
@@ -104,8 +108,23 @@ export const SurveysPage = () => {
                     {book.author}
                   </span>
                 </label>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">
+                  Add wishlist books before creating a survey.
+                </p>
+              )}
             </div>
+            {feedback ? (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                {feedback}
+              </p>
+            ) : null}
+            {createSurveyMutation.error instanceof Error ? (
+              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+                {createSurveyMutation.error.message}
+              </p>
+            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"

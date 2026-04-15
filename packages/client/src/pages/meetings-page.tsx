@@ -18,6 +18,8 @@ export const MeetingsPage = () => {
   const createMeetingMutation = useCreateMeeting();
   const createDateSurveyMutation = useCreateDateSurvey();
   const isAdmin = authQuery.data?.role === 'admin';
+  const [meetingFeedback, setMeetingFeedback] = useState<string | null>(null);
+  const [dateSurveyFeedback, setDateSurveyFeedback] = useState<string | null>(null);
 
   const [meetingForm, setMeetingForm] = useState({
     date: '',
@@ -70,6 +72,7 @@ export const MeetingsPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
+              setMeetingFeedback(null);
               createMeetingMutation.mutate(
                 {
                   ...meetingForm,
@@ -78,21 +81,29 @@ export const MeetingsPage = () => {
                     : null,
                 },
                 {
-                  onSuccess: () =>
+                  onSuccess: () => {
+                    setMeetingFeedback(
+                      `Created meeting for ${meetingForm.date} at ${meetingForm.time}.`,
+                    );
                     setMeetingForm({
                       date: '',
                       time: '',
                       location: '',
                       bookId: '',
-                    }),
+                    });
+                  },
                 },
               );
             }}
           >
             <h2 className="text-lg font-semibold text-white">Create meeting</h2>
-            {['date', 'time', 'location'].map((field) => (
+            {[
+              ['date', 'Date'],
+              ['time', 'Time'],
+              ['location', 'Location'],
+            ].map(([field, label]) => (
               <label className="block text-sm text-slate-300" key={field}>
-                {field}
+                {label}
                 <input
                   className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
                   type={
@@ -132,6 +143,16 @@ export const MeetingsPage = () => {
                 ))}
               </select>
             </label>
+            {meetingFeedback ? (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                {meetingFeedback}
+              </p>
+            ) : null}
+            {createMeetingMutation.error instanceof Error ? (
+              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+                {createMeetingMutation.error.message}
+              </p>
+            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"
@@ -144,6 +165,7 @@ export const MeetingsPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
+              setDateSurveyFeedback(null);
               createDateSurveyMutation.mutate(
                 {
                   title: dateSurveyForm.title,
@@ -156,7 +178,10 @@ export const MeetingsPage = () => {
                   dates: dateSurveyForm.dates.filter(Boolean),
                 },
                 {
-                  onSuccess: () =>
+                  onSuccess: () => {
+                    setDateSurveyFeedback(
+                      `Created date survey “${dateSurveyForm.title}”.`,
+                    );
                     setDateSurveyForm({
                       title: 'Next meeting date poll',
                       closesAt: '',
@@ -164,7 +189,8 @@ export const MeetingsPage = () => {
                       location: '',
                       bookId: '',
                       dates: ['', ''],
-                    }),
+                    });
+                  },
                 },
               );
             }}
@@ -200,9 +226,12 @@ export const MeetingsPage = () => {
               />
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
-              {['time', 'location'].map((field) => (
+              {[
+                ['time', 'Time'],
+                ['location', 'Location'],
+              ].map(([field, label]) => (
                 <label className="block text-sm text-slate-300" key={field}>
-                  {field}
+                  {label}
                   <input
                     className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
                     type={field === 'time' ? 'time' : 'text'}
@@ -257,6 +286,16 @@ export const MeetingsPage = () => {
                 </label>
               ))}
             </div>
+            {dateSurveyFeedback ? (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                {dateSurveyFeedback}
+              </p>
+            ) : null}
+            {createDateSurveyMutation.error instanceof Error ? (
+              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+                {createDateSurveyMutation.error.message}
+              </p>
+            ) : null}
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
               type="submit"

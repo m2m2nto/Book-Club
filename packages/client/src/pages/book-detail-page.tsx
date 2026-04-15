@@ -168,14 +168,14 @@ export const BookDetailPage = () => {
                   }}
                 >
                   {[
-                    'title',
-                    'author',
-                    'coverUrl',
-                    'openLibraryId',
-                    'dateRead',
-                  ].map((field) => (
+                    ['title', 'Title'],
+                    ['author', 'Author'],
+                    ['coverUrl', 'Cover URL'],
+                    ['openLibraryId', 'Open Library ID'],
+                    ['dateRead', 'Date Read'],
+                  ].map(([field, label]) => (
                     <label className="block text-sm text-slate-300" key={field}>
-                      {field}
+                      {label}
                       <input
                         className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
                         value={bookForm[field as keyof typeof bookForm]}

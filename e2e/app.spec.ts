@@ -28,7 +28,9 @@ test('admin can add a book', async ({ page }) => {
   await page.getByLabel('title').fill('The Dispossessed');
   await page.getByLabel('author').fill('Ursula K. Le Guin');
   await page.getByRole('button', { name: /save book/i }).click();
-  await expect(page.getByText('The Dispossessed')).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /The Dispossessed/i }).first(),
+  ).toBeVisible();
 });
 
 test('member can rate a book', async ({ page }) => {

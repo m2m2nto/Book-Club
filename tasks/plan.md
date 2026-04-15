@@ -263,6 +263,18 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Admin nav items hidden for non-admins
 - **Verify:** Desktop + mobile walkthrough, no dead links
 
+### 7.8 — Security hardening and launch verification
+- Add CSRF protection, stricter session handling, security headers, auth/API rate limiting, and broader Zod validation at route boundaries
+- Stabilize root build and E2E workflows so `npm run build` and `npm run e2e` both pass reliably
+- Document launch readiness, rollback, and remaining operational blockers
+- **Verify:** `npm run lint`, `npm run build`, `npm test`, `npm run e2e`, `npm audit --audit-level=high`
+
+### 7.9 — Admin onboarding and UX polish
+- Add clearer success/error feedback to core admin creation flows
+- Add first-run guidance/checklist on the admin dashboard
+- Normalize admin form labels and action copy for consistency
+- **Verify:** Real-browser admin first-steps walkthrough feels smooth and discoverable
+
 ---
 
 ## Architecture Decisions

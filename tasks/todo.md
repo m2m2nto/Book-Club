@@ -60,4 +60,6 @@
 - [x] 7.5  Admin database export
 - [x] 7.6  Playwright E2E test suite
 - [x] 7.7  Navigation, responsive polish, and final integration
+- [x] 7.8  Security hardening, launch-readiness verification, and E2E/build stabilization
+- [ ] 7.9  Admin onboarding and UX polish pass (success feedback, first-steps guidance, copy consistency)
 > **Checkpoint:** Feature-complete, E2E tests pass, responsive on mobile

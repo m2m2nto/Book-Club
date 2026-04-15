@@ -21,6 +21,7 @@ export const BooksPage = () => {
   const authQuery = useAuth();
   const [status, setStatus] = useState<BookStatus | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: '',
     author: '',
@@ -73,8 +74,10 @@ export const BooksPage = () => {
             className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
             onSubmit={(event) => {
               event.preventDefault();
+              setFeedback(null);
               createBookMutation.mutate(form, {
                 onSuccess: () => {
+                  setFeedback(`Saved “${form.title}” to the library.`);
                   setForm({
                     title: '',
                     author: '',
@@ -187,6 +190,17 @@ export const BooksPage = () => {
                   ))}
               </select>
             </label>
+
+            {feedback ? (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                {feedback}
+              </p>
+            ) : null}
+            {createBookMutation.error instanceof Error ? (
+              <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+                {createBookMutation.error.message}
+              </p>
+            ) : null}
 
             <button
               className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"

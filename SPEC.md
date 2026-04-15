@@ -195,6 +195,7 @@ book-club/
 | D1 | Current book highlight | Dashboard shows current highlighted book with cover, title, and countdown to next meeting. |
 | D2 | User dashboard | Shows book highlight, next meeting, open surveys, and pending RSVP actions. |
 | D3 | Admin dashboard | Same as user dashboard plus quick links to admin actions. |
+| D4 | Admin first-steps guidance | Admin dashboard includes a lightweight getting-started checklist or guidance state that helps first-time admins invite users, add books, create surveys, and schedule meetings. |
 
 ### Admin Utilities
 
@@ -259,6 +260,7 @@ Auth
   GET  /auth/google/callback
   POST /auth/logout
   GET  /auth/me
+  GET  /auth/csrf
 
 Users
   GET    /api/users
@@ -361,6 +363,9 @@ Conventions:
 - Use correct HTTP codes: `401`, `403`, `404`, `422`
 - Comments in UI are oldest first
 - Private-note access checks must be enforced server-side
+- State-changing client requests use CSRF protection when cookie-based auth is active
+- Admin creation flows should provide visible success/error feedback rather than relying only on list refreshes
+- Form labels and action copy should use consistent title casing across the admin workflow
 
 ## Testing Strategy
 
@@ -391,6 +396,8 @@ Required coverage areas:
 - Store reminder scheduling using Luxembourg timezone rules.
 - Preserve historical data when users are soft-deleted.
 - Log Open Library import issues on the server and surface a non-blocking UI message.
+- Protect state-changing routes with CSRF validation for cookie-authenticated sessions.
+- Keep security headers and rate limiting enabled on production-facing routes.
 
 ### Ask first
 - Adding new roles beyond `admin` and `user`
@@ -427,6 +434,7 @@ The feature is complete when all of the following are true:
 14. Stats pages correctly show books per year and average group ratings.
 15. Admin can export the live SQLite database after a confirmation step, including sensitive/session tables.
 16. `npm run dev`, `npm run build`, `npm run lint`, `npm test`, and `npm run e2e` all succeed.
+17. The primary admin first-run flow is usable end-to-end: invite a user, add a book, create a survey, schedule a meeting, and export a backup with visible success feedback.
 
 ## Open Questions
 

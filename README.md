@@ -16,7 +16,7 @@ Book Club Manager is being built to help a club manage its full workflow in one 
 
 ## Project Status
 
-This project is currently in active setup and early implementation.
+This project is in active implementation with the core v1 workflows now working end-to-end.
 
 Completed so far:
 
@@ -25,10 +25,13 @@ Completed so far:
 - monorepo workspace scaffolding
 - shared linting and formatting tooling
 - Express server with health endpoint
-- Vite React client shell and dashboard stub
+- Vite React client shell and protected app layout
 - shared TypeScript domain types and constants
 - Drizzle + SQLite database setup
-- initial backend/frontend test setup with Vitest
+- backend/frontend test setup with Vitest
+- Playwright E2E coverage for core admin/member flows
+- security hardening for sessions, CSRF, headers, rate limiting, and route validation
+- working admin flows for user management, books, surveys, meetings, and DB export
 
 ## Tech Stack
 
@@ -110,6 +113,7 @@ npm run db:smoke
 - The specification lives in `SPEC.md`.
 - The implementation plan lives in `tasks/plan.md`.
 - The task checklist lives in `tasks/todo.md`.
+- Launch readiness and rollback notes live in `LAUNCH.md`.
 
 ## License
 
