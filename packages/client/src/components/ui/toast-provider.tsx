@@ -54,30 +54,34 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-full max-w-sm flex-col gap-3">
+      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-full max-w-[24rem] flex-col gap-3">
         {toasts.map((toast) => (
           <div
             className={cn(
-              'pointer-events-auto rounded-2xl border p-4 shadow-glow backdrop-blur',
+              'pointer-events-auto rounded-[var(--radius-xl)] border p-4 shadow-[var(--shadow-overlay)] backdrop-blur-md transition-all duration-[var(--motion-duration-base)] ease-[var(--motion-ease-emphasized)]',
               toast.variant === 'success' &&
-                'border-emerald-500/30 bg-emerald-500/10 text-emerald-100',
+                'border-[color:var(--color-success-base)]/12 bg-[color:var(--color-success-soft)]/95 text-[color:var(--color-success-base)]',
               toast.variant === 'error' &&
-                'border-rose-500/30 bg-rose-500/10 text-rose-100',
+                'border-[color:var(--color-error-base)]/12 bg-[color:var(--color-error-soft)]/96 text-[color:var(--color-error-base)]',
               toast.variant === 'info' &&
-                'border-violet-500/30 bg-slate-900/95 text-slate-100',
+                'border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-raised)]/96 text-[color:var(--color-info-base)]',
             )}
             key={toast.id}
             role="status"
           >
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <p className="font-medium">{toast.title}</p>
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold leading-5 text-[color:var(--color-text-primary)]">
+                  {toast.title}
+                </p>
                 {toast.description ? (
-                  <p className="text-sm text-current/80">{toast.description}</p>
+                  <p className="text-sm leading-6 text-[color:var(--color-text-secondary)]">
+                    {toast.description}
+                  </p>
                 ) : null}
               </div>
               <button
-                className="rounded-lg px-2 py-1 text-xs text-current/80 hover:bg-white/10"
+                className="rounded-[var(--radius-md)] px-2.5 py-1 text-xs font-medium text-[color:var(--color-text-muted)] hover:bg-black/5 hover:text-[color:var(--color-text-primary)]"
                 onClick={() => dismissToast(toast.id)}
                 type="button"
               >
@@ -86,7 +90,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
             </div>
             {toast.actionLabel && toast.onAction ? (
               <button
-                className="mt-3 rounded-xl border border-current/20 px-3 py-2 text-sm font-medium hover:bg-white/10"
+                className="mt-4 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-white/70 px-3 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={() => {
                   toast.onAction?.();
                   dismissToast(toast.id);

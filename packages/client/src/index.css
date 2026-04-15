@@ -1,23 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+
+  --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --font-editorial: 'Cormorant Garamond', 'Iowan Old Style', 'Times New Roman',
+    serif;
+
+  --color-canvas-default: #fcfbf8;
+  --color-canvas-subtle: #f6f4ef;
+  --color-surface-base: #ffffff;
+  --color-surface-raised: #fffdfa;
+  --color-surface-tint: #f5f3ff;
+  --color-border-soft: #e7e3da;
+  --color-border-strong: #d8d1c6;
+  --color-text-primary: #1f1f23;
+  --color-text-secondary: #4a4a55;
+  --color-text-muted: #7a7a86;
+  --color-text-inverse: #ffffff;
+  --color-text-accent: #4f46a5;
+  --color-accent-primary: #5b55d6;
+  --color-accent-primary-hover: #4f46c9;
+  --color-accent-primary-soft: #eeecff;
+  --color-accent-primary-soft-hover: #e4e0ff;
+  --color-success-base: #3d7a57;
+  --color-success-soft: #edf7f0;
+  --color-warning-base: #9a6a1a;
+  --color-warning-soft: #fff6df;
+  --color-error-base: #a04452;
+  --color-error-soft: #fff0f2;
+  --color-info-base: #4e5a77;
+  --color-info-soft: #eff3fb;
+
+  --shadow-soft: 0 8px 24px rgba(24, 24, 32, 0.06);
+  --shadow-lifted: 0 16px 36px rgba(24, 24, 32, 0.1);
+  --shadow-overlay: 0 20px 60px rgba(24, 24, 32, 0.14);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-pill: 9999px;
+
+  --space-page-x: clamp(1.25rem, 3vw, 3rem);
+  --space-page-y: clamp(1.5rem, 4vw, 3.5rem);
+  --space-section-gap: clamp(2.5rem, 5vw, 5rem);
+  --space-module-gap: 1.5rem;
+  --space-stack-tight: 0.5rem;
+  --space-stack-default: 1rem;
+  --space-stack-loose: 1.5rem;
+  --space-card-padding: 1.5rem;
+  --space-form-gap: 1rem;
+
+  --motion-duration-fast: 140ms;
+  --motion-duration-base: 220ms;
+  --motion-duration-slow: 360ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+
+  background:
+    radial-gradient(circle at top left, rgba(91, 85, 214, 0.08), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(227, 218, 255, 0.55), transparent 24%),
+    linear-gradient(180deg, #fcfbf8 0%, #f7f4ee 100%);
+  color: var(--color-text-primary);
+}
+
+html {
+  background: var(--color-canvas-default);
 }
 
 body {
-  @apply min-h-screen bg-slate-950 text-slate-100 antialiased;
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+  @apply min-h-screen antialiased;
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  background:
+    radial-gradient(circle at top left, rgba(91, 85, 214, 0.08), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(227, 218, 255, 0.55), transparent 24%),
+    linear-gradient(180deg, #fcfbf8 0%, #f7f4ee 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)),
+    radial-gradient(circle at 14% 16%, rgba(91, 85, 214, 0.06), transparent 18%),
+    radial-gradient(circle at 86% 10%, rgba(255, 240, 214, 0.45), transparent 18%);
+  opacity: 0.95;
 }
 
 #root {
   @apply min-h-screen;
+  position: relative;
+  z-index: 1;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-soft);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-text-primary);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    transition:
+      color var(--motion-duration-base) var(--motion-ease-standard),
+      background-color var(--motion-duration-base) var(--motion-ease-standard),
+      border-color var(--motion-duration-base) var(--motion-ease-standard),
+      box-shadow var(--motion-duration-base) var(--motion-ease-standard),
+      transform var(--motion-duration-fast) var(--motion-ease-emphasized);
+  }
+
+  ::selection {
+    background: rgba(91, 85, 214, 0.16);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .font-editorial {
+    font-family: var(--font-editorial);
+  }
+
+  .page-shell {
+    margin-inline: auto;
+    width: min(100%, 1200px);
+    padding-inline: var(--space-page-x);
+    padding-block: var(--space-page-y);
+  }
+
+  .page-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section-gap);
+  }
+
+  .surface-base {
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xl);
+    background: color-mix(in srgb, var(--color-surface-base) 92%, transparent);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .surface-raised {
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-xl);
+    background: color-mix(in srgb, var(--color-surface-raised) 94%, transparent);
+    box-shadow: var(--shadow-lifted);
+  }
+
+  .surface-tint {
+    border: 1px solid color-mix(in srgb, var(--color-accent-primary) 14%, white);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 243, 255, 0.92));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .editorial-title {
+    font-family: var(--font-editorial);
+    font-size: clamp(2.25rem, 4vw, 4.25rem);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+
+  .body-copy {
+    max-width: 44rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+}
+
+@supports not (background: color-mix(in srgb, white 80%, transparent)) {
+  .surface-base,
+  .surface-raised {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .surface-tint {
+    background: rgba(245, 243, 255, 0.92);
+  }
 }
