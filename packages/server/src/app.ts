@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@book-club/shared';
-import express, { type NextFunction, type Request, type Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
@@ -39,9 +39,13 @@ export const createApp = () => {
   const app = express();
 
   app.use(
-    helmet({
-      contentSecurityPolicy: env.nodeEnv === 'production' ? undefined : false,
-    }),
+    helmet(
+      env.nodeEnv === 'production'
+        ? {}
+        : {
+            contentSecurityPolicy: false,
+          },
+    ),
   );
   app.use(express.json({ limit: '1mb' }));
   app.use(sessionMiddleware);
@@ -78,7 +82,6 @@ export const createApp = () => {
       error: unknown,
       _req: Request,
       res: Response,
-      _next: NextFunction,
     ) => {
       const message =
         error instanceof Error && env.nodeEnv !== 'production'

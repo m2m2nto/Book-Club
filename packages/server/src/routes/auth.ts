@@ -1,6 +1,8 @@
+import crypto from 'node:crypto';
+
 import type { ApiResponse } from '@book-club/shared';
 import { eq } from 'drizzle-orm';
-import { Router, type Response } from 'express';
+import { Router, type RequestHandler, type Response } from 'express';
 import { z } from 'zod';
 
 import { passportInstance } from '../auth/passport.js';
@@ -55,18 +57,34 @@ router.get('/google', (req, res, next) => {
     return;
   }
 
+  const state = crypto.randomUUID();
+  req.session.oauthState = state;
+
   passportInstance.authenticate('google', {
     scope: ['profile', 'email'],
-    state: true,
+    state,
   })(req, res, next);
 });
 
+const verifyOAuthState: RequestHandler = (req, res, next) => {
+  const state = typeof req.query.state === 'string' ? req.query.state : '';
+
+  if (!state || !req.session.oauthState || req.session.oauthState !== state) {
+    delete req.session.oauthState;
+    res.redirect(`${env.clientUrl}/login?error=auth_failed`);
+    return;
+  }
+
+  delete req.session.oauthState;
+  next();
+};
+
 router.get(
   '/google/callback',
+  verifyOAuthState,
   passportInstance.authenticate('google', {
     failureRedirect: `${env.clientUrl}/login?error=auth_failed`,
     session: true,
-    state: true,
   }),
   (_req, res) => {
     res.redirect(env.clientUrl);

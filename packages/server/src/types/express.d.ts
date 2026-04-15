@@ -19,6 +19,7 @@ declare module 'express-session' {
       expiresAt: number;
     };
     csrfToken?: string;
+    oauthState?: string;
   }
 }
 

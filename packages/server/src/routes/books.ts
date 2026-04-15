@@ -17,10 +17,6 @@ const bookStatusSchema = z.enum(['wishlist', 'pipeline', 'reading', 'read']);
 const bookIdParamsSchema = z.object({
   id: z.coerce.number().int().positive(),
 });
-const commentParamsSchema = z.object({
-  id: z.coerce.number().int().positive(),
-  commentId: z.coerce.number().int().positive(),
-});
 const statusQuerySchema = z.object({
   status: bookStatusSchema.optional(),
 });
