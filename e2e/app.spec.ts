@@ -10,7 +10,9 @@ const loginAs = async (
 
 test('login page renders', async ({ page }) => {
   await page.goto('/login');
-  await expect(page.getByText(/continue with google/i)).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /continue with google/i }),
+  ).toBeVisible();
 });
 
 test('admin can create a user', async ({ page }) => {
