@@ -9,6 +9,9 @@ import {
   useVoteDateSurvey,
 } from '../hooks/use-meetings';
 
+const statusLabel = (status: string) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
+
 export const DateSurveyDetailPage = () => {
   const { id } = useParams();
   const surveyId = Number(id);
@@ -31,7 +34,7 @@ export const DateSurveyDetailPage = () => {
 
   if (!survey) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-slate-300">
+      <div className="surface-base px-6 py-8 text-sm text-[color:var(--color-text-secondary)]">
         Loading date survey...
       </div>
     );
@@ -42,88 +45,120 @@ export const DateSurveyDetailPage = () => {
     : ownVotes;
 
   return (
-    <div className="space-y-8">
+    <div className="page-stack">
       <Link
-        className="text-sm text-violet-300 hover:text-violet-200"
+        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/meetings"
       >
         ← Back to meetings
       </Link>
-      <header className="space-y-2">
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-semibold text-white">{survey.title}</h1>
-          <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-            {survey.status}
-          </span>
+
+      <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
+        <div className="page-header gap-4">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+              {statusLabel(survey.status)}
+            </span>
+            <span className="text-[color:var(--color-text-muted)]">
+              {survey.time} · {survey.location}
+            </span>
+          </div>
+          <div className="space-y-3">
+            <h1 className="editorial-title text-balance max-w-4xl">
+              {survey.title}
+            </h1>
+            <p className="body-copy max-w-3xl text-[1rem]">
+              Closes {new Date(survey.closesAt).toLocaleString()}. Select every
+              date that works for you before the meeting is confirmed.
+            </p>
+          </div>
         </div>
-        <p className="text-sm text-slate-400">
-          Closes {new Date(survey.closesAt).toLocaleString()} · {survey.time} ·{' '}
-          {survey.location}
-        </p>
-      </header>
+      </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {survey.options.map((option) => (
-          <article
-            key={option.id}
-            className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5"
-          >
-            <p className="text-lg font-semibold text-white">
-              {option.proposedDate}
-            </p>
-            <p className="mt-2 text-sm text-slate-400">{option.votes} votes</p>
-            {survey.status === 'open' ? (
-              <button
-                className={`mt-4 w-full rounded-xl border px-3 py-2 text-sm ${activeSelection.includes(option.id) ? 'border-violet-400 bg-violet-500/10 text-violet-200' : 'border-slate-700 text-slate-200 hover:bg-slate-800'}`}
-                onClick={() =>
-                  setSelectedOptionIds((current) =>
-                    current.includes(option.id)
-                      ? current.filter((id) => id !== option.id)
-                      : [...current, option.id],
-                  )
-                }
-                type="button"
-              >
-                {activeSelection.includes(option.id)
-                  ? 'Selected'
-                  : 'Select date'}
-              </button>
-            ) : null}
-            {isAdmin && survey.status === 'open' ? (
-              <button
-                className="mt-3 w-full rounded-xl bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-400"
-                onClick={() =>
-                  closeMutation.mutate(option.id, {
-                    onSuccess: () => {
-                      showToast({
-                        title: `Confirmed ${option.proposedDate} as the meeting date.`,
-                        variant: 'success',
-                      });
-                    },
-                    onError: (error) => {
-                      showToast({
-                        title: 'Could not confirm that date.',
-                        description:
-                          error instanceof Error
-                            ? error.message
-                            : 'Please try again.',
-                        variant: 'error',
-                      });
-                    },
-                  })
-                }
-                type="button"
-              >
-                Confirm this date
-              </button>
-            ) : null}
-          </article>
-        ))}
+        {survey.options.map((option) => {
+          const isSelected = activeSelection.includes(option.id);
+          const isConfirmed = survey.confirmedOptionId === option.id;
+
+          return (
+            <article
+              key={option.id}
+              className={
+                isConfirmed ? 'surface-tint p-5' : 'surface-base p-5'
+              }
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[1.25rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                    {option.proposedDate}
+                  </p>
+                  <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+                    {option.votes} votes
+                  </p>
+                </div>
+                {isConfirmed ? (
+                  <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.72)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                    Confirmed
+                  </span>
+                ) : null}
+              </div>
+
+              {survey.status === 'open' ? (
+                <button
+                  className={
+                    isSelected
+                      ? 'pressable mt-5 w-full rounded-[var(--radius-lg)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-accent)]'
+                      : 'pressable mt-5 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]'
+                  }
+                  onClick={() =>
+                    setSelectedOptionIds((current) =>
+                      current.includes(option.id)
+                        ? current.filter((id) => id !== option.id)
+                        : [...current, option.id],
+                    )
+                  }
+                  type="button"
+                >
+                  {isSelected ? 'Selected' : 'Select date'}
+                </button>
+              ) : null}
+
+              {isAdmin && survey.status === 'open' ? (
+                <button
+                  className="pressable mt-3 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+                  onClick={() =>
+                    closeMutation.mutate(option.id, {
+                      onSuccess: () => {
+                        showToast({
+                          title: `Confirmed ${option.proposedDate} as the meeting date.`,
+                          variant: 'success',
+                        });
+                      },
+                      onError: (error) => {
+                        showToast({
+                          title: 'Could not confirm that date.',
+                          description:
+                            error instanceof Error
+                              ? error.message
+                              : 'Please try again.',
+                          variant: 'error',
+                        });
+                      },
+                    })
+                  }
+                  type="button"
+                >
+                  Confirm this date
+                </button>
+              ) : null}
+            </article>
+          );
+        })}
       </section>
 
       {survey.status === 'open' ? (
         <button
-          className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+          className="pressable w-fit rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
           onClick={() =>
             voteMutation.mutate(activeSelection, {
               onSuccess: () => {
