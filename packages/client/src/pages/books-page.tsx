@@ -1,8 +1,9 @@
+import { Search, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../hooks/use-auth';
 import { useToast } from '../components/ui/toast-provider';
+import { useAuth } from '../hooks/use-auth';
 import {
   type BookStatus,
   useBooks,
@@ -17,6 +18,9 @@ const statuses: Array<{ label: string; value?: BookStatus }> = [
   { label: 'Pipeline', value: 'pipeline' },
   { label: 'Wishlist', value: 'wishlist' },
 ];
+
+const statusLabel = (status: BookStatus) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
 
 export const BooksPage = () => {
   const authQuery = useAuth();
@@ -40,27 +44,36 @@ export const BooksPage = () => {
   const isAdmin = authQuery.data?.role === 'admin';
 
   const introText = useMemo(() => {
-    if (!booksQuery.data?.length)
+    if (!booksQuery.data?.length) {
       return 'No books yet. Add the first title to start your club library.';
+    }
+
     return `${booksQuery.data.length} books available in this view.`;
   }, [booksQuery.data]);
 
+  const featuredBook = booksQuery.data?.[0] ?? null;
+  const remainingBooks = featuredBook ? booksQuery.data?.slice(1) ?? [] : [];
+
   return (
-    <div className="space-y-8">
-      <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-[0.25em] text-violet-300">
-            Library
-          </p>
-          <h1 className="text-3xl font-semibold text-white">Books</h1>
-          <p className="mt-2 text-sm text-slate-400">{introText}</p>
+    <div className="page-stack">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_20rem] xl:items-end">
+        <div className="page-header fade-rise max-w-3xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Library</p>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            A cleaner catalog for what the club has read and what comes next.
+          </h1>
+          <p className="body-copy text-[1.02rem]">{introText}</p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="fade-rise flex flex-wrap gap-2">
           {statuses.map((item) => (
             <button
               key={item.label}
-              className={`rounded-xl border px-3 py-2 text-sm ${status === item.value ? 'border-violet-400 bg-violet-500/10 text-violet-200' : 'border-slate-700 text-slate-300 hover:bg-slate-900'}`}
+              className={
+                status === item.value
+                  ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]'
+                  : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
+              }
               onClick={() => setStatus(item.value)}
               type="button"
             >
@@ -68,12 +81,116 @@ export const BooksPage = () => {
             </button>
           ))}
         </div>
-      </header>
+      </section>
 
       {isAdmin ? (
-        <section className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+        <section className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_24rem] xl:items-start">
+          <div className="space-y-6">
+            {featuredBook ? (
+              <Link
+                className="surface-tint hover-lift fade-rise grid overflow-hidden lg:grid-cols-[220px_minmax(0,1fr)]"
+                to={`/books/${featuredBook.id}`}
+              >
+                <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)] lg:h-full">
+                  {featuredBook.coverUrl ? (
+                    <img
+                      alt={featuredBook.title}
+                      className="h-full w-full object-cover"
+                      src={featuredBook.coverUrl}
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
+                      No cover image
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col justify-between px-6 py-6 lg:px-8 lg:py-8">
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
+                      <Sparkles className="h-4 w-4" />
+                      Featured in this view
+                    </div>
+                    <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                      {featuredBook.title}
+                    </h2>
+                    <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
+                      {featuredBook.author}
+                    </p>
+                    <p className="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                      {featuredBook.description ?? 'No description yet.'}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.72)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+                      {statusLabel(featuredBook.status)}
+                    </span>
+                    <span className="text-[color:var(--color-text-muted)]">
+                      {featuredBook.averageRating
+                        ? `${featuredBook.averageRating.toFixed(1)} average rating`
+                        : 'No ratings yet'}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ) : null}
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {remainingBooks.map((book) => (
+                <Link
+                  className="surface-base hover-lift overflow-hidden"
+                  key={book.id}
+                  to={`/books/${book.id}`}
+                >
+                  <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
+                    {book.coverUrl ? (
+                      <img
+                        alt={book.title}
+                        className="h-full w-full object-cover"
+                        src={book.coverUrl}
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
+                        No cover image
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-3 p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
+                        {statusLabel(book.status)}
+                      </span>
+                      <span className="text-xs text-[color:var(--color-text-muted)]">
+                        {book.averageRating
+                          ? `${book.averageRating.toFixed(1)}★`
+                          : '—'}
+                      </span>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                        {book.title}
+                      </h2>
+                      <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
+                        {book.author}
+                      </p>
+                    </div>
+                    <p className="line-clamp-3 text-sm leading-6 text-[color:var(--color-text-secondary)]">
+                      {book.description ?? 'No description yet.'}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {!booksQuery.data?.length ? (
+              <div className="surface-base px-6 py-8 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                No books match this view yet.
+              </div>
+            ) : null}
+          </div>
+
           <form
-            className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+            className="surface-base space-y-5 p-6"
             onSubmit={(event) => {
               event.preventDefault();
               createBookMutation.mutate(form, {
@@ -107,28 +224,34 @@ export const BooksPage = () => {
               });
             }}
           >
-            <div>
-              <h2 className="text-lg font-semibold text-white">Add book</h2>
-              <p className="mt-1 text-sm text-slate-400">
-                Search Open Library or enter data manually.
-              </p>
+            <div className="page-header gap-3">
+              <p className="eyebrow">Add book</p>
+              <div className="space-y-2">
+                <h2 className="section-title">Add a title to the catalog</h2>
+                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                  Search Open Library or enter the details manually.
+                </p>
+              </div>
             </div>
 
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Search Open Library
-              <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-              />
+              <div className="relative mt-2">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--color-text-muted)]" />
+                <input
+                  className="w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] py-2.5 pl-10 pr-3 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
+              </div>
             </label>
 
             {searchQueryResult.data?.length ? (
-              <div className="max-h-64 space-y-2 overflow-auto rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+              <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] p-3">
                 {searchQueryResult.data.map((result) => (
                   <button
                     key={`${result.openLibraryId ?? result.title}-${result.author}`}
-                    className="w-full rounded-xl border border-slate-800 px-3 py-3 text-left hover:bg-slate-900"
+                    className="pressable w-full rounded-[var(--radius-lg)] border border-[color:transparent] bg-[rgba(255,255,255,0.82)] px-3 py-3 text-left hover:border-[color:var(--color-border-soft)] hover:bg-[rgba(255,255,255,0.98)]"
                     onClick={() =>
                       setForm((current) => ({
                         ...current,
@@ -142,8 +265,12 @@ export const BooksPage = () => {
                     }
                     type="button"
                   >
-                    <p className="font-medium text-white">{result.title}</p>
-                    <p className="text-xs text-slate-400">{result.author}</p>
+                    <p className="font-medium text-[color:var(--color-text-primary)]">
+                      {result.title}
+                    </p>
+                    <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
+                      {result.author}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -154,12 +281,15 @@ export const BooksPage = () => {
               ['author', 'Author'],
               ['coverUrl', 'Cover URL'],
               ['openLibraryId', 'Open Library ID'],
-              ['dateRead', 'Date read (YYYY-MM-DD)'],
+              ['dateRead', 'Date Read (YYYY-MM-DD)'],
             ].map(([key, label]) => (
-              <label className="block text-sm text-slate-300" key={key}>
+              <label
+                className="block text-sm text-[color:var(--color-text-secondary)]"
+                key={key}
+              >
                 {label}
                 <input
-                  className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                  className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                   value={form[key as keyof typeof form]}
                   onChange={(event) =>
                     setForm((current) => ({
@@ -171,10 +301,10 @@ export const BooksPage = () => {
               </label>
             ))}
 
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Description
               <textarea
-                className="mt-2 min-h-28 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 min-h-28 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={form.description}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -185,10 +315,10 @@ export const BooksPage = () => {
               />
             </label>
 
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Status
               <select
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={form.status}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -208,21 +338,72 @@ export const BooksPage = () => {
             </label>
 
             <button
-              className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createBookMutation.isPending ? 'Saving...' : 'Save book'}
             </button>
           </form>
+        </section>
+      ) : (
+        <section className="space-y-6">
+          {featuredBook ? (
+            <Link
+              className="surface-tint hover-lift fade-rise grid overflow-hidden lg:grid-cols-[220px_minmax(0,1fr)]"
+              to={`/books/${featuredBook.id}`}
+            >
+              <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)] lg:h-full">
+                {featuredBook.coverUrl ? (
+                  <img
+                    alt={featuredBook.title}
+                    className="h-full w-full object-cover"
+                    src={featuredBook.coverUrl}
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
+                    No cover image
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-between px-6 py-6 lg:px-8 lg:py-8">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
+                    <Sparkles className="h-4 w-4" />
+                    Featured in this view
+                  </div>
+                  <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                    {featuredBook.title}
+                  </h2>
+                  <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
+                    {featuredBook.author}
+                  </p>
+                  <p className="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                    {featuredBook.description ?? 'No description yet.'}
+                  </p>
+                </div>
+
+                <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+                  <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.72)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+                    {statusLabel(featuredBook.status)}
+                  </span>
+                  <span className="text-[color:var(--color-text-muted)]">
+                    {featuredBook.averageRating
+                      ? `${featuredBook.averageRating.toFixed(1)} average rating`
+                      : 'No ratings yet'}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ) : null}
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {booksQuery.data?.map((book) => (
+            {(featuredBook ? remainingBooks : booksQuery.data ?? []).map((book) => (
               <Link
+                className="surface-base hover-lift overflow-hidden"
                 key={book.id}
-                className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70 transition-transform hover:-translate-y-0.5"
                 to={`/books/${book.id}`}
               >
-                <div className="aspect-[4/5] bg-slate-950">
+                <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
                   {book.coverUrl ? (
                     <img
                       alt={book.title}
@@ -230,67 +411,34 @@ export const BooksPage = () => {
                       src={book.coverUrl}
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center px-6 text-center text-slate-500">
+                    <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
                       No cover image
                     </div>
                   )}
                 </div>
-                <div className="space-y-2 p-5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                      {book.status}
-                    </span>
-                    <span className="text-xs text-slate-500">
-                      {book.averageRating
-                        ? `${book.averageRating.toFixed(1)}★`
-                        : '—'}
-                    </span>
+                <div className="space-y-3 p-5">
+                  <span className="text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
+                    {statusLabel(book.status)}
+                  </span>
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                      {book.title}
+                    </h2>
+                    <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
+                      {book.author}
+                    </p>
                   </div>
-                  <h2 className="text-lg font-semibold text-white">
-                    {book.title}
-                  </h2>
-                  <p className="text-sm text-slate-400">{book.author}</p>
-                  <p className="line-clamp-3 text-sm text-slate-500">
-                    {book.description ?? 'No description yet.'}
-                  </p>
                 </div>
               </Link>
             ))}
           </div>
+
+          {!booksQuery.data?.length ? (
+            <div className="surface-base px-6 py-8 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              No books match this view yet.
+            </div>
+          ) : null}
         </section>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {booksQuery.data?.map((book) => (
-            <Link
-              key={book.id}
-              className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70"
-              to={`/books/${book.id}`}
-            >
-              <div className="aspect-[4/5] bg-slate-950">
-                {book.coverUrl ? (
-                  <img
-                    alt={book.title}
-                    className="h-full w-full object-cover"
-                    src={book.coverUrl}
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center px-6 text-center text-slate-500">
-                    No cover image
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2 p-5">
-                <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                  {book.status}
-                </span>
-                <h2 className="text-lg font-semibold text-white">
-                  {book.title}
-                </h2>
-                <p className="text-sm text-slate-400">{book.author}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
       )}
     </div>
   );
