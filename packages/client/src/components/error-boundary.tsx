@@ -14,8 +14,15 @@ export class ErrorBoundary extends Component<Props, State> {
   override render() {
     if (this.state.hasError) {
       return (
-        <div className="rounded-2xl border border-rose-700/40 bg-rose-950/30 p-8 text-sm text-rose-200">
-          Something went wrong while rendering this page.
+        <div className="surface-base mx-auto max-w-2xl px-6 py-8 text-sm">
+          <p className="eyebrow text-[color:var(--color-error-base)]">Rendering issue</p>
+          <h2 className="mt-3 font-editorial text-3xl leading-none text-[color:var(--color-text-primary)]">
+            Something went wrong while rendering this page.
+          </h2>
+          <p className="mt-4 max-w-xl leading-7 text-[color:var(--color-text-secondary)]">
+            Try refreshing the page. If the problem continues, come back to the
+            previous screen and try again.
+          </p>
         </div>
       );
     }

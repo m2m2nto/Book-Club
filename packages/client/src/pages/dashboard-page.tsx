@@ -79,81 +79,98 @@ export const DashboardPage = () => {
     },
   ] as const;
 
+  const adminQuickActions = [
+    ['Invite members', '/admin/users'],
+    ['Schedule meeting', '/meetings'],
+    ['Create survey', '/surveys'],
+  ] as const;
+
   return (
     <div className="page-stack">
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_22rem] lg:items-end">
-        <div className="space-y-5">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_19rem] xl:items-start">
+        <div className="fade-rise page-header max-w-3xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Dashboard</p>
-          <div className="max-w-3xl space-y-4">
-            <h1 className="editorial-title max-w-3xl">
-              Your book club, arranged with a little more calm.
-            </h1>
-            <p className="body-copy text-[1.05rem]">
-              Track the next meeting, spot open votes, and see what still needs
-              your attention without digging through the whole club archive.
-            </p>
-          </div>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            A clearer view of what your club needs next.
+          </h1>
+          <p className="body-copy text-[1.02rem]">
+            Keep the next meeting, open votes, and shared momentum in view
+            without scanning every page.
+          </p>
         </div>
 
         {authQuery.data?.role === 'admin' ? (
-          <div className="surface-base grid gap-3 p-4 sm:grid-cols-3 lg:grid-cols-1">
-            {[
-              ['Invite members', '/admin/users'],
-              ['Schedule meeting', '/meetings'],
-              ['Create survey', '/surveys'],
-            ].map(([label, href]) => (
-              <Link
-                className="inline-flex items-center justify-between rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
-                key={href}
-                to={href}
-              >
-                <span>{label}</span>
-                <ArrowRight className="h-4 w-4 text-[color:var(--color-text-accent)]" />
-              </Link>
-            ))}
-          </div>
+          <aside className="surface-base fade-rise p-4">
+            <p className="eyebrow">Quick actions</p>
+            <div className="mt-4 grid gap-2.5">
+              {adminQuickActions.map(([label, href]) => (
+                <Link
+                  className="hover-lift rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.86)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)]"
+                  key={href}
+                  to={href}
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span>{label}</span>
+                    <ArrowRight className="h-4 w-4 text-[color:var(--color-text-accent)]" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </aside>
         ) : null}
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-        <article className="surface-tint px-7 py-8 lg:px-8 lg:py-9">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
+        <article className="surface-tint fade-rise px-7 py-8 lg:px-9 lg:py-9">
           <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
             <Sparkles className="h-4 w-4" />
-            Book of the moment
+            Current focus
           </div>
-          <h2 className="mt-5 font-editorial text-[2.75rem] leading-[0.96] tracking-[-0.03em] text-[color:var(--color-text-primary)] lg:text-[3.25rem]">
-            {nextMeeting?.bookId ? 'Current reading cycle' : 'No book selected yet'}
-          </h2>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-[color:var(--color-text-secondary)]">
-            {nextMeeting
-              ? `${nextMeeting.date} · ${nextMeeting.time} · ${nextMeeting.location}`
-              : 'Create a meeting or date poll to give the club a clear next chapter.'}
-          </p>
-          <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]">
-            <CalendarDays className="h-4 w-4" />
-            {nextMeeting
-              ? 'Next club session is on the calendar.'
-              : 'No current reading session yet.'}
+          <div className="mt-5 max-w-3xl space-y-4">
+            <h2 className="text-[2.1rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.8rem]">
+              {nextMeeting
+                ? 'The next gathering is already taking shape.'
+                : 'Start the next chapter with a clear date and plan.'}
+            </h2>
+            <p className="text-base leading-8 text-[color:var(--color-text-secondary)]">
+              {nextMeeting
+                ? `${nextMeeting.date} · ${nextMeeting.time} · ${nextMeeting.location}`
+                : 'Create a meeting or date poll to give the club a clear next step.'}
+            </p>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <span className="rounded-full border border-[color:rgba(42,93,176,0.08)] bg-[rgba(255,255,255,0.74)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]">
+              {nextMeeting
+                ? 'Next club session is on the calendar.'
+                : 'No active session yet.'}
+            </span>
+            <Link
+              className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
+              to="/meetings"
+            >
+              Open meetings
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </article>
 
-        <article className="surface-base flex flex-col justify-between px-6 py-7 lg:px-7 lg:py-8">
-          <div>
+        <article className="surface-base fade-rise flex flex-col justify-between px-6 py-7 lg:px-7 lg:py-8">
+          <div className="space-y-4">
             <p className="eyebrow">Next meeting</p>
-            <h2 className="mt-4 section-title text-[2rem]">
+            <h2 className="text-[1.8rem] font-semibold leading-[1.02] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
               {nextMeeting ? nextMeeting.date : 'Nothing scheduled yet'}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+            <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
               {dashboard?.myRsvp
                 ? `Your RSVP is currently marked as ${dashboard.myRsvp.status}.`
-                : 'You have not responded yet.'}
+                : 'You have not responded to the next gathering yet.'}
             </p>
           </div>
           <Link
             className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
             to="/meetings"
           >
-            Open meetings
+            Review meeting details
             <ArrowRight className="h-4 w-4" />
           </Link>
         </article>
@@ -161,7 +178,7 @@ export const DashboardPage = () => {
 
       <section className="grid gap-4 md:grid-cols-3">
         {summaryCards.map(({ label, value, href, action, icon: Icon, tone }) => (
-          <article className="surface-base px-6 py-6" key={label}>
+          <article className="surface-base fade-rise px-6 py-6" key={label}>
             <div
               className={
                 tone === 'accent'
@@ -174,7 +191,7 @@ export const DashboardPage = () => {
               <Icon className="h-4 w-4" />
               {label}
             </div>
-            <p className="mt-5 text-4xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+            <p className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
               {value}
             </p>
             <Link
@@ -190,14 +207,16 @@ export const DashboardPage = () => {
 
       {dashboard?.adminSummary ? (
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-          <article className="surface-base px-6 py-7 lg:px-7">
+          <article className="surface-base fade-rise px-6 py-7 lg:px-7">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
                 <p className="eyebrow">Admin getting started</p>
-                <h2 className="mt-3 section-title">Set the club in motion.</h2>
+                <h2 className="mt-3 text-[1.7rem] font-semibold leading-[1.04] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
+                  Set the club in motion.
+                </h2>
                 <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
-                  Follow these first steps to get members invited, books added,
-                  and the next discussion on the calendar.
+                  Follow these first steps to invite members, add books, and put
+                  the next discussion on the calendar.
                 </p>
               </div>
               <p className="text-sm text-[color:var(--color-text-muted)]">
@@ -209,8 +228,8 @@ export const DashboardPage = () => {
             <div className="mt-6 grid gap-3 md:grid-cols-2">
               {completedChecklist.map((item) => (
                 <Link
+                  className="hover-lift rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.84)] px-4 py-4"
                   key={item.label}
-                  className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-4 py-4 hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                   to={item.href}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -238,21 +257,21 @@ export const DashboardPage = () => {
           </article>
 
           <section className="grid gap-4 md:grid-cols-3 xl:grid-cols-1">
-            <article className="surface-base px-6 py-6">
+            <article className="surface-base fade-rise px-6 py-6">
               <p className="eyebrow">Users</p>
-              <p className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+              <p className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {dashboard.adminSummary.users}
               </p>
             </article>
-            <article className="surface-base px-6 py-6">
+            <article className="surface-base fade-rise px-6 py-6">
               <p className="eyebrow">Meetings</p>
-              <p className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+              <p className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {dashboard.adminSummary.meetings}
               </p>
             </article>
-            <article className="surface-base px-6 py-6">
+            <article className="surface-base fade-rise px-6 py-6">
               <p className="eyebrow">Open surveys</p>
-              <p className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+              <p className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {dashboard.adminSummary.openSurveys}
               </p>
             </article>
