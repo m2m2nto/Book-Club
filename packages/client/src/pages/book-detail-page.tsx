@@ -15,6 +15,9 @@ import {
   useUpdateComment,
 } from '../hooks/use-books';
 
+const statusLabel = (status: BookStatus) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
+
 export const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -54,7 +57,7 @@ export const BookDetailPage = () => {
 
   if (!bookQuery.data) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-slate-300">
+      <div className="surface-base px-6 py-8 text-sm text-[color:var(--color-text-secondary)]">
         Loading book details...
       </div>
     );
@@ -64,17 +67,17 @@ export const BookDetailPage = () => {
   const isAdmin = authQuery.data?.role === 'admin';
 
   return (
-    <div className="space-y-8">
+    <div className="page-stack">
       <Link
-        className="text-sm text-violet-300 hover:text-violet-200"
+        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/books"
       >
         ← Back to books
       </Link>
 
-      <section className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70">
-          <div className="aspect-[4/5] bg-slate-950">
+      <section className="grid gap-8 xl:grid-cols-[320px_minmax(0,1fr)] xl:items-start">
+        <div className="surface-base overflow-hidden">
+          <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
             {book.coverUrl ? (
               <img
                 alt={book.title}
@@ -82,7 +85,7 @@ export const BookDetailPage = () => {
                 src={book.coverUrl}
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-slate-500">
+              <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
                 No cover image
               </div>
             )}
@@ -90,34 +93,54 @@ export const BookDetailPage = () => {
         </div>
 
         <div className="space-y-6">
-          <div>
-            <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-              {book.status}
-            </span>
-            <h1 className="mt-3 text-4xl font-semibold text-white">
-              {book.title}
-            </h1>
-            <p className="mt-2 text-lg text-slate-300">{book.author}</p>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
-              {book.description ?? 'No description yet.'}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
-              <span>
-                Average rating:{' '}
-                {book.averageRating ? book.averageRating.toFixed(1) : '—'}
-              </span>
-              <span>Date read: {book.dateRead ?? '—'}</span>
-              <span>Open Library: {book.openLibraryId ?? '—'}</span>
-            </div>
-          </div>
+          <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
+            <div className="page-header gap-4">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+                  {statusLabel(book.status)}
+                </span>
+                <span className="text-[color:var(--color-text-muted)]">
+                  {book.averageRating
+                    ? `${book.averageRating.toFixed(1)} average rating`
+                    : 'No ratings yet'}
+                </span>
+              </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
-            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-3">
+                <h1 className="editorial-title editorial-title--serif text-balance max-w-4xl">
+                  {book.title}
+                </h1>
+                <p className="text-lg text-[color:var(--color-text-secondary)]">
+                  {book.author}
+                </p>
+              </div>
+
+              <p className="body-copy max-w-3xl text-[1rem]">
+                {book.description ?? 'No description yet.'}
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[color:var(--color-text-secondary)]">
+              <span>
+                <span className="font-medium text-[color:var(--color-text-primary)]">
+                  Date read:
+                </span>{' '}
+                {book.dateRead ?? '—'}
+              </span>
+              <span>
+                <span className="font-medium text-[color:var(--color-text-primary)]">
+                  Open Library:
+                </span>{' '}
+                {book.openLibraryId ?? '—'}
+              </span>
+            </div>
+          </section>
+
+          <section className="surface-base px-6 py-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-white">
-                  Your rating
-                </h2>
-                <p className="text-sm text-slate-400">
+                <h2 className="section-title text-[1.45rem]">Your rating</h2>
+                <p className="mt-2 text-sm leading-7 text-[color:var(--color-text-secondary)]">
                   Click a star to save or update your score.
                 </p>
               </div>
@@ -146,21 +169,23 @@ export const BookDetailPage = () => {
                 }
               />
             </div>
-          </div>
+          </section>
 
           {isAdmin ? (
-            <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-5">
-              <div className="mb-4 flex items-center justify-between">
+            <section className="surface-base px-6 py-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
-                    Admin book controls
+                  <p className="eyebrow">Admin controls</p>
+                  <h2 className="mt-3 text-[1.45rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                    Edit or remove this book
                   </h2>
-                  <p className="text-sm text-slate-400">
-                    Edit details or delete this book.
+                  <p className="mt-2 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                    Update metadata, change status, or remove the title from the
+                    catalog.
                   </p>
                 </div>
                 <button
-                  className="rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+                  className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                   onClick={() => {
                     setEditBookMode((current) => !current);
                     setBookForm({
@@ -181,7 +206,7 @@ export const BookDetailPage = () => {
 
               {editBookMode ? (
                 <form
-                  className="grid gap-4 md:grid-cols-2"
+                  className="mt-6 grid gap-4 md:grid-cols-2"
                   onSubmit={(event) => {
                     event.preventDefault();
                     updateBookMutation.mutate(bookForm, {
@@ -212,10 +237,13 @@ export const BookDetailPage = () => {
                     ['openLibraryId', 'Open Library ID'],
                     ['dateRead', 'Date Read'],
                   ].map(([field, label]) => (
-                    <label className="block text-sm text-slate-300" key={field}>
+                    <label
+                      className="block text-sm text-[color:var(--color-text-secondary)]"
+                      key={field}
+                    >
                       {label}
                       <input
-                        className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                        className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                         value={bookForm[field as keyof typeof bookForm]}
                         onChange={(event) =>
                           setBookForm((current) => ({
@@ -226,10 +254,10 @@ export const BookDetailPage = () => {
                       />
                     </label>
                   ))}
-                  <label className="block text-sm text-slate-300">
+                  <label className="block text-sm text-[color:var(--color-text-secondary)]">
                     Status
                     <select
-                      className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                      className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                       value={bookForm.status}
                       onChange={(event) =>
                         setBookForm((current) => ({
@@ -241,16 +269,16 @@ export const BookDetailPage = () => {
                       {['wishlist', 'pipeline', 'reading', 'read'].map(
                         (status) => (
                           <option key={status} value={status}>
-                            {status}
+                            {statusLabel(status as BookStatus)}
                           </option>
                         ),
                       )}
                     </select>
                   </label>
-                  <label className="block text-sm text-slate-300 md:col-span-2">
+                  <label className="block text-sm text-[color:var(--color-text-secondary)] md:col-span-2">
                     Description
                     <textarea
-                      className="mt-2 min-h-28 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                      className="mt-2 min-h-28 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                       value={bookForm.description}
                       onChange={(event) =>
                         setBookForm((current) => ({
@@ -260,15 +288,15 @@ export const BookDetailPage = () => {
                       }
                     />
                   </label>
-                  <div className="flex gap-3 md:col-span-2">
+                  <div className="flex flex-wrap gap-3 md:col-span-2">
                     <button
-                      className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+                      className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
                       type="submit"
                     >
                       Save changes
                     </button>
                     <button
-                      className="rounded-xl border border-rose-600/40 px-4 py-2 text-sm text-rose-300 hover:bg-rose-500/10"
+                      className="pressable rounded-[var(--radius-lg)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-error-base)] hover:border-[rgba(160,69,82,0.28)]"
                       onClick={() =>
                         deleteBookMutation.mutate(undefined, {
                           onSuccess: () => {
@@ -302,35 +330,41 @@ export const BookDetailPage = () => {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-          <h2 className="text-xl font-semibold text-white">Ratings</h2>
-          <div className="mt-4 space-y-3">
+      <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="surface-base px-6 py-6">
+          <h2 className="section-title text-[1.45rem]">Ratings</h2>
+          <div className="mt-5 space-y-3">
             {book.ratings.length ? (
               book.ratings.map((rating) => (
                 <div
-                  className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3"
+                  className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.72)] px-4 py-4"
                   key={rating.id}
                 >
-                  <div>
-                    <p className="font-medium text-white">{rating.userName}</p>
-                    <p className="text-xs text-slate-500">
-                      Updated {new Date(rating.updatedAt).toLocaleString()}
-                    </p>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="font-medium text-[color:var(--color-text-primary)]">
+                        {rating.userName}
+                      </p>
+                      <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
+                        Updated {new Date(rating.updatedAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <StarRating value={rating.score} />
                   </div>
-                  <StarRating value={rating.score} />
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-400">No ratings yet.</p>
+              <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                No ratings yet.
+              </p>
             )}
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-          <h2 className="text-xl font-semibold text-white">Notes & comments</h2>
+        <div className="surface-base px-6 py-6">
+          <h2 className="section-title text-[1.45rem]">Notes & comments</h2>
           <form
-            className="mt-4 space-y-3"
+            className="mt-5 space-y-3"
             onSubmit={(event) => {
               event.preventDefault();
               createCommentMutation.mutate(
@@ -361,12 +395,12 @@ export const BookDetailPage = () => {
             }}
           >
             <textarea
-              className="min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+              className="min-h-28 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
               placeholder="Share a thought about this book..."
               value={commentText}
               onChange={(event) => setCommentText(event.target.value)}
             />
-            <label className="flex items-center gap-2 text-sm text-slate-300">
+            <label className="flex items-center gap-2 text-sm text-[color:var(--color-text-secondary)]">
               <input
                 checked={isPrivate}
                 onChange={(event) => setIsPrivate(event.target.checked)}
@@ -375,7 +409,7 @@ export const BookDetailPage = () => {
               Save as private note
             </label>
             <button
-              className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+              className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               Post
@@ -386,17 +420,17 @@ export const BookDetailPage = () => {
             {book.comments.length ? (
               book.comments.map((comment) => (
                 <article
-                  className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
+                  className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.74)] p-4"
                   key={comment.id}
                 >
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-white">
+                      <p className="font-medium text-[color:var(--color-text-primary)]">
                         {comment.userName}
                       </p>
-                      <p className="text-xs text-slate-500">
-                        {comment.isPrivate ? 'Private note' : 'Public comment'}{' '}
-                        · {new Date(comment.createdAt).toLocaleString()}
+                      <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
+                        {comment.isPrivate ? 'Private note' : 'Public comment'} ·{' '}
+                        {new Date(comment.createdAt).toLocaleString()}
                       </p>
                     </div>
                     {comment.userId === authQuery.data?.id ||
@@ -404,7 +438,7 @@ export const BookDetailPage = () => {
                       <div className="flex gap-2">
                         {comment.userId === authQuery.data?.id ? (
                           <button
-                            className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300"
+                            className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] px-2.5 py-1.5 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                             onClick={() => {
                               setEditCommentId(comment.id);
                               setEditText(comment.text);
@@ -415,7 +449,7 @@ export const BookDetailPage = () => {
                           </button>
                         ) : null}
                         <button
-                          className="rounded-lg border border-rose-600/40 px-2 py-1 text-xs text-rose-300"
+                          className="pressable rounded-[var(--radius-md)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-2.5 py-1.5 text-xs font-medium text-[color:var(--color-error-base)]"
                           onClick={() =>
                             deleteCommentMutation.mutate(comment.id, {
                               onSuccess: () => {
@@ -473,19 +507,19 @@ export const BookDetailPage = () => {
                       }}
                     >
                       <textarea
-                        className="min-h-24 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-white"
+                        className="min-h-24 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                         value={editText}
                         onChange={(event) => setEditText(event.target.value)}
                       />
                       <div className="flex gap-2">
                         <button
-                          className="rounded-lg bg-violet-500 px-3 py-2 text-xs text-white"
+                          className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-inverse)]"
                           type="submit"
                         >
                           Save
                         </button>
                         <button
-                          className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300"
+                          className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                           onClick={() => setEditCommentId(null)}
                           type="button"
                         >
@@ -494,14 +528,16 @@ export const BookDetailPage = () => {
                       </div>
                     </form>
                   ) : (
-                    <p className="mt-3 text-sm leading-6 text-slate-300">
+                    <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
                       {comment.text}
                     </p>
                   )}
                 </article>
               ))
             ) : (
-              <p className="text-sm text-slate-400">No comments yet.</p>
+              <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                No comments yet.
+              </p>
             )}
           </div>
         </div>
