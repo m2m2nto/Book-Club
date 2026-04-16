@@ -1,3 +1,4 @@
+import { CalendarDays, Clock3, MapPin } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -10,6 +11,9 @@ import {
   useDateSurveys,
   useMeetings,
 } from '../hooks/use-meetings';
+
+const statusLabel = (status: string) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
 
 export const MeetingsPage = () => {
   const authQuery = useAuth();
@@ -57,20 +61,46 @@ export const MeetingsPage = () => {
   );
 
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-violet-300">
-          Meetings
-        </p>
-        <h1 className="text-3xl font-semibold text-white">
-          Schedule, date polls, and RSVPs
-        </h1>
-      </header>
+    <div className="page-stack">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
+        <div className="page-header fade-rise max-w-3xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Meetings</p>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            Keep schedules, date polls, and RSVPs in one calm planning flow.
+          </h1>
+          <p className="body-copy text-[1.02rem]">
+            See what is upcoming, what still needs availability, and what the
+            club has already completed.
+          </p>
+        </div>
+
+        <div className="surface-base fade-rise px-5 py-5">
+          <p className="eyebrow">At a glance</p>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Open date polls
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                {dateSurveysQuery.data?.length ?? 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Upcoming meetings
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                {upcoming.length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {isAdmin ? (
         <section className="grid gap-6 xl:grid-cols-2">
           <form
-            className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+            className="surface-base space-y-5 p-6"
             onSubmit={(event) => {
               event.preventDefault();
               createMeetingMutation.mutate(
@@ -109,16 +139,28 @@ export const MeetingsPage = () => {
               );
             }}
           >
-            <h2 className="text-lg font-semibold text-white">Create meeting</h2>
+            <div className="page-header gap-3">
+              <p className="eyebrow">Create meeting</p>
+              <div className="space-y-2">
+                <h2 className="section-title">Schedule a confirmed gathering</h2>
+                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                  Put the next session on the calendar and optionally connect it
+                  to a book.
+                </p>
+              </div>
+            </div>
             {[
               ['date', 'Date'],
               ['time', 'Time'],
               ['location', 'Location'],
             ].map(([field, label]) => (
-              <label className="block text-sm text-slate-300" key={field}>
+              <label
+                className="block text-sm text-[color:var(--color-text-secondary)]"
+                key={field}
+              >
                 {label}
                 <input
-                  className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                  className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                   type={
                     field === 'date'
                       ? 'date'
@@ -136,10 +178,10 @@ export const MeetingsPage = () => {
                 />
               </label>
             ))}
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Book
               <select
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={meetingForm.bookId}
                 onChange={(event) =>
                   setMeetingForm((current) => ({
@@ -157,7 +199,7 @@ export const MeetingsPage = () => {
               </select>
             </label>
             <button
-              className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createMeetingMutation.isPending ? 'Saving...' : 'Create meeting'}
@@ -165,7 +207,7 @@ export const MeetingsPage = () => {
           </form>
 
           <form
-            className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+            className="surface-base space-y-5 p-6"
             onSubmit={(event) => {
               event.preventDefault();
               createDateSurveyMutation.mutate(
@@ -211,13 +253,20 @@ export const MeetingsPage = () => {
               );
             }}
           >
-            <h2 className="text-lg font-semibold text-white">
-              Create date survey
-            </h2>
-            <label className="block text-sm text-slate-300">
+            <div className="page-header gap-3">
+              <p className="eyebrow">Create date poll</p>
+              <div className="space-y-2">
+                <h2 className="section-title">Start with availability first</h2>
+                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                  Collect a couple of possible dates before confirming the final
+                  meeting.
+                </p>
+              </div>
+            </div>
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Title
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={dateSurveyForm.title}
                 onChange={(event) =>
                   setDateSurveyForm((current) => ({
@@ -227,10 +276,10 @@ export const MeetingsPage = () => {
                 }
               />
             </label>
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Closes at
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 type="datetime-local"
                 value={dateSurveyForm.closesAt}
                 onChange={(event) =>
@@ -246,10 +295,13 @@ export const MeetingsPage = () => {
                 ['time', 'Time'],
                 ['location', 'Location'],
               ].map(([field, label]) => (
-                <label className="block text-sm text-slate-300" key={field}>
+                <label
+                  className="block text-sm text-[color:var(--color-text-secondary)]"
+                  key={field}
+                >
                   {label}
                   <input
-                    className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                     type={field === 'time' ? 'time' : 'text'}
                     value={dateSurveyForm[field as 'time' | 'location']}
                     onChange={(event) =>
@@ -262,10 +314,10 @@ export const MeetingsPage = () => {
                 </label>
               ))}
             </div>
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Book
               <select
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={dateSurveyForm.bookId}
                 onChange={(event) =>
                   setDateSurveyForm((current) => ({
@@ -282,12 +334,15 @@ export const MeetingsPage = () => {
                 ))}
               </select>
             </label>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {dateSurveyForm.dates.map((value, index) => (
-                <label className="block text-sm text-slate-300" key={index}>
+                <label
+                  className="block text-sm text-[color:var(--color-text-secondary)]"
+                  key={index}
+                >
                   Option {index + 1}
                   <input
-                    className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                    className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                     type="date"
                     value={value}
                     onChange={(event) =>
@@ -303,7 +358,7 @@ export const MeetingsPage = () => {
               ))}
             </div>
             <button
-              className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createDateSurveyMutation.isPending
@@ -315,11 +370,14 @@ export const MeetingsPage = () => {
       ) : null}
 
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">
-            Open date surveys
-          </h2>
-          <span className="text-sm text-slate-500">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="section-title text-[1.5rem]">Open date surveys</h2>
+            <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+              Availability polls that still need input or confirmation.
+            </p>
+          </div>
+          <span className="text-sm text-[color:var(--color-text-muted)]">
             {dateSurveysQuery.data?.length ?? 0} total
           </span>
         </div>
@@ -327,72 +385,119 @@ export const MeetingsPage = () => {
           {dateSurveysQuery.data?.map((survey) => (
             <Link
               key={survey.id}
-              className="block rounded-3xl border border-slate-800 bg-slate-900/70 p-5 hover:bg-slate-900"
+              className="surface-base hover-lift block px-5 py-5"
               to={`/date-surveys/${survey.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
                   {survey.title}
                 </h3>
-                <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                  {survey.status}
+                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                  {statusLabel(survey.status)}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
                 Closes {new Date(survey.closesAt).toLocaleString()}
               </p>
             </Link>
           ))}
+          {!dateSurveysQuery.data?.length ? (
+            <div className="surface-base px-5 py-6 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              No open date surveys yet.
+            </div>
+          ) : null}
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-white">Upcoming meetings</h2>
+        <div>
+          <h2 className="section-title text-[1.5rem]">Upcoming meetings</h2>
+          <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+            Confirmed gatherings the club can still prepare for.
+          </p>
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           {upcoming.map((meeting) => (
             <Link
               key={meeting.id}
-              className="block rounded-3xl border border-slate-800 bg-slate-900/70 p-5 hover:bg-slate-900"
+              className="surface-base hover-lift block px-5 py-5"
               to={`/meetings/${meeting.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
                   {meeting.bookTitle ?? 'General meeting'}
                 </h3>
-                <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                  {meeting.status}
+                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                  {statusLabel(meeting.status)}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
-                {meeting.date} · {meeting.time} · {meeting.location}
-              </p>
+              <div className="mt-4 grid gap-2 text-sm text-[color:var(--color-text-secondary)]">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock3 className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.time}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.location}</span>
+                </div>
+              </div>
             </Link>
           ))}
+          {!upcoming.length ? (
+            <div className="surface-base px-5 py-6 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              No upcoming meetings yet.
+            </div>
+          ) : null}
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-white">Past meetings</h2>
+        <div>
+          <h2 className="section-title text-[1.5rem]">Past meetings</h2>
+          <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+            Previous discussions, completed sessions, and archived planning.
+          </p>
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           {past.map((meeting) => (
             <Link
               key={meeting.id}
-              className="block rounded-3xl border border-slate-800 bg-slate-900/70 p-5 hover:bg-slate-900"
+              className="surface-base hover-lift block px-5 py-5"
               to={`/meetings/${meeting.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
                   {meeting.bookTitle ?? 'General meeting'}
                 </h3>
-                <span className="rounded-full bg-slate-800 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
-                  {meeting.status}
+                <span className="rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]">
+                  {statusLabel(meeting.status)}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
-                {meeting.date} · {meeting.time} · {meeting.location}
-              </p>
+              <div className="mt-4 grid gap-2 text-sm text-[color:var(--color-text-secondary)]">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock3 className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.time}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[color:var(--color-text-muted)]" />
+                  <span>{meeting.location}</span>
+                </div>
+              </div>
             </Link>
           ))}
+          {!past.length ? (
+            <div className="surface-base px-5 py-6 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              No past meetings yet.
+            </div>
+          ) : null}
         </div>
       </section>
     </div>
