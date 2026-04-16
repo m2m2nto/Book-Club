@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { RefreshCw, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 
 import { useToast } from '../components/ui/toast-provider';
@@ -85,28 +86,53 @@ export const AdminUsersPage = () => {
 
   if (authQuery.data?.role !== 'admin') {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-slate-300">
+      <div className="surface-base px-6 py-8 text-sm text-[color:var(--color-text-secondary)]">
         Admin access is required to manage users.
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-violet-300">
-          Admin tools
-        </p>
-        <h1 className="text-3xl font-semibold text-white">User management</h1>
-        <p className="text-sm text-slate-400">
-          Invite members, promote admins, deactivate access, and restore
-          soft-deleted accounts.
-        </p>
-      </header>
+    <div className="page-stack">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
+        <div className="page-header fade-rise max-w-3xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Admin tools</p>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            Manage member access with a lighter, clearer operations view.
+          </h1>
+          <p className="body-copy text-[1.02rem]">
+            Invite members, adjust roles, revoke access, and restore soft-deleted
+            accounts without losing the thread of who can sign in.
+          </p>
+        </div>
 
-      <section className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
+        <div className="surface-base fade-rise px-5 py-5">
+          <p className="eyebrow">At a glance</p>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Current users
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                {usersQuery.data?.length ?? 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Admin role
+              </p>
+              <p className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-text-accent)]">
+                <ShieldCheck className="h-4 w-4" />
+                Required
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[24rem_minmax(0,1fr)] xl:items-start">
         <form
-          className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+          className="surface-base space-y-5 p-6"
           onSubmit={(event) => {
             event.preventDefault();
             createUserMutation.mutate(undefined, {
@@ -121,17 +147,20 @@ export const AdminUsersPage = () => {
             });
           }}
         >
-          <div>
-            <h2 className="text-lg font-semibold text-white">Add user</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Users must be invited before they can log in with Google.
-            </p>
+          <div className="page-header gap-3">
+            <p className="eyebrow">Add user</p>
+            <div className="space-y-2">
+              <h2 className="section-title">Invite someone new</h2>
+              <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                Users must be invited before they can sign in with Google.
+              </p>
+            </div>
           </div>
 
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm text-[color:var(--color-text-secondary)]">
             Name
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none focus:border-violet-400"
+              className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
               value={form.name}
               onChange={(event) =>
                 setForm((current) => ({ ...current, name: event.target.value }))
@@ -139,10 +168,10 @@ export const AdminUsersPage = () => {
             />
           </label>
 
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm text-[color:var(--color-text-secondary)]">
             Email
             <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none focus:border-violet-400"
+              className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
               type="email"
               value={form.email}
               onChange={(event) =>
@@ -154,10 +183,10 @@ export const AdminUsersPage = () => {
             />
           </label>
 
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm text-[color:var(--color-text-secondary)]">
             Role
             <select
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white outline-none focus:border-violet-400"
+              className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
               value={form.role}
               onChange={(event) =>
                 setForm((current) => ({
@@ -172,58 +201,73 @@ export const AdminUsersPage = () => {
           </label>
 
           <button
-            className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+            className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             type="submit"
           >
             {createUserMutation.isPending ? 'Saving...' : 'Add user'}
           </button>
-
         </form>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Current users</h2>
+        <section className="surface-base p-6">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="section-title">Current users</h2>
+              <p className="mt-2 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                Review access state, roles, and soft-deleted accounts.
+              </p>
+            </div>
             <button
-              className="rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+              className="pressable inline-flex items-center gap-2 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
               onClick={() => usersQuery.refetch()}
               type="button"
             >
+              <RefreshCw className="h-4 w-4" />
               Refresh
             </button>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-slate-300">
-              <thead className="text-xs uppercase tracking-[0.2em] text-slate-500">
+            <table className="min-w-full text-left text-sm text-[color:var(--color-text-secondary)]">
+              <thead className="text-xs uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                 <tr>
-                  <th className="pb-3">User</th>
-                  <th className="pb-3">Role</th>
-                  <th className="pb-3">Status</th>
-                  <th className="pb-3 text-right">Actions</th>
+                  <th className="pb-3 font-medium">User</th>
+                  <th className="pb-3 font-medium">Role</th>
+                  <th className="pb-3 font-medium">Status</th>
+                  <th className="pb-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-[color:var(--color-border-soft)]">
                 {usersQuery.data?.map((user) => {
                   const isDeleted = Boolean(user.deletedAt);
                   return (
                     <tr key={user.id}>
                       <td className="py-4">
-                        <p className="font-medium text-white">{user.name}</p>
-                        <p className="text-xs text-slate-500">{user.email}</p>
+                        <p className="font-medium text-[color:var(--color-text-primary)]">
+                          {user.name}
+                        </p>
+                        <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
+                          {user.email}
+                        </p>
                       </td>
                       <td className="py-4 capitalize">{user.role}</td>
                       <td className="py-4">
-                        {isDeleted
-                          ? 'Deleted'
-                          : user.active
-                            ? 'Active'
-                            : 'Inactive'}
+                        <span
+                          className={
+                            isDeleted
+                              ? 'rounded-full border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-error-base)]'
+                              : user.active
+                                ? 'rounded-full border border-[rgba(45,107,79,0.16)] bg-[color:var(--color-success-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-success-base)]'
+                                : 'rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]'
+                          }
+                        >
+                          {isDeleted ? 'Deleted' : user.active ? 'Active' : 'Inactive'}
+                        </span>
                       </td>
                       <td className="py-4">
                         <div className="flex justify-end gap-2">
                           {!isDeleted ? (
                             <button
-                              className="rounded-lg border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800"
+                              className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                               onClick={() =>
                                 patchUserMutation.mutate({
                                   id: user.id,
@@ -237,21 +281,17 @@ export const AdminUsersPage = () => {
                           ) : null}
                           {isDeleted ? (
                             <button
-                              className="rounded-lg border border-emerald-600/40 px-3 py-2 text-xs text-emerald-300 hover:bg-emerald-500/10"
-                              onClick={() =>
-                                reactivateUserMutation.mutate(user.id)
-                              }
+                              className="pressable rounded-[var(--radius-md)] border border-[rgba(45,107,79,0.16)] bg-[color:var(--color-success-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-success-base)]"
+                              onClick={() => reactivateUserMutation.mutate(user.id)}
                               type="button"
                             >
                               Reactivate
                             </button>
                           ) : (
                             <button
-                              className="rounded-lg border border-rose-600/40 px-3 py-2 text-xs text-rose-300 hover:bg-rose-500/10"
+                              className="pressable rounded-[var(--radius-md)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-error-base)]"
                               onClick={() => {
-                                if (
-                                  window.confirm(`Soft-delete ${user.name}?`)
-                                ) {
+                                if (window.confirm(`Soft-delete ${user.name}?`)) {
                                   deleteUserMutation.mutate(user.id);
                                 }
                               }}
