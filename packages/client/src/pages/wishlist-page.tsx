@@ -1,3 +1,4 @@
+import { Search, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { useToast } from '../components/ui/toast-provider';
@@ -18,23 +19,41 @@ export const WishlistPage = () => {
   });
   const searchQuery = useSearchBooks(search);
 
-  return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-violet-300">
-          Wishlist
-        </p>
-        <h1 className="text-3xl font-semibold text-white">
-          Suggest future reads
-        </h1>
-        <p className="mt-2 text-sm text-slate-400">
-          Any member can add a book suggestion for future surveys.
-        </p>
-      </header>
+  const featuredSuggestion = wishlistQuery.data?.[0] ?? null;
+  const remainingSuggestions = featuredSuggestion
+    ? wishlistQuery.data?.slice(1) ?? []
+    : wishlistQuery.data ?? [];
 
-      <section className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+  return (
+    <div className="page-stack">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
+        <div className="page-header fade-rise max-w-3xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Wishlist</p>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            Keep future reads in one thoughtful, visible suggestion pool.
+          </h1>
+          <p className="body-copy text-[1.02rem]">
+            Any member can add a book idea here before it becomes part of a
+            survey.
+          </p>
+        </div>
+
+        <div className="surface-base fade-rise px-5 py-5">
+          <p className="eyebrow">At a glance</p>
+          <div className="mt-4">
+            <p className="text-sm text-[color:var(--color-text-secondary)]">
+              Wishlist suggestions
+            </p>
+            <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              {wishlistQuery.data?.length ?? 0}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[24rem_minmax(0,1fr)] xl:items-start">
         <form
-          className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+          className="surface-base space-y-5 p-6"
           onSubmit={(event) => {
             event.preventDefault();
             createMutation.mutate(form, {
@@ -63,23 +82,34 @@ export const WishlistPage = () => {
             });
           }}
         >
-          <h2 className="text-lg font-semibold text-white">Add suggestion</h2>
+          <div className="page-header gap-3">
+            <p className="eyebrow">Add suggestion</p>
+            <div className="space-y-2">
+              <h2 className="section-title">Suggest a future read</h2>
+              <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                Search Open Library or enter the details manually.
+              </p>
+            </div>
+          </div>
 
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm text-[color:var(--color-text-secondary)]">
             Search Open Library
-            <input
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
+            <div className="relative mt-2">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--color-text-muted)]" />
+              <input
+                className="w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] py-2.5 pl-10 pr-3 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </div>
           </label>
 
           {searchQuery.data?.length ? (
-            <div className="max-h-64 space-y-2 overflow-auto rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+            <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] p-3">
               {searchQuery.data.map((result) => (
                 <button
                   key={`${result.openLibraryId ?? result.title}-${result.author}`}
-                  className="w-full rounded-xl border border-slate-800 px-3 py-3 text-left hover:bg-slate-900"
+                  className="pressable w-full rounded-[var(--radius-lg)] border border-transparent bg-[rgba(255,255,255,0.82)] px-3 py-3 text-left hover:border-[color:var(--color-border-soft)] hover:bg-[rgba(255,255,255,0.98)]"
                   onClick={() =>
                     setForm({
                       title: result.title,
@@ -91,8 +121,12 @@ export const WishlistPage = () => {
                   }
                   type="button"
                 >
-                  <p className="font-medium text-white">{result.title}</p>
-                  <p className="text-xs text-slate-400">{result.author}</p>
+                  <p className="font-medium text-[color:var(--color-text-primary)]">
+                    {result.title}
+                  </p>
+                  <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
+                    {result.author}
+                  </p>
                 </button>
               ))}
             </div>
@@ -104,10 +138,13 @@ export const WishlistPage = () => {
             ['coverUrl', 'Cover URL'],
             ['openLibraryId', 'Open Library ID'],
           ].map(([field, label]) => (
-            <label className="block text-sm text-slate-300" key={field}>
+            <label
+              className="block text-sm text-[color:var(--color-text-secondary)]"
+              key={field}
+            >
               {label}
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={form[field as keyof typeof form]}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -119,10 +156,10 @@ export const WishlistPage = () => {
             </label>
           ))}
 
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm text-[color:var(--color-text-secondary)]">
             Description
             <textarea
-              className="mt-2 min-h-28 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+              className="mt-2 min-h-28 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
               value={form.description}
               onChange={(event) =>
                 setForm((current) => ({
@@ -134,44 +171,90 @@ export const WishlistPage = () => {
           </label>
 
           <button
-            className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+            className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             type="submit"
           >
             {createMutation.isPending ? 'Saving...' : 'Add to wishlist'}
           </button>
         </form>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {wishlistQuery.data?.map((book) => (
-            <article
-              key={book.id}
-              className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70"
-            >
-              <div className="aspect-[4/5] bg-slate-950">
-                {book.coverUrl ? (
+        <div className="space-y-6">
+          {featuredSuggestion ? (
+            <article className="surface-tint fade-rise grid overflow-hidden lg:grid-cols-[220px_minmax(0,1fr)]">
+              <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)] lg:h-full">
+                {featuredSuggestion.coverUrl ? (
                   <img
-                    alt={book.title}
+                    alt={featuredSuggestion.title}
                     className="h-full w-full object-cover"
-                    src={book.coverUrl}
+                    src={featuredSuggestion.coverUrl}
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center px-6 text-center text-slate-500">
+                  <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
                     No cover image
                   </div>
                 )}
               </div>
-              <div className="space-y-2 p-5">
-                <h2 className="text-lg font-semibold text-white">
-                  {book.title}
-                </h2>
-                <p className="text-sm text-slate-400">{book.author}</p>
-                <p className="line-clamp-3 text-sm text-slate-500">
-                  {book.description ?? 'No description yet.'}
-                </p>
+              <div className="flex flex-col justify-between px-6 py-6 lg:px-8 lg:py-8">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
+                    <Sparkles className="h-4 w-4" />
+                    Recently suggested
+                  </div>
+                  <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                    {featuredSuggestion.title}
+                  </h2>
+                  <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
+                    {featuredSuggestion.author}
+                  </p>
+                  <p className="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                    {featuredSuggestion.description ?? 'No description yet.'}
+                  </p>
+                </div>
               </div>
             </article>
-          ))}
-        </section>
+          ) : null}
+
+          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {remainingSuggestions.map((book) => (
+              <article
+                key={book.id}
+                className="surface-base overflow-hidden"
+              >
+                <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
+                  {book.coverUrl ? (
+                    <img
+                      alt={book.title}
+                      className="h-full w-full object-cover"
+                      src={book.coverUrl}
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
+                      No cover image
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-3 p-5">
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                      {book.title}
+                    </h2>
+                    <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
+                      {book.author}
+                    </p>
+                  </div>
+                  <p className="line-clamp-3 text-sm leading-6 text-[color:var(--color-text-secondary)]">
+                    {book.description ?? 'No description yet.'}
+                  </p>
+                </div>
+              </article>
+            ))}
+            {!wishlistQuery.data?.length ? (
+              <div className="surface-base px-6 py-8 text-sm leading-7 text-[color:var(--color-text-secondary)] sm:col-span-2 xl:col-span-3">
+                No suggestions yet. Add the first future read.
+              </div>
+            ) : null}
+          </section>
+        </div>
       </section>
     </div>
   );
