@@ -1,10 +1,13 @@
+import { Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useToast } from '../components/ui/toast-provider';
 import { useAuth } from '../hooks/use-auth';
-import { useWishlist } from '../hooks/use-surveys';
-import { useCreateSurvey, useBookSurveys } from '../hooks/use-surveys';
+import { useBookSurveys, useCreateSurvey, useWishlist } from '../hooks/use-surveys';
+
+const statusLabel = (status: string) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
 
 export const SurveysPage = () => {
   const authQuery = useAuth();
@@ -25,20 +28,46 @@ export const SurveysPage = () => {
   );
 
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-violet-300">
-          Book surveys
-        </p>
-        <h1 className="text-3xl font-semibold text-white">
-          Pick the next read together
-        </h1>
-      </header>
+    <div className="page-stack">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
+        <div className="page-header fade-rise max-w-3xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Book surveys</p>
+          <h1 className="editorial-title text-balance max-w-4xl">
+            Make the next club read feel deliberate, visible, and collaborative.
+          </h1>
+          <p className="body-copy text-[1.02rem]">
+            Turn wishlist ideas into a vote and keep the selection process easy
+            to follow.
+          </p>
+        </div>
+
+        <div className="surface-base fade-rise px-5 py-5">
+          <p className="eyebrow">At a glance</p>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Surveys
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                {surveysQuery.data?.length ?? 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-[color:var(--color-text-secondary)]">
+                Wishlist titles
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                {wishlistBooks.length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {isAdmin ? (
-        <section className="grid gap-6 lg:grid-cols-[400px_minmax(0,1fr)]">
+        <section className="grid gap-6 xl:grid-cols-[24rem_minmax(0,1fr)] xl:items-start">
           <form
-            className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6"
+            className="surface-base space-y-5 p-6"
             onSubmit={(event) => {
               event.preventDefault();
               createSurveyMutation.mutate(
@@ -68,28 +97,37 @@ export const SurveysPage = () => {
               );
             }}
           >
-            <h2 className="text-lg font-semibold text-white">Create survey</h2>
-            <label className="block text-sm text-slate-300">
+            <div className="page-header gap-3">
+              <p className="eyebrow">Create survey</p>
+              <div className="space-y-2">
+                <h2 className="section-title">Build the next vote</h2>
+                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                  Select wishlist books, define the deadline, and choose how many
+                  votes each member can rank.
+                </p>
+              </div>
+            </div>
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Title
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
             </label>
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Closes at
               <input
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 type="datetime-local"
                 value={closesAt}
                 onChange={(event) => setClosesAt(event.target.value)}
               />
             </label>
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-[color:var(--color-text-secondary)]">
               Max votes
               <select
-                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                className="mt-2 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm text-[color:var(--color-text-primary)] outline-none focus:border-[color:var(--color-border-strong)] focus:ring-2 focus:ring-[rgba(42,93,176,0.12)]"
                 value={maxVotes}
                 onChange={(event) => setMaxVotes(Number(event.target.value))}
               >
@@ -100,39 +138,41 @@ export const SurveysPage = () => {
                 ))}
               </select>
             </label>
-            <div className="space-y-2 rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+            <div className="space-y-3 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] p-3.5">
               {wishlistBooks.length ? (
                 wishlistBooks.map((book) => (
-                <label
-                  className="flex items-start gap-3 text-sm text-slate-300"
-                  key={book.id}
-                >
-                  <input
-                    checked={selectedBookIds.includes(book.id)}
-                    onChange={(event) =>
-                      setSelectedBookIds((current) =>
-                        event.target.checked
-                          ? [...current, book.id]
-                          : current.filter((id) => id !== book.id),
-                      )
-                    }
-                    type="checkbox"
-                  />
-                  <span>
-                    <span className="font-medium text-white">{book.title}</span>
-                    <br />
-                    {book.author}
-                  </span>
-                </label>
+                  <label
+                    className="flex items-start gap-3 rounded-[var(--radius-lg)] bg-[rgba(255,255,255,0.82)] px-3 py-3 text-sm text-[color:var(--color-text-secondary)]"
+                    key={book.id}
+                  >
+                    <input
+                      checked={selectedBookIds.includes(book.id)}
+                      onChange={(event) =>
+                        setSelectedBookIds((current) =>
+                          event.target.checked
+                            ? [...current, book.id]
+                            : current.filter((id) => id !== book.id),
+                        )
+                      }
+                      type="checkbox"
+                    />
+                    <span>
+                      <span className="font-medium text-[color:var(--color-text-primary)]">
+                        {book.title}
+                      </span>
+                      <br />
+                      {book.author}
+                    </span>
+                  </label>
                 ))
               ) : (
-                <p className="text-sm text-slate-400">
+                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
                   Add wishlist books before creating a survey.
                 </p>
               )}
             </div>
             <button
-              className="w-full rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createSurveyMutation.isPending ? 'Saving...' : 'Create survey'}
@@ -140,55 +180,71 @@ export const SurveysPage = () => {
           </form>
 
           <div className="space-y-4">
-            {surveysQuery.data?.map((survey) => (
+            {surveysQuery.data?.length ? (
+              surveysQuery.data.map((survey) => (
+                <Link
+                  key={survey.id}
+                  className="surface-base hover-lift block px-6 py-6"
+                  to={`/surveys/${survey.id}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
+                        <Sparkles className="h-4 w-4" />
+                        Vote window
+                      </div>
+                      <h2 className="mt-4 text-[1.65rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                        {survey.title}
+                      </h2>
+                      <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                        Closes {new Date(survey.closesAt).toLocaleString()} · Max
+                        votes {survey.maxVotes}
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                      {statusLabel(survey.status)}
+                    </span>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="surface-base px-6 py-8 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                No surveys yet. Start the first vote from wishlist books.
+              </div>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section className="space-y-4">
+          {surveysQuery.data?.length ? (
+            surveysQuery.data.map((survey) => (
               <Link
                 key={survey.id}
-                className="block rounded-3xl border border-slate-800 bg-slate-900/70 p-6 hover:bg-slate-900"
+                className="surface-base hover-lift block px-6 py-6"
                 to={`/surveys/${survey.id}`}
               >
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-white">
+                    <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                       {survey.title}
                     </h2>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
                       Closes {new Date(survey.closesAt).toLocaleString()} · Max
                       votes {survey.maxVotes}
                     </p>
                   </div>
-                  <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                    {survey.status}
+                  <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                    {statusLabel(survey.status)}
                   </span>
                 </div>
               </Link>
-            ))}
-          </div>
+            ))
+          ) : (
+            <div className="surface-base px-6 py-8 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              No surveys are open right now.
+            </div>
+          )}
         </section>
-      ) : (
-        <div className="space-y-4">
-          {surveysQuery.data?.map((survey) => (
-            <Link
-              key={survey.id}
-              className="block rounded-3xl border border-slate-800 bg-slate-900/70 p-6 hover:bg-slate-900"
-              to={`/surveys/${survey.id}`}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">
-                    {survey.title}
-                  </h2>
-                  <p className="mt-2 text-sm text-slate-400">
-                    Closes {new Date(survey.closesAt).toLocaleString()} · Max
-                    votes {survey.maxVotes}
-                  </p>
-                </div>
-                <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-                  {survey.status}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
       )}
     </div>
   );

@@ -10,6 +10,9 @@ import {
   useVoteSurvey,
 } from '../hooks/use-surveys';
 
+const statusLabel = (status: string) =>
+  status.charAt(0).toUpperCase() + status.slice(1);
+
 export const SurveyDetailPage = () => {
   const { id } = useParams();
   const surveyId = Number(id);
@@ -31,7 +34,7 @@ export const SurveyDetailPage = () => {
 
   if (!survey) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-slate-300">
+      <div className="surface-base px-6 py-8 text-sm text-[color:var(--color-text-secondary)]">
         Loading survey...
       </div>
     );
@@ -67,26 +70,37 @@ export const SurveyDetailPage = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="page-stack">
       <Link
-        className="text-sm text-violet-300 hover:text-violet-200"
+        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/surveys"
       >
         ← Back to surveys
       </Link>
 
-      <header className="space-y-2">
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-semibold text-white">{survey.title}</h1>
-          <span className="rounded-full bg-violet-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-violet-200">
-            {survey.status}
-          </span>
+      <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
+        <div className="page-header gap-4">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+              {statusLabel(survey.status)}
+            </span>
+            <span className="text-[color:var(--color-text-muted)]">
+              Max votes {survey.maxVotes}
+            </span>
+          </div>
+          <div className="space-y-3">
+            <h1 className="editorial-title text-balance max-w-4xl">
+              {survey.title}
+            </h1>
+            <p className="body-copy max-w-3xl text-[1rem]">
+              Closes {new Date(survey.closesAt).toLocaleString()}.
+              {survey.status === 'open'
+                ? ' Rank your choices in order of preference.'
+                : ' Results are now visible to the club.'}
+            </p>
+          </div>
         </div>
-        <p className="text-sm text-slate-400">
-          Closes {new Date(survey.closesAt).toLocaleString()} · Max votes{' '}
-          {survey.maxVotes}
-        </p>
-      </header>
+      </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {survey.options.map((option) => {
@@ -94,9 +108,9 @@ export const SurveyDetailPage = () => {
           return (
             <article
               key={option.id}
-              className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70"
+              className="surface-base overflow-hidden"
             >
-              <div className="aspect-[4/5] bg-slate-950">
+              <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
                 {option.coverUrl ? (
                   <img
                     alt={option.title}
@@ -104,20 +118,35 @@ export const SurveyDetailPage = () => {
                     src={option.coverUrl}
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center px-6 text-center text-slate-500">
+                  <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[color:var(--color-text-muted)]">
                     No cover image
                   </div>
                 )}
               </div>
-              <div className="space-y-3 p-5">
-                <h2 className="text-lg font-semibold text-white">
-                  {option.title}
-                </h2>
-                <p className="text-sm text-slate-400">{option.author}</p>
-                <p className="text-xs text-slate-500">Score: {option.score}</p>
+              <div className="space-y-4 p-5">
+                <div>
+                  <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                    {option.title}
+                  </h2>
+                  <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
+                    {option.author}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-[color:var(--color-text-muted)]">
+                    Score: {option.score}
+                  </span>
+                  {selectedIndex >= 0 ? (
+                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                      Rank #{selectedIndex + 1}
+                    </span>
+                  ) : null}
+                </div>
+
                 {survey.status === 'open' && !hasVoted ? (
                   <button
-                    className="w-full rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+                    className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                     onClick={() => {
                       setSelected((current) => {
                         if (current.includes(option.id)) {
@@ -131,21 +160,21 @@ export const SurveyDetailPage = () => {
                     }}
                     type="button"
                   >
-                    {selectedIndex >= 0
-                      ? `Selected as #${selectedIndex + 1}`
-                      : 'Select'}
+                    {selectedIndex >= 0 ? `Selected as #${selectedIndex + 1}` : 'Select'}
                   </button>
                 ) : null}
+
                 {survey.status !== 'open' ? (
-                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300">
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                     Results visible
                   </p>
                 ) : null}
+
                 {survey.status === 'tie-break-required' &&
                 isAdmin &&
                 tiedOptions.some((item) => item.bookId === option.bookId) ? (
                   <button
-                    className="w-full rounded-xl bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-400"
+                    className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
                     onClick={() =>
                       resolveTieMutation.mutate(option.bookId, {
                         onSuccess: () => {
@@ -180,7 +209,7 @@ export const SurveyDetailPage = () => {
       <div className="flex flex-wrap gap-3">
         {survey.status === 'open' && !hasVoted ? (
           <button
-            className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400"
+            className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             onClick={submitVotes}
             type="button"
           >
@@ -189,7 +218,7 @@ export const SurveyDetailPage = () => {
         ) : null}
         {isAdmin && survey.status === 'open' ? (
           <button
-            className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800"
+            className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
             onClick={() =>
               closeMutation.mutate(undefined, {
                 onSuccess: () => {
