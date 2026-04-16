@@ -13,9 +13,9 @@ This spec complements `SPEC.md`:
 ## 1. Chosen Creative Direction
 
 ### Direction
-**Airy Editorial**
+**Airy Editorial — Cool Editorial Variant**
 
-Book Club Manager should feel like a modern literary magazine translated into a product experience.
+Book Club Manager should feel like a modern editorial workspace translated into a product experience.
 
 The interface should feel:
 - bright
@@ -23,7 +23,7 @@ The interface should feel:
 - intelligent
 - premium
 - calm
-- human
+- precise
 - editorial rather than dashboard-like
 
 The product should **not** feel like:
@@ -33,7 +33,7 @@ The product should **not** feel like:
 - a dense utility panel system
 
 ### Experience statement
-The app should feel like a curated reading space: open, precise, and quietly elegant. Users should feel that the content matters, the club matters, and the software is thoughtfully designed around that reality.
+The app should feel like a curated editorial system: open, crisp, and quietly elegant. Users should feel that the content matters, the club matters, and the software is thoughtfully designed around that reality.
 
 ### Core design thesis
 In this direction, **typography and space do most of the work**.
@@ -43,6 +43,15 @@ That means:
 - clarity comes from whitespace and grouping before borders and containers
 - emphasis comes from restraint, not decoration
 - interaction polish comes from motion and micro-feedback, not visual noise
+
+### Locked stylistic decisions
+The current Airy Editorial direction is intentionally constrained:
+- **Temperature**: cool editorial
+- **Accent strategy**: quiet accent only
+- **Visual lead**: typography-led
+- **Motion**: barely there
+
+These choices should guide future design decisions unless the product direction changes explicitly.
 
 ---
 
@@ -54,7 +63,7 @@ Every screen and component should push toward these qualities:
 - **Editorial**: strong hierarchy, curated composition, content-first rhythm
 - **Minimal**: fewer visual treatments, more disciplined structure
 - **Refined**: polished but understated motion, careful spacing, crisp alignment
-- **Warmly premium**: soft neutrals and elegant typography, never cold or sterile
+- **Coolly premium**: crisp neutrals and elegant typography, never clinical or harsh
 - **Operationally clear**: admin and data-heavy flows remain dependable and legible
 
 ### Product feeling
@@ -63,7 +72,7 @@ Users should feel:
 - oriented immediately
 - calm while browsing
 - confident while acting
-- gently rewarded when completing actions
+- quietly reassured when completing actions
 
 ---
 
@@ -108,11 +117,11 @@ The app should feel designed, but never over-designed. Luxury comes from confide
 ## 4. Visual Language Overview
 
 ### Overall look
-- bright canvas
+- bright cool canvas
 - restrained surfaces
-- charcoal typography
-- one refined accent family
-- subtle, soft depth
+- ink-dark typography
+- one quiet accent family
+- subtle, minimal depth
 - large amounts of breathing room
 
 ### Primary styling cues
@@ -120,8 +129,8 @@ The app should feel designed, but never over-designed. Luxury comes from confide
 - elegant section spacing
 - low-contrast dividers
 - pale surface shifts instead of heavy cards
-- selective serif use for editorial emphasis only
-- subtle motion on reveal, hover, and completion
+- sans-led hierarchy with optional restrained serif only for major editorial moments
+- barely-there motion on reveal, hover, and completion
 
 ### What should visually lead
 1. page title and main content
@@ -135,28 +144,28 @@ Visual weight should be intentional. Not every section deserves equal prominence
 
 ## 5. Color and Surface System
 
-Airy Editorial is a light UI, but not a stark white UI.
+Airy Editorial is a light UI with a cool editorial cast, but not a harsh or sterile white UI.
 
 ### 5.1 Foundation palette
 Use a mostly neutral base.
 
-- **App canvas**: soft white or very pale neutral
-- **Raised surfaces**: warm white
-- **Muted surfaces**: pale cool gray or soft stone wash
-- **Primary text**: charcoal
-- **Secondary text**: graphite gray
-- **Muted text**: mist gray
-- **Accent**: editorial indigo
+- **App canvas**: porcelain white or very pale cool neutral
+- **Raised surfaces**: clean white
+- **Muted surfaces**: pale cool gray
+- **Primary text**: graphite ink
+- **Secondary text**: slate gray
+- **Muted text**: steel gray
+- **Accent**: ink blue
 
 ### 5.2 Accent strategy
 Use one primary accent family to preserve calm and coherence.
 
 Recommended primary accent:
-- **Editorial Indigo**
+- **Ink Blue**
 
 Supporting accent usage may include:
-- pale indigo wash for active states
-- faint mist-blue or silver-gray for subtle highlights
+- pale ink-blue wash for active states
+- faint silver-gray for subtle highlights
 - restrained success green, warning amber, and error rose for feedback only
 
 ### 5.3 Surface rules
@@ -166,7 +175,7 @@ Use:
 - very soft shadows
 - hairline borders only when needed
 - pale tonal separation
-- occasional translucent or tinted sections for emphasis
+- occasional cool-tinted sections for emphasis
 
 Avoid:
 - thick borders
@@ -197,14 +206,12 @@ Use two functional families:
 Use sparingly for moments of voice and emphasis.
 
 Recommended usage:
-- hero headlines
-- page titles on major screens when appropriate
-- featured book titles
-- empty-state statements
-- selected editorial callouts
+- hero headlines only when a stronger editorial moment is needed
+- selected empty-state statements
+- rare featured callouts
 
 ### B. UI sans-serif
-Use for all operational UI.
+Use for all operational UI and as the default system for almost all screens.
 
 Use for:
 - navigation
@@ -230,6 +237,7 @@ Rules:
 - rely on weight, line-height, and spacing before introducing decoration
 - avoid crowded headlines
 - avoid overly small metadata text unless truly secondary
+- keep the system typography-led, with serif as a rare accent rather than a default presence
 
 ### 6.3 Hierarchy model
 Each page should follow a stable text hierarchy.
@@ -299,16 +307,15 @@ Use uppercase sparingly for:
 Avoid turning the UI into a field of tracked uppercase labels.
 
 ### 6.7 Serif restraint rules
-Serif is a signature, not a default.
+Serif is optional and rare.
 
 Do:
-- use it for key emotional moments
-- use it to elevate major screens or featured content
+- use it only for select hero or empty-state moments if it improves the editorial tone
 
 Do not:
 - use serif for dense operational content
 - use serif inside forms or tables
-- mix serif and sans too frequently in the same compact module
+- let serif compete with the core sans-led hierarchy
 
 ---
 
@@ -599,27 +606,27 @@ Avoid motion that:
 
 ## 10.2 Motion personality
 Motion should feel:
-- soft
 - precise
 - light
+- restrained
 - editorial
 - composed
 
 ## 10.3 Key motion patterns
 
 ### Page entry
-Pages should reveal with subtle sequencing.
+Pages should reveal with minimal sequencing.
 - page header first
 - supporting content next
-- list/cards afterward with minimal stagger
+- list/cards afterward with little or no visible stagger
 
 ### Page transition
-Route changes should use a short slide/fade or fade/translate pattern.
-The feeling should resemble moving to the next spread in a magazine, not switching tabs in a dashboard.
+Route changes should use a short fade or very small fade/translate pattern.
+The feeling should resemble quiet continuity between layouts, not an overt transition effect.
 
 ### Hover lift
 Interactive cards and book covers may lift slightly on hover.
-This should be subtle and elegant.
+This should be subtle, minimal, and almost imperceptible.
 
 ### Press feedback
 Buttons should compress slightly and rebound cleanly.
@@ -628,9 +635,9 @@ Buttons should compress slightly and rebound cleanly.
 Toasts and successful state confirmations should feel like a soft arrival, not a loud interruption.
 
 ## 10.4 Motion restraint rules
-- reserve richer motion for top-level pages and featured interactions
 - keep dense admin forms mostly quiet
 - reduce animation if it risks harming clarity or speed
+- prefer opacity, color, and tiny translate changes over expressive transforms
 - support reduced-motion accessibility preferences
 
 ---
@@ -747,6 +754,8 @@ Use language like:
 - “Created survey.”
 - “Could not save your RSVP.”
 
+The tone should read like a concise editorial notice: calm, direct, and unembellished.
+
 Avoid:
 - overly technical language
 - exclamation-heavy celebration
@@ -853,12 +862,12 @@ A UI change does **not** align with this spec when it:
 ## 16. Summary
 
 Book Club Manager should evolve toward an **Airy Editorial** product experience defined by:
-- bright, restrained surfaces
-- clear charcoal typography
-- selective serif emphasis
+- bright, restrained cool surfaces
+- clear ink-dark typography
+- sans-led hierarchy with optional restrained serif accents
 - generous, deliberate spacing
 - editorial composition
-- subtle motion
+- barely-there motion
 - calm, premium clarity
 
 If there is a conflict between decoration and clarity, choose clarity.
@@ -870,6 +879,14 @@ If there is a choice between adding a new visual treatment and improving spacing
 ## 17. Concrete Design Tokens
 
 This section translates the creative direction into practical tokens that can be implemented in Tailwind theme values, CSS custom properties, component classes, and motion presets.
+
+### Compact visual system summary
+- **Canvas**: bright porcelain-white with cool undertones
+- **Accent**: disciplined ink blue used sparingly
+- **Typography**: sans-led system with optional editorial serif only for rare moments
+- **Surfaces**: white or pale cool-gray with hairline borders
+- **Depth**: minimal shadow, mostly spacing-led hierarchy
+- **Motion**: opacity-driven, tiny movement, almost invisible
 
 ## 17.1 Color tokens
 
@@ -908,30 +925,30 @@ This section translates the creative direction into practical tokens that can be
 ### Suggested starter values
 These can be adjusted during implementation, but should remain in this family:
 
-- `color.canvas.default` → `#fcfbf8`
-- `color.canvas.subtle` → `#f6f4ef`
+- `color.canvas.default` → `#f7f9fc`
+- `color.canvas.subtle` → `#f1f4f8`
 - `color.surface.base` → `#ffffff`
-- `color.surface.raised` → `#fffdfa`
-- `color.surface.tint` → `#f5f3ff`
-- `color.border.soft` → `#e7e3da`
-- `color.border.strong` → `#d8d1c6`
-- `color.text.primary` → `#1f1f23`
-- `color.text.secondary` → `#4a4a55`
-- `color.text.muted` → `#7a7a86`
+- `color.surface.raised` → `#fbfdff`
+- `color.surface.tint` → `#edf3ff`
+- `color.border.soft` → `#dde4ee`
+- `color.border.strong` → `#cad4e0`
+- `color.text.primary` → `#141c26`
+- `color.text.secondary` → `#435062`
+- `color.text.muted` → `#6c7a8c`
 - `color.text.inverse` → `#ffffff`
-- `color.text.accent` → `#4f46a5`
-- `color.accent.primary` → `#5b55d6`
-- `color.accent.primaryHover` → `#4f46c9`
-- `color.accent.primarySoft` → `#eeecff`
-- `color.accent.primarySoftHover` → `#e4e0ff`
-- `color.success.base` → `#3d7a57`
-- `color.success.soft` → `#edf7f0`
-- `color.warning.base` → `#9a6a1a`
-- `color.warning.soft` → `#fff6df`
-- `color.error.base` → `#a04452`
-- `color.error.soft` → `#fff0f2`
-- `color.info.base` → `#4e5a77`
-- `color.info.soft` → `#eff3fb`
+- `color.text.accent` → `#2457a6`
+- `color.accent.primary` → `#2a5db0`
+- `color.accent.primaryHover` → `#214d95`
+- `color.accent.primarySoft` → `#eaf2ff`
+- `color.accent.primarySoftHover` → `#ddeaff`
+- `color.success.base` → `#2d6b4f`
+- `color.success.soft` → `#edf6f1`
+- `color.warning.base` → `#94651f`
+- `color.warning.soft` → `#fff7e5`
+- `color.error.base` → `#a04552`
+- `color.error.soft` → `#fff1f3`
+- `color.info.base` → `#49617c`
+- `color.info.soft` → `#edf4fb`
 
 ## 17.2 Typography tokens
 
@@ -941,8 +958,8 @@ These can be adjusted during implementation, but should remain in this family:
 - `font.family.mono` — monospace for code/data only when needed
 
 Suggested starter mapping:
-- `font.family.ui` → `Inter, ui-sans-serif, system-ui, sans-serif`
-- `font.family.editorial` → `"Cormorant Garamond", "Iowan Old Style", "Times New Roman", serif`
+- `font.family.ui` → `Inter, "SF Pro Text", ui-sans-serif, system-ui, sans-serif`
+- `font.family.editorial` → `"Newsreader", "Iowan Old Style", "Times New Roman", serif`
 - `font.family.mono` → `ui-monospace, SFMono-Regular, Menlo, monospace`
 
 ### Type scale tokens
@@ -1066,11 +1083,11 @@ Suggested shadow family:
 - `motion.ease.exit` → `cubic-bezier(0.4, 0, 1, 1)`
 
 ### Motion patterns
-- `motion.page.enter` — fade + translateY(8px)
-- `motion.card.hover` — translateY(-2px) + shadow shift
-- `motion.button.press` — scale(0.98)
-- `motion.toast.enter` — fade + translateY(10px)
-- `motion.list.staggerStep` — `30–50ms` between siblings
+- `motion.page.enter` — fade + translateY(4px)
+- `motion.card.hover` — translateY(-1px) + subtle shadow shift
+- `motion.button.press` — scale(0.985)
+- `motion.toast.enter` — fade + translateY(6px)
+- `motion.list.staggerStep` — `0–20ms` between siblings
 
 ## 17.6 Layout tokens
 
@@ -1088,6 +1105,126 @@ Use narrower reading widths for support copy, comments, and editorial text block
 ## 18. Page Redesign Plan
 
 This section turns the design direction into a practical page-by-page implementation plan.
+
+## 18A. Page-by-Page Redesign Checklist
+
+Use this checklist before implementation on each page. A page is only considered aligned with the Airy Editorial direction when the relevant items below are satisfied.
+
+### 18A.1 Global shell and navigation checklist
+- [ ] Replace dark or heavy shell backgrounds with cool light canvas tones.
+- [ ] Simplify navigation chrome so it supports content instead of dominating it.
+- [ ] Use ink-blue accent only for active navigation and key interactive emphasis.
+- [ ] Standardize page max-width, horizontal padding, and vertical rhythm.
+- [ ] Ensure focus states remain clear in the lighter theme.
+- [ ] Remove unnecessary heavy borders, pills, and dark containers.
+
+### 18A.2 Shared UI primitives checklist
+- [ ] Define shared page header pattern with eyebrow, title, and support copy rules.
+- [ ] Define shared section header pattern.
+- [ ] Define light surface/card variants with restrained border and shadow usage.
+- [ ] Define button variants for primary, secondary, and ghost actions.
+- [ ] Define input, select, and textarea styles for the light editorial system.
+- [ ] Define badge/status chip rules with low-saturation visual treatment.
+- [ ] Define toast variants with editorial notice styling.
+- [ ] Define minimal route/page transition wrapper with reduced-motion support.
+
+### 18A.3 Login page checklist
+- [ ] Reframe the page as an editorial welcome screen rather than a dark auth panel.
+- [ ] Increase whitespace around the main headline and sign-in area.
+- [ ] Keep one obvious primary sign-in action.
+- [ ] Reduce heavy framing around supporting feature bullets or benefits.
+- [ ] Use typography, not large color blocks, to create the first impression.
+- [ ] Keep motion limited to subtle reveal and button press feedback.
+
+### 18A.4 Dashboard checklist
+- [ ] Introduce a stronger editorial header with clear page title and concise support text.
+- [ ] Establish one featured primary content block.
+- [ ] Reduce the widget-board feeling by simplifying secondary modules.
+- [ ] Keep admin checklist/help visually useful but not dominant.
+- [ ] Use spacing and hierarchy to separate current priorities from supporting information.
+- [ ] Ensure quick actions feel integrated rather than visually noisy.
+
+### 18A.5 Books page checklist
+- [ ] Make the page feel like a curated catalog, not a dense app grid.
+- [ ] Prioritize book title and author hierarchy.
+- [ ] Keep filters and controls visually light.
+- [ ] Reduce card heaviness and allow more open composition where possible.
+- [ ] Ensure hover/focus states are subtle and premium.
+- [ ] Preserve strong scanability across responsive breakpoints.
+
+### 18A.6 Book detail page checklist
+- [ ] Give the hero section more breathing room.
+- [ ] Make title, author, and description the visual focus.
+- [ ] Keep ratings, comments, and notes readable and well spaced.
+- [ ] Make admin controls quieter than the core reading content.
+- [ ] Ensure success/error feedback feels calm and integrated.
+- [ ] Keep comment editing and moderation states visually clean.
+
+### 18A.7 Surveys page checklist
+- [ ] Separate create flow from browsing flow with spacing rather than heavy framing.
+- [ ] Clarify open vs closed survey sections through headings and rhythm.
+- [ ] Reduce form clutter in admin create areas.
+- [ ] Keep status and deadlines readable but secondary.
+- [ ] Ensure survey cards/rows remain light and scannable.
+- [ ] Keep success actions and next-step CTAs stylistically consistent.
+
+### 18A.8 Survey detail page checklist
+- [ ] Make the page title and survey context immediately understandable.
+- [ ] Present ranked choices in a cleaner, calmer selection surface.
+- [ ] Keep selected states clear without overusing accent fills.
+- [ ] Ensure results are legible and elegant after closure.
+- [ ] Keep admin close/tie-resolution controls visible but restrained.
+- [ ] Use minimal motion for vote submission and result updates.
+
+### 18A.9 Meetings page checklist
+- [ ] Clarify the hierarchy between date surveys, upcoming meetings, and past meetings.
+- [ ] Reduce the visual weight of admin create forms.
+- [ ] Make date/time/location easier to scan.
+- [ ] Keep member-facing lists more prominent than admin tooling when appropriate.
+- [ ] Maintain consistent status chip treatment.
+- [ ] Preserve clear post-create next-step actions without clutter.
+
+### 18A.10 Meeting detail page checklist
+- [ ] Make the primary meeting information easy to read at a glance.
+- [ ] Give RSVP controls enough room to feel intentional.
+- [ ] Keep recap content in a readable, editorial-style block.
+- [ ] Ensure linked book information integrates cleanly into the layout.
+- [ ] Keep admin update/cancel controls operationally clear but visually restrained.
+- [ ] Use minimal confirmation motion for RSVP and admin save actions.
+
+### 18A.11 Date survey detail page checklist
+- [ ] Present date options in a clean, easy-to-compare arrangement.
+- [ ] Keep multi-select behavior understandable without visual noise.
+- [ ] Separate member voting and admin confirmation controls clearly.
+- [ ] Elevate the confirmed date cleanly after closure.
+- [ ] Ensure availability feedback is immediate and calm.
+- [ ] Avoid crowded control groupings.
+
+### 18A.12 Wishlist page checklist
+- [ ] Make the suggestion form feel lighter and more inviting.
+- [ ] Improve hierarchy of title, author, and optional fields.
+- [ ] Keep search/import assistance visually subordinate to the main suggestion flow.
+- [ ] Make wishlist items feel curated and readable.
+- [ ] Preserve clear success/error feedback after submissions.
+- [ ] Avoid turning the page into a dense utility form.
+
+### 18A.13 Admin users page checklist
+- [ ] Keep the admin user list trustworthy and easy to scan.
+- [ ] Lighten the overall page without reducing structure.
+- [ ] Make the add-user form feel cleaner and less boxed in.
+- [ ] Preserve clear distinction between primary actions and destructive actions.
+- [ ] Keep table/list density comfortable and readable.
+- [ ] Ensure feedback and state changes remain obvious in the lighter UI.
+
+### 18A.14 Validation checklist for every redesigned page
+- [ ] Primary action is obvious within a few seconds.
+- [ ] Accent color is used sparingly and intentionally.
+- [ ] Typography carries most of the hierarchy.
+- [ ] Spacing, not chrome, defines grouping.
+- [ ] Motion is subtle enough to go mostly unnoticed.
+- [ ] Light surfaces still provide adequate contrast and affordance.
+- [ ] The page feels more editorial than dashboard-like.
+- [ ] The page remains operationally clear and testable.
 
 ## 18.1 Global shell and navigation
 
@@ -1479,5 +1616,5 @@ The Airy Editorial redesign is successful when:
 - spacing, not dark chrome, defines most grouping
 - the shell feels calmer and less dominant
 - books and meetings feel more curated than dashboard-like
-- animations add polish without slowing use
+- animations add polish without drawing attention to themselves
 - admin flows remain clear and trustworthy

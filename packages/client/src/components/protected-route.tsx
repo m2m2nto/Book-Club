@@ -9,8 +9,10 @@ export const ProtectedRoute = ({ children }: PropsWithChildren) => {
 
   if (authQuery.isLoading) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-sm text-slate-300">
-        Loading your session...
+      <div className="page-shell flex min-h-screen items-center justify-center">
+        <div className="surface-base w-full max-w-md px-6 py-6 text-sm text-[color:var(--color-text-secondary)]">
+          Loading your session...
+        </div>
       </div>
     );
   }

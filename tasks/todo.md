@@ -64,4 +64,11 @@
 - [x] 7.9  Admin onboarding and UX polish pass (success feedback, first-steps guidance, copy consistency)
 - [x] 7.10 Shared toast feedback, post-create shortcuts, and member UX polish pass
 - [ ] 7.11 Airy Editorial design token system and page-by-page redesign implementation
+  - [ ] 7.11.1 Define cool-editorial theme tokens and light shell primitives
+  - [ ] 7.11.2 Redesign login page to establish the new visual language
+  - [ ] 7.11.3 Redesign dashboard page with stronger editorial hierarchy
+  - [ ] 7.11.4 Redesign books page as a typography-led catalog
+  - [ ] 7.11.5 Redesign book detail page
+  - [ ] 7.11.6 Redesign meetings and surveys pages
+  - [ ] 7.11.7 Redesign wishlist and admin utility pages
 > **Checkpoint:** Feature-complete, E2E tests pass, responsive on mobile

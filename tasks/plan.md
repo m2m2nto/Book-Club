@@ -283,11 +283,19 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 
 ### 7.11 — Airy Editorial redesign system and phased page implementation
 - Translate `UX_UI_SPEC.md` into concrete theme tokens for color, type, spacing, radius, shadow, and motion
-- Rework the app shell and login experience first so the new direction is visible globally
+- Rework the app shell first so the new direction is visible globally before page-specific redesigns
 - Implement shared primitives for page headers, surfaces, buttons, inputs, badges, toasts, and route transitions
-- Apply the new system page-by-page starting with dashboard, books, and book detail, then surveys, meetings, wishlist, and admin utility pages
-- Keep admin/data-heavy pages lighter and calmer without sacrificing clarity or trust
+- Roll out the redesign in the following low-risk order:
+  1. shell + shared primitives
+  2. login page
+  3. dashboard page
+  4. books page
+  5. book detail page
+  6. meetings and surveys
+  7. wishlist and admin utility pages
 - Phase 1 implementation plan and target files are documented in `tasks/airy-editorial-phase-1.md`
+- Use login to validate the visual language, dashboard to validate layout hierarchy, and books to validate the content-browsing system
+- Keep admin/data-heavy pages lighter and calmer without sacrificing clarity or trust
 - **Verify:** Major screens visibly align with the Airy Editorial direction, maintain usability, and pass lint/build/E2E after each phase
 
 ---

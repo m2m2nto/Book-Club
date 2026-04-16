@@ -1,385 +1,220 @@
-# Airy Editorial — Phase 1 Execution Plan
+# Airy Editorial — Phase 1 Implementation Brief
 
-This document turns `UX_UI_SPEC.md` into the first practical implementation phase.
+This brief covers the first implementation slice of the Airy Editorial redesign:
+- `7.11.1` theme tokens and shell primitives
+- `7.11.2` login page redesign
+- `7.11.3` dashboard page redesign
+- `7.11.4` books page redesign
 
-Phase 1 focuses on the **foundation layer** of the redesign:
-- theme tokens
-- typography
-- spacing rhythm
-- shell
-- shared primitives
-- first-impression pages
-
-It is intentionally limited to high-leverage changes that make the Airy Editorial direction visible quickly without redesigning the entire app at once.
+Use `UX_UI_SPEC.md` as the source of truth for design intent. This brief turns that direction into a small, practical implementation scope.
 
 ---
 
-## 1. Phase 1 Goal
+## Goals
 
-Make the product feel meaningfully closer to the **Airy Editorial** direction through:
-- a lighter visual foundation
-- stronger typography hierarchy
-- more deliberate spacing
-- calmer shell/navigation
-- refined shared components
-- a redesigned login experience
-- a first-pass editorial dashboard
+Phase 1 should prove the new direction without requiring a full-app rewrite.
 
-By the end of Phase 1, users should feel the new direction immediately when they:
-- open the app
-- sign in
-- land on the dashboard
+It must establish:
+- the cool editorial light theme
+- the typography-led hierarchy system
+- the quiet ink-blue accent system
+- the lighter shell and shared primitives
+- the first three high-impact page redesigns
+
+At the end of this phase, the product should already feel visibly different on first load.
 
 ---
 
-## 2. Scope
+## Non-goals
 
-### In scope
-- global light theme foundation
-- color/type/spacing token setup
-- app shell cleanup
-- button refinement
-- toast refinement
-- login page redesign polish
-- dashboard redesign polish
-- shared header/surface utility patterns where needed
+This phase should not:
+- redesign every page in the app
+- introduce complex animation systems
+- rewrite working product logic without UX need
+- change feature behavior unless needed for presentation or clarity
+- add speculative new UI patterns not grounded in `UX_UI_SPEC.md`
 
-### Out of scope
-- full books page redesign
-- book detail redesign
-- surveys/meetings redesign
-- wishlist/admin page redesign
-- advanced shared-element transitions
-- full stats page redesign
+Motion should remain subtle and implementation-friendly.
 
 ---
 
-## 3. Exact Files to Change First
+## Implementation order
 
-## 3.1 Global foundation
+### 1. Theme tokens + shell primitives
+Build the visual system first.
 
-### `packages/client/src/index.css`
-**Purpose:** establish the global Airy Editorial foundation.
+### 2. Login page
+Use it to validate the new visual language.
 
-**Change goals:**
-- replace ad hoc global colors with a token-like CSS variable layer
-- add typography variables for UI and editorial fonts
-- define canvas, surface, text, border, accent, and semantic feedback variables
-- define reusable spacing/radius/shadow variables where practical
-- simplify background art so it feels lighter and less decorative
-- ensure body/root styles reflect the new calmer canvas
+### 3. Dashboard page
+Use it to validate page hierarchy and section rhythm.
 
-**Expected output:**
-- one clear source of truth for Phase 1 visual tokens
-- lighter, more stable base for every page
+### 4. Books page
+Use it to validate the content browsing system.
+
+Do not redesign downstream pages until these four steps are coherent.
 
 ---
 
-## 3.2 Shared shell
+## 7.11.1 — Theme tokens and shell primitives
 
-### `packages/client/src/components/app-shell.tsx`
-**Purpose:** make the app frame feel editorial and less heavy.
+### Scope
+Create or update the shared design foundation used by all later pages.
 
-**Change goals:**
-- reduce visual dominance of the sidebar and main content frame
-- simplify gradients and glassiness where they feel too ornate
-- tighten nav hierarchy around typography and spacing instead of shadows
-- soften active nav states
-- improve overall vertical rhythm in the shell
-- make the main content area feel like an open canvas, not a boxed panel
-
-**Specific redesign targets:**
-- brand panel becomes cleaner and more typographic
-- user profile module becomes quieter
-- nav links gain more elegant spacing and calmer active treatment
-- main panel border/shadow treatment becomes subtler
-
-**Expected output:**
-- shell no longer feels like a warm-glass dashboard
-- content pages become the visual focus
-
----
-
-## 3.3 Primary action primitive
-
-### `packages/client/src/components/ui/button.tsx`
-**Purpose:** align the primary interaction language with Airy Editorial.
-
-**Change goals:**
-- move button styling toward token-driven classes
-- make primary buttons flatter, cleaner, and less gradient-heavy
-- make secondary buttons lighter and more typographic
-- keep tactile press and hover motion but reduce visual loudness
-- ensure focus states remain highly visible in the lighter UI
-
-**Specific redesign targets:**
-- reduce “shiny CTA” feel
-- preserve strong contrast and clarity
-- keep subtle lift/compression behavior
-
-**Expected output:**
-- buttons feel premium, calm, and consistent across login/dashboard/forms
-
----
-
-## 3.4 Toast primitive
-
-### `packages/client/src/components/ui/toast-provider.tsx`
-**Purpose:** make feedback feel editorial and refined.
-
-**Change goals:**
-- align toast spacing, radius, border, and text hierarchy with the new token system
-- make info/success/error variants quieter and more elegant
-- improve action button styling to feel lighter and more integrated
-- refine placement and width so toasts feel like soft overlays, not alerts
-- if useful, add a subtle enter/exit animation class strategy for future motion polish
-
-**Expected output:**
-- success/error/info feedback feels polished and calm
-- toast system visually matches the new shell and buttons
-
----
-
-## 3.5 Login page
-
-### `packages/client/src/pages/login-page.tsx`
-**Purpose:** create the first fully visible expression of the redesign.
-
-**Change goals:**
-- strengthen editorial hierarchy in the hero section
-- shift from “panel-heavy landing” to “airy welcome composition”
-- reduce decorative card noise in the supporting benefits area
-- make the sign-in card more minimal and elegant
-- improve headline, support copy width, and vertical spacing
-
-**Specific redesign targets:**
-- more confident hero headline treatment
-- simpler benefit presentation
-- cleaner sign-in block with stronger type rhythm
-- preserve fast comprehension of the Google-only auth flow
-
-**Expected output:**
-- the login page becomes the clearest statement of the new brand direction
-
----
-
-## 3.6 Dashboard
-
-### `packages/client/src/pages/dashboard-page.tsx`
-**Purpose:** make the main app experience feel composed rather than widget-based.
-
-**Change goals:**
-- rebalance visual weight between hero, utility stats, and admin checklist
-- improve section hierarchy using typography and spacing
-- make metric cards quieter and more consistent
-- keep admin quick actions visible but less visually loud
-- make the “book of the moment” and “next meeting” areas feel curated
-
-**Specific redesign targets:**
-- cleaner page header and hero
-- more editorial spacing between sections
-- less card repetition feeling
-- checklist should read as guidance, not as another dashboard widget wall
-
-**Expected output:**
-- dashboard becomes calmer, more premium, and easier to scan
-
----
-
-## 3.7 Optional support primitives if needed during implementation
-
-If the first pass reveals too much repeated layout code, add these small shared pieces during Phase 1:
-
-### `packages/client/src/components/ui/page-header.tsx`
-Use for consistent page eyebrow/title/support-copy structure.
-
-### `packages/client/src/components/ui/surface.tsx`
-Use for quiet, token-aligned surface variants such as:
-- `surface-base`
-- `surface-raised`
-- `surface-tint`
-
-Only introduce these if duplication becomes a problem during the first implementation pass.
-
----
-
-## 4. Implementation Sequence
-
-## Step 1 — Tokenize the global foundation
-**Files:**
+### Implementation targets
+Likely files:
+- `packages/client/src/main.tsx`
 - `packages/client/src/index.css`
-
-**Tasks:**
-- add CSS custom properties for colors, typography, spacing, radius, and shadows
-- map current warm palette to the new Airy Editorial values
-- establish `font-family` variables for UI and editorial roles
-- simplify body background and global canvas treatment
-
-**Checkpoint:**
-- app loads with the new base palette and typography defaults
-- no individual page changes required yet for the baseline to improve
-
----
-
-## Step 2 — Refine shared interaction primitives
-**Files:**
+- `packages/client/src/components/app-shell.tsx`
 - `packages/client/src/components/ui/button.tsx`
 - `packages/client/src/components/ui/toast-provider.tsx`
+- shared UI helpers/components introduced during the redesign
 
-**Tasks:**
-- convert button styles to use new token language
-- quiet the gradients/shadows
-- refine toast spacing, borders, and variants
-- ensure focus and accessibility remain strong
+### Required work
+- Introduce light theme tokens aligned with `UX_UI_SPEC.md`
+- Establish cool editorial canvas, surface, border, and text colors
+- Introduce ink-blue accent usage for primary actions and active states
+- Update shell background, page container spacing, and navigation styling
+- Define shared page header pattern
+- Define shared surface/card treatment
+- Update button variants to match the new direction
+- Update input/select/textarea styling toward the lighter editorial system
+- Keep toast styling aligned with the new shell and surface language
 
-**Checkpoint:**
-- buttons and toasts visually match the new base theme
-- login and dashboard inherit visible improvements immediately
+### Design rules
+- Typography and spacing should carry more hierarchy than cards or color blocks
+- Avoid heavy dark shells, oversized shadows, and loud tints
+- Preserve strong focus states and contrast in the light theme
+- Maintain reduced-motion compatibility
+
+### Acceptance criteria
+- App shell looks visibly lighter and calmer
+- Shared buttons, inputs, and toasts feel visually coherent
+- Accent color is disciplined and not overused
+- Existing pages remain usable even before full redesign
+- `npm run lint` and `npm run build` pass
 
 ---
 
-## Step 3 — Lighten the global shell
-**Files:**
-- `packages/client/src/components/app-shell.tsx`
+## 7.11.2 — Login page redesign
 
-**Tasks:**
-- reduce shell heaviness
-- simplify sidebar and main-panel framing
-- improve nav spacing and active states
-- make brand block more typographic and less ornamental
+### Scope
+Redesign the login page to establish the Airy Editorial look and feel.
 
-**Checkpoint:**
-- navigating the authenticated app feels calmer even before page-specific redesigns
-
----
-
-## Step 4 — Polish the login page as the flagship first impression
-**Files:**
+### Implementation targets
+Likely files:
 - `packages/client/src/pages/login-page.tsx`
+- shared page header or hero primitives introduced in 7.11.1
 
-**Tasks:**
-- improve hero hierarchy
-- rebalance the two-column layout
-- simplify benefit blocks
-- refine sign-in panel spacing and copy rhythm
+### Required work
+- Replace the dark, boxed feeling with a bright editorial composition
+- Increase whitespace and simplify the page structure
+- Make the headline more typography-led
+- Keep one clear primary sign-in action
+- Reduce heavy treatment around supporting copy and benefit bullets
+- Align the page with the updated button, spacing, and surface system
 
-**Checkpoint:**
-- login page clearly communicates the Airy Editorial direction on its own
+### Design rules
+- The page should feel crisp and premium, not soft-glowy or playful
+- Serif, if used at all, should be minimal and justified
+- Motion should be limited to a subtle reveal and press feedback
+- Sign-in path must stay obvious within seconds
+
+### Acceptance criteria
+- The login page reads as clearly part of the new design direction
+- The sign-in button remains the dominant action
+- The page feels lighter, more spacious, and more editorial than before
+- The page remains fully functional in normal and test-auth flows
 
 ---
 
-## Step 5 — Recompose the dashboard
-**Files:**
+## 7.11.3 — Dashboard page redesign
+
+### Scope
+Redesign the dashboard into a calmer editorial overview.
+
+### Implementation targets
+Likely files:
 - `packages/client/src/pages/dashboard-page.tsx`
+- any shared dashboard or page-section primitives introduced during the redesign
 
-**Tasks:**
-- reduce dashboard card-wall feeling
-- strengthen feature-vs-utility hierarchy
-- improve spacing and title rhythm
-- quiet repeated card treatments
+### Required work
+- Introduce a stronger editorial page header
+- Establish one featured content block for the most important current item
+- Simplify the visual treatment of secondary cards/modules
+- Reduce the widget-board feeling through spacing and hierarchy
+- Keep the admin getting-started checklist useful but visually quieter
+- Ensure quick links/actions fit the new tone
 
-**Checkpoint:**
-- dashboard feels editorial and easier to scan than the current version
+### Design rules
+- Primary vs secondary content must be obvious through structure, not loud color
+- Statistics and utility content should stay readable but visually subdued
+- Admin guidance must feel integrated, not bolted on
+- Motion should be almost invisible
 
----
-
-## 5. Phase 1 Design Rules While Implementing
-
-### 5.1 Typography rules
-- use serif only for selective hero/title moments
-- keep all utility UI in sans-serif
-- prefer fewer sizes with more disciplined spacing
-- constrain support-copy width where possible
-
-### 5.2 Spacing rules
-- increase section spacing before adding more visual framing
-- use consistent page gutters across login, shell, and dashboard
-- reduce nested padding patterns
-- let modules breathe instead of stacking tightly
-
-### 5.3 Surface rules
-- one soft border is usually enough
-- remove unnecessary gradients if they feel decorative
-- use shadow only to separate layers subtly
-- avoid visual competition between adjacent cards
-
-### 5.4 Motion rules
-- preserve subtle button press/lift
-- keep toasts soft and quick
-- avoid introducing route-motion complexity in Phase 1 unless nearly free
-- prioritize polish that supports readability and confidence
+### Acceptance criteria
+- The page feels more like a curated overview than a dashboard grid
+- Users can identify the most important current action quickly
+- Admin checklist remains discoverable and usable
+- Existing dashboard data and quick actions continue to work
 
 ---
 
-## 6. Validation Plan
+## 7.11.4 — Books page redesign
 
-After each step or grouped step, run:
+### Scope
+Redesign the books page as a typography-led catalog.
 
-```bash
-npm run lint
-npm run build
-```
+### Implementation targets
+Likely files:
+- `packages/client/src/pages/books-page.tsx`
+- any shared list/card/filter primitives introduced during the redesign
 
-After Step 5, run:
+### Required work
+- Reduce the heavy card/grid feeling
+- Make title and author hierarchy more elegant and scannable
+- Keep filters and create flow visually light
+- Improve spacing between book items and sections
+- Refine hover/focus states to feel subtle and premium
+- Preserve admin create affordances and success feedback
 
-```bash
-npm run e2e
-```
+### Design rules
+- The page should feel curated, not like a generic media grid
+- Covers may support browsing, but typography should lead the layout
+- Avoid loud status badges or over-framed controls
+- Interactive polish should remain restrained
 
-Also perform a quick manual browser pass on:
-- login page
-- dashboard
-- sidebar/nav behavior
-- toast appearance after a create/save action
-
----
-
-## 7. Suggested Commit Strategy
-
-### Commit 1
-**Message:** `Add Airy Editorial theme tokens and refine shared UI primitives`
-
-Includes:
-- `index.css`
-- `button.tsx`
-- `toast-provider.tsx`
-
-### Commit 2
-**Message:** `Lighten app shell and redesign login experience`
-
-Includes:
-- `app-shell.tsx`
-- `login-page.tsx`
-
-### Commit 3
-**Message:** `Recompose dashboard for Airy Editorial layout`
-
-Includes:
-- `dashboard-page.tsx`
-
-This keeps the redesign incremental and easy to review.
+### Acceptance criteria
+- Browsing feels lighter and more editorial
+- Titles are easy to scan quickly
+- Filters and create controls remain clear without overpowering the page
+- Book creation and navigation flows still work as before
 
 ---
 
-## 8. Definition of Done for Phase 1
+## Shared engineering constraints
 
-Phase 1 is done when:
-- the app immediately reads as lighter and more editorial
-- the shell no longer dominates the experience
-- typography hierarchy is visibly improved on login and dashboard
-- spacing feels more intentional and less card-dense
-- buttons and toasts feel calmer and more premium
-- lint/build/e2e still pass
+Throughout Phase 1:
+- preserve current behavior and API integrations
+- avoid regressions in auth, navigation, and core CRUD flows
+- prefer shared primitives over one-off page styling
+- keep edits incremental and easy to verify
+- re-run validation after each major step rather than waiting until the end
+
+Recommended checks during implementation:
+- `npm run lint`
+- `npm run build`
+- targeted manual browser walkthrough for login, dashboard, and books
+- `npm run e2e` after the phase is complete
 
 ---
 
-## 9. Phase 1 File Checklist
+## Definition of done for Phase 1
 
-- [ ] `packages/client/src/index.css`
-- [ ] `packages/client/src/components/ui/button.tsx`
-- [ ] `packages/client/src/components/ui/toast-provider.tsx`
-- [ ] `packages/client/src/components/app-shell.tsx`
-- [ ] `packages/client/src/pages/login-page.tsx`
-- [ ] `packages/client/src/pages/dashboard-page.tsx`
-- [ ] optional: `packages/client/src/components/ui/page-header.tsx`
-- [ ] optional: `packages/client/src/components/ui/surface.tsx`
+Phase 1 is complete when:
+- the shell and primitives clearly establish the Airy Editorial direction
+- the login page reflects the new visual system
+- the dashboard page reflects the new layout and hierarchy principles
+- the books page reflects the new typography-led browsing model
+- the app still passes lint/build and remains functionally stable
+- the redesign feels intentional and cohesive rather than partially themed

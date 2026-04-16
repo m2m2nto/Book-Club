@@ -54,26 +54,38 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-full max-w-[24rem] flex-col gap-3">
+      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-full max-w-[24rem] flex-col gap-3 sm:right-6 sm:top-6">
         {toasts.map((toast) => (
           <div
             className={cn(
-              'pointer-events-auto rounded-[var(--radius-xl)] border p-4 shadow-[var(--shadow-overlay)] backdrop-blur-md transition-all duration-[var(--motion-duration-base)] ease-[var(--motion-ease-emphasized)]',
+              'pointer-events-auto rounded-[var(--radius-xl)] border bg-[rgba(255,255,255,0.96)] p-4 shadow-[var(--shadow-overlay)] backdrop-blur-md',
               toast.variant === 'success' &&
-                'border-[color:var(--color-success-base)]/12 bg-[color:var(--color-success-soft)]/95 text-[color:var(--color-success-base)]',
+                'border-[color:color-mix(in_srgb,var(--color-success-base)_18%,white)]',
               toast.variant === 'error' &&
-                'border-[color:var(--color-error-base)]/12 bg-[color:var(--color-error-soft)]/96 text-[color:var(--color-error-base)]',
-              toast.variant === 'info' &&
-                'border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-raised)]/96 text-[color:var(--color-info-base)]',
+                'border-[color:color-mix(in_srgb,var(--color-error-base)_18%,white)]',
+              toast.variant === 'info' && 'border-[color:var(--color-border-soft)]',
             )}
             key={toast.id}
             role="status"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1.5">
-                <p className="text-sm font-semibold leading-5 text-[color:var(--color-text-primary)]">
-                  {toast.title}
-                </p>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      'h-1.5 w-1.5 rounded-full',
+                      toast.variant === 'success' &&
+                        'bg-[color:var(--color-success-base)]',
+                      toast.variant === 'error' &&
+                        'bg-[color:var(--color-error-base)]',
+                      toast.variant === 'info' &&
+                        'bg-[color:var(--color-text-accent)]',
+                    )}
+                  />
+                  <p className="text-sm font-semibold leading-5 text-[color:var(--color-text-primary)]">
+                    {toast.title}
+                  </p>
+                </div>
                 {toast.description ? (
                   <p className="text-sm leading-6 text-[color:var(--color-text-secondary)]">
                     {toast.description}
@@ -81,7 +93,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
                 ) : null}
               </div>
               <button
-                className="rounded-[var(--radius-md)] px-2.5 py-1 text-xs font-medium text-[color:var(--color-text-muted)] hover:bg-black/5 hover:text-[color:var(--color-text-primary)]"
+                className="rounded-[var(--radius-md)] px-2.5 py-1 text-xs font-medium text-[color:var(--color-text-muted)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]"
                 onClick={() => dismissToast(toast.id)}
                 type="button"
               >
@@ -90,7 +102,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
             </div>
             {toast.actionLabel && toast.onAction ? (
               <button
-                className="mt-4 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-white/70 px-3 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                className="pressable mt-4 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={() => {
                   toast.onAction?.();
                   dismissToast(toast.id);

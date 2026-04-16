@@ -2,94 +2,92 @@ import { ArrowRight, LogIn } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
 
+const highlights = [
+  'Track the current read, archive, and meeting rhythm in one place.',
+  'Keep voting, RSVPs, and discussion feeling clear instead of noisy.',
+  'Give members a calm, fast path back into the club workspace.',
+];
+
 export const LoginPage = () => {
   return (
     <div className="page-shell flex min-h-screen items-center">
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1.3fr)_24rem] lg:items-stretch">
-        <section className="surface-tint relative overflow-hidden px-7 py-10 lg:px-10 lg:py-12">
-          <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(91,85,214,0.12),transparent_55%),radial-gradient(circle_at_top_right,rgba(255,239,214,0.55),transparent_42%)]" />
-          <div className="relative flex h-full flex-col justify-between gap-10">
-            <div className="space-y-6">
+      <div className="page-container w-full">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_24rem] lg:items-center xl:gap-14">
+          <section className="fade-rise space-y-10">
+            <div className="page-header max-w-4xl gap-5">
               <p className="eyebrow text-[color:var(--color-text-accent)]">
                 Book Club Manager
               </p>
-              <div className="max-w-3xl space-y-5">
-                <h1 className="editorial-title max-w-3xl">
-                  Sign in to guide your club&apos;s reading rhythm.
+              <div className="space-y-5">
+                <h1 className="editorial-title text-balance max-w-4xl">
+                  Sign in to a clearer, lighter book club workspace.
                 </h1>
                 <p className="body-copy text-[1.05rem]">
-                  Access is invite-only. Ask an admin to add your email address
-                  before signing in so your next vote, RSVP, and reading note
-                  all land in the right place.
+                  Keep books, meetings, votes, and shared decisions in one calm,
+                  editorial system. Access is invite-only, so ask an admin to
+                  add your email before signing in.
                 </p>
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {[
-                  ['Browse the club archive', 'See what your group has already read and discussed.'],
-                  ['Vote on future reads', 'Take part in surveys that shape the next book.'],
-                  ['RSVP with less friction', 'Keep meeting plans clear for everyone in the club.'],
-                ].map(([title, description]) => (
-                  <div
-                    className="rounded-[var(--radius-lg)] border border-white/75 bg-white/70 px-4 py-4"
-                    key={title}
-                  >
-                    <p className="text-sm font-semibold text-[color:var(--color-text-primary)]">
-                      {title}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-[color:var(--color-text-secondary)]">
-                      {description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="max-w-sm space-y-3 border-l-0 border-[color:var(--color-border-soft)] pt-2 lg:border-l lg:pl-6">
-                <p className="eyebrow">A quieter home for books, meetings, and shared decisions</p>
-                <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
-                  Designed to feel bright, calm, and clear from the moment your
-                  club arrives.
-                </p>
-              </div>
+            <div className="grid gap-3.5 sm:max-w-2xl">
+              {highlights.map((item) => (
+                <div
+                  className="flex items-start gap-3 border-b border-[color:rgba(221,228,238,0.85)] pb-3.5 last:border-b-0 last:pb-0"
+                  key={item}
+                >
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[color:var(--color-text-accent)]" />
+                  <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                    {item}
+                  </p>
+                </div>
+              ))}
             </div>
-          </div>
-        </section>
 
-        <section className="surface-base flex flex-col justify-between px-6 py-8 lg:px-8 lg:py-10">
-          <div className="space-y-5">
-            <p className="eyebrow">Member access</p>
-            <div className="space-y-3">
-              <h2 className="section-title text-[2rem]">Continue with Google</h2>
-              <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
-                Google is the only sign-in method supported in v1. If your
-                account has already been invited, you&apos;ll land right inside the
-                club.
+            <div className="flex items-start gap-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+              <ArrowRight className="mt-1 h-4 w-4 flex-none text-[color:var(--color-text-accent)]" />
+              <p className="max-w-2xl">
+                Already invited? Continue with Google and you&apos;ll land directly in
+                your club workspace.
               </p>
             </div>
-          </div>
+          </section>
 
-          <div className="mt-10 space-y-5">
-            <Button
-              className="w-full justify-center gap-2 py-3 text-base"
-              onClick={() => {
-                window.location.href = '/auth/google';
-              }}
-            >
-              <LogIn className="h-4 w-4" />
-              Sign in with Google
-            </Button>
-            <div className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-4 py-3 text-sm text-[color:var(--color-text-secondary)]">
-              <div className="flex items-start gap-2">
-                <ArrowRight className="mt-0.5 h-4 w-4 text-[color:var(--color-text-accent)]" />
-                <span>
-                  Need access first? Ask your club admin to invite your email.
-                </span>
+          <section className="surface-raised fade-rise px-6 py-7 sm:px-8 sm:py-8">
+            <div className="space-y-6">
+              <div className="page-header gap-3">
+                <p className="eyebrow">Member access</p>
+                <div className="space-y-3">
+                  <h2 className="section-title">Continue with Google</h2>
+                  <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                    Google is the only sign-in method in v1. If your email has
+                    already been invited, you&apos;ll go straight into the club.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4 border-t border-[color:var(--color-border-soft)] pt-6">
+                <Button
+                  className="w-full justify-center gap-2 py-3 text-base"
+                  onClick={() => {
+                    window.location.href = '/auth/google';
+                  }}
+                >
+                  <LogIn className="h-4 w-4" />
+                  Sign in with Google
+                </Button>
+
+                <div className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-4 py-4 text-sm leading-7 text-[color:var(--color-text-secondary)]">
+                  <span className="font-medium text-[color:var(--color-text-primary)]">
+                    Need access first?
+                  </span>{' '}
+                  Ask your club admin to invite your email address before
+                  signing in.
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Users,
   Vote,
+  X,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -50,13 +51,13 @@ export const AppShell = ({
 
   return (
     <div className="min-h-screen text-[color:var(--color-text-primary)]">
-      <div className="page-shell grid min-h-screen gap-5 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8">
+      <div className="page-shell grid min-h-screen gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
         <button
-          className="inline-flex items-center gap-2 self-start rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)] shadow-[var(--shadow-soft)] lg:hidden"
+          className="pressable inline-flex items-center gap-2 self-start rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.82)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)] shadow-[var(--shadow-soft)] lg:hidden"
           onClick={() => setMenuOpen((current) => !current)}
           type="button"
         >
-          <Menu className="h-4 w-4" />
+          {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           Menu
         </button>
 
@@ -66,26 +67,28 @@ export const AppShell = ({
             menuOpen ? 'block' : 'hidden',
           )}
         >
-          <div className="rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-default)] px-4 py-5">
-            <p className="eyebrow text-[color:var(--color-text-muted)]">
-              Book Club Manager
-            </p>
-            <h1 className="mt-3 font-editorial text-[2.2rem] leading-[0.95] tracking-[-0.03em] text-[color:var(--color-text-primary)]">
-              A calmer club rhythm.
-            </h1>
-            <p className="mt-3 text-sm leading-6 text-[color:var(--color-text-secondary)]">
-              Keep books, meetings, and shared decisions in one bright,
-              readable place.
-            </p>
+          <div className="space-y-4 border-b border-[color:var(--color-border-soft)] px-1 pb-5">
+            <div className="page-header gap-3">
+              <p className="eyebrow">Book Club Manager</p>
+              <div className="space-y-2">
+                <h1 className="text-[1.45rem] font-semibold leading-[1.02] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
+                  A quieter home for books, meetings, and club decisions.
+                </h1>
+                <p className="text-sm leading-6 text-[color:var(--color-text-secondary)]">
+                  Clear structure, lighter surfaces, and one place to keep the
+                  club in rhythm.
+                </p>
+              </div>
+            </div>
           </div>
 
           {currentUser ? (
-            <div className="mt-5 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-raised)] px-4 py-4">
+            <div className="mt-5 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.72)] p-4">
               <div className="flex items-center gap-3">
                 {currentUser.avatarUrl ? (
                   <img
                     alt={currentUser.name}
-                    className="h-11 w-11 rounded-full object-cover"
+                    className="h-11 w-11 rounded-full border border-[color:var(--color-border-soft)] object-cover"
                     src={currentUser.avatarUrl}
                   />
                 ) : (
@@ -97,7 +100,7 @@ export const AppShell = ({
                   <p className="truncate text-sm font-semibold text-[color:var(--color-text-primary)]">
                     {currentUser.name}
                   </p>
-                  <div className="mt-1 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
+                  <div className="mt-1 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                     <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--color-text-accent)]" />
                     <span>{currentUser.role}</span>
                   </div>
@@ -105,7 +108,7 @@ export const AppShell = ({
               </div>
 
               <button
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[color:var(--color-surface-base)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                className="pressable mt-4 flex w-full items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.92)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={onLogout}
                 type="button"
               >
@@ -125,21 +128,19 @@ export const AppShell = ({
                   cn(
                     'group flex items-center gap-3 rounded-[var(--radius-lg)] px-3.5 py-3 text-sm font-medium transition-all duration-[var(--motion-duration-base)] ease-[var(--motion-ease-standard)]',
                     isActive
-                      ? 'bg-[color:var(--color-accent-primary-soft)] text-[color:var(--color-text-accent)]'
-                      : 'text-[color:var(--color-text-secondary)] hover:-translate-y-0.5 hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]',
+                      ? 'border border-[color:rgba(42,93,176,0.08)] bg-[color:var(--color-accent-primary-soft)] text-[color:var(--color-text-accent)]'
+                      : 'border border-transparent text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-soft)] hover:bg-[rgba(255,255,255,0.68)] hover:text-[color:var(--color-text-primary)]',
                   )
                 }
               >
-                <Icon className="h-4 w-4 transition-transform duration-[var(--motion-duration-fast)] group-hover:scale-105" />
+                <Icon className="h-4 w-4" />
                 <span>{label}</span>
               </NavLink>
             ))}
           </nav>
         </aside>
 
-        <main className="min-w-0 rounded-[var(--radius-xl)] border border-[color:var(--color-border-soft)] bg-white/50 p-5 lg:p-8">
-          {children}
-        </main>
+        <main className="surface-base min-w-0 p-5 lg:p-8">{children}</main>
       </div>
     </div>
   );
