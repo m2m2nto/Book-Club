@@ -2,9 +2,18 @@ import { eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
 
+import {
+  buildResetPasswordUrl,
+  createAuthToken,
+} from '../auth/reset-tokens.js';
 import { db } from '../db/client.js';
 import { usersTable } from '../db/schema.js';
 import { requireAdmin } from '../middleware/auth.js';
+import {
+  renderInviteEmail,
+  renderPasswordResetEmail,
+  sendEmail,
+} from '../services/email.js';
 
 const router = Router();
 
@@ -51,6 +60,75 @@ router.get('/', (_req, res) => {
 
   res.json({ data: users, error: null });
 });
+
+const sendAuthLinkResponse = async ({
+  userId,
+  type,
+  createdByUserId,
+}: {
+  userId: number;
+  type: 'invite' | 'password-reset';
+  createdByUserId: number;
+}) => {
+  const user = db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      name: usersTable.name,
+      active: usersTable.active,
+      deletedAt: usersTable.deletedAt,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId))
+    .get();
+
+  if (!user || !user.active || user.deletedAt) {
+    return {
+      status: 404 as const,
+      body: {
+        data: null,
+        error: { code: 'NOT_FOUND', message: 'User not found.' },
+      },
+    };
+  }
+
+  const token = createAuthToken({
+    userId: user.id,
+    type,
+    createdByUserId,
+  });
+  const resetUrl = buildResetPasswordUrl(token.rawToken);
+  const template =
+    type === 'invite'
+      ? renderInviteEmail({
+          name: user.name,
+          resetUrl,
+          expiresAt: token.expiresAt,
+        })
+      : renderPasswordResetEmail({
+          name: user.name,
+          resetUrl,
+          expiresAt: token.expiresAt,
+        });
+
+  await sendEmail({
+    to: user.email,
+    ...template,
+  });
+
+  return {
+    status: 200 as const,
+    body: {
+      data: {
+        success: true,
+        expiresAt: token.expiresAt,
+        deliveryMode: process.env.NODE_ENV === 'production' ? 'smtp' : 'dev-log',
+        resetUrl: process.env.NODE_ENV === 'production' ? null : resetUrl,
+      },
+      error: null,
+    },
+  };
+};
 
 router.post('/', (req, res) => {
   const parsedBody = createUserSchema.safeParse(req.body);
@@ -209,6 +287,74 @@ router.delete('/:id', (req, res) => {
     .run();
 
   res.json({ data: { success: true }, error: null });
+});
+
+router.post('/:id/send-invite', async (req, res, next) => {
+  const parsedParams = userIdParamsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    res.status(422).json({
+      data: null,
+      error: { code: 'VALIDATION_ERROR', message: 'Invalid user id.' },
+    });
+    return;
+  }
+
+  try {
+    const createdByUserId = req.user?.id;
+
+    if (!createdByUserId) {
+      res.status(401).json({
+        data: null,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required.' },
+      });
+      return;
+    }
+
+    const response = await sendAuthLinkResponse({
+      userId: parsedParams.data.id,
+      type: 'invite',
+      createdByUserId,
+    });
+
+    res.status(response.status).json(response.body);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/:id/send-password-reset', async (req, res, next) => {
+  const parsedParams = userIdParamsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    res.status(422).json({
+      data: null,
+      error: { code: 'VALIDATION_ERROR', message: 'Invalid user id.' },
+    });
+    return;
+  }
+
+  try {
+    const createdByUserId = req.user?.id;
+
+    if (!createdByUserId) {
+      res.status(401).json({
+        data: null,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required.' },
+      });
+      return;
+    }
+
+    const response = await sendAuthLinkResponse({
+      userId: parsedParams.data.id,
+      type: 'password-reset',
+      createdByUserId,
+    });
+
+    res.status(response.status).json(response.body);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('/:id/reactivate', (req, res) => {

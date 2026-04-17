@@ -10,6 +10,12 @@ type ReminderTemplateInput = {
   meetingId: number;
 };
 
+type AuthLinkTemplateInput = {
+  name: string;
+  resetUrl: string;
+  expiresAt: string;
+};
+
 export const renderSevenDayReminder = ({
   meetingTitle,
   date,
@@ -67,6 +73,43 @@ export const renderOneDayFollowUp = ({
     `Location: ${location}`,
     '',
     `Respond here: ${env.clientUrl}/meetings/${meetingId}`,
+  ].join('\n'),
+});
+
+export const renderInviteEmail = ({
+  name,
+  resetUrl,
+  expiresAt,
+}: AuthLinkTemplateInput) => ({
+  subject: 'You are invited to Book Club Journal',
+  text: [
+    `Hi ${name},`,
+    '',
+    'You have been invited to join your book club workspace.',
+    'Use the link below to set your password and sign in:',
+    '',
+    resetUrl,
+    '',
+    `This link expires at ${expiresAt}.`,
+  ].join('\n'),
+});
+
+export const renderPasswordResetEmail = ({
+  name,
+  resetUrl,
+  expiresAt,
+}: AuthLinkTemplateInput) => ({
+  subject: 'Reset your Book Club Journal password',
+  text: [
+    `Hi ${name},`,
+    '',
+    'We received a request to reset your password.',
+    'Use the link below to choose a new password:',
+    '',
+    resetUrl,
+    '',
+    `This link expires at ${expiresAt}.`,
+    'If you did not request this change, you can ignore this email.',
   ].join('\n'),
 });
 
