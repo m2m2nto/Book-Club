@@ -21,6 +21,7 @@ import { StatsPage } from './pages/stats-page';
 import { SurveyDetailPage } from './pages/survey-detail-page';
 import { SurveysPage } from './pages/surveys-page';
 import { WishlistPage } from './pages/wishlist-page';
+import { ResetPasswordPage } from './pages/reset-password-page';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <ErrorBoundary>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route element={<ProtectedLayout />}>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/books" element={<BooksPage />} />
