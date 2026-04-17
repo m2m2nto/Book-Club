@@ -66,6 +66,35 @@ const checks = [
       has(files.readme, /named Docker volume/i) &&
       has(files.readme, /container updates won't erase/i),
   },
+  {
+    score: 10,
+    ok:
+      has(files.compose, /read_only:\s*true/) &&
+      has(files.compose, /tmpfs:/) &&
+      has(files.compose, /\/tmp/),
+  },
+  {
+    score: 10,
+    ok:
+      has(files.compose, /security_opt:/) &&
+      has(files.compose, /no-new-privileges:true/) &&
+      has(files.compose, /cap_drop:/) &&
+      has(files.compose, /- ALL/),
+  },
+  {
+    score: 10,
+    ok: has(files.compose, /init:\s*true/),
+  },
+  {
+    score: 10,
+    ok:
+      has(files.dockerignore, /e2e/) &&
+      has(files.dockerignore, /tasks/) &&
+      has(files.dockerignore, /SPEC\.md/) &&
+      has(files.dockerignore, /UX_UI_SPEC\.md/) &&
+      has(files.dockerignore, /LAUNCH\.md/) &&
+      has(files.dockerignore, /scripts/),
+  },
 ];
 
 const score = checks.reduce((sum, check) => sum + (check.ok ? check.score : 0), 0);

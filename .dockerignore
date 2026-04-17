@@ -9,4 +9,11 @@ packages/server/data
 coverage
 playwright-report
 test-results
+e2e
+tasks
+scripts
+playwright.config.ts
+SPEC.md
+UX_UI_SPEC.md
+LAUNCH.md
 npm-debug.log*
