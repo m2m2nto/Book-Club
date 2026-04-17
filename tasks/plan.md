@@ -15,8 +15,9 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 | 5 | Meetings & RSVP | 6 | Date surveys, meeting scheduling, RSVP |
 | 6 | Email Reminders | 2 | Automated 7-day + 1-day reminders |
 | 7 | Dashboard, Stats & Polish | 7 | Feature-complete with E2E tests |
+| 8 | Auth Migration: Email + Password | 6 | Google removed, invite/reset auth works end-to-end |
 
-**Total: 34 tasks across 7 phases.**
+**Total: 40 tasks across 8 phases.**
 
 ---
 
@@ -297,6 +298,41 @@ Building a greenfield self-hosted web app for managing a small book club (up to 
 - Use login to validate the visual language, dashboard to validate layout hierarchy, and books to validate the content-browsing system
 - Keep admin/data-heavy pages lighter and calmer without sacrificing clarity or trust
 - **Verify:** Major screens visibly align with the Airy Editorial direction, maintain usability, and pass lint/build/E2E after each phase
+
+---
+
+## Phase 8: Auth Migration — Email + Password
+
+**Goal:** Replace Google OAuth with invite-only email/password auth, including secure password setup and reset flows.
+
+### 8.1 — User credential and reset-token schema changes
+- Add password hash support and password reset/invite token storage with expiry and single-use guarantees
+- Migration preserves existing users and does not expose plaintext secrets
+- **Verify:** Migration runs, token rows can be created/consumed once, no plaintext password storage
+
+### 8.2 — Server-side password auth and session flow
+- Replace Google OAuth routes with email/password login endpoints while preserving existing session middleware
+- Use secure password hashing, login rate limiting, and active/deleted user enforcement
+- **Verify:** Integration tests for valid login, invalid password, inactive user, deleted user, and logout
+
+### 8.3 — Invite and forgot-password flows
+- Admin can issue invite/reset links; users can request forgot-password for active invited accounts
+- Tokens are time-limited, single-use, and return generic responses to avoid account enumeration
+- **Verify:** Integration tests for invite, reset, expired token, reused token, and forgot-password response shape
+
+### 8.4 — Admin user management updates
+- Admin user screen exposes send-invite and reset-password actions, plus status visibility for password setup
+- **Verify:** Frontend tests and manual flow for invite/reset from admin users page
+
+### 8.5 — Login and reset UI
+- Replace Google login page with email/password form, forgot-password form, and reset-password screen
+- Preserve visible success/error feedback and invite-only messaging
+- **Verify:** Unauthenticated redirect, successful login, forgot-password request, password reset, and logout
+
+### 8.6 — End-to-end auth migration verification
+- Update E2E seeds and Playwright coverage for admin bootstrap, invite, password setup, login, and reset
+- Remove Google-only assumptions from docs and tests
+- **Verify:** `npm test`, `npm run build`, and `npm run e2e` all pass
 
 ---
 

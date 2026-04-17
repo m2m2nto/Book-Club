@@ -72,3 +72,12 @@
   - [ ] 7.11.6 Redesign meetings and surveys pages
   - [ ] 7.11.7 Redesign wishlist and admin utility pages
 > **Checkpoint:** Feature-complete, E2E tests pass, responsive on mobile
+
+## Phase 8: Auth Migration — Email + Password
+- [ ] 8.1 User credential and reset-token schema changes
+- [ ] 8.2 Server-side password auth and session flow
+- [ ] 8.3 Invite and forgot-password flows
+- [ ] 8.4 Admin user management updates
+- [ ] 8.5 Login and reset UI
+- [ ] 8.6 End-to-end auth migration verification
+> **Checkpoint:** Google auth removed, invite/reset email-password login works end-to-end

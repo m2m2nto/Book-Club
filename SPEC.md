@@ -7,7 +7,8 @@ Build a self-hosted web application for managing a small book club of up to 30 m
 This file defines product behavior and acceptance criteria. Visual and interaction standards for future features live in `UX_UI_SPEC.md`.
 
 The app should let members:
-- sign in with Google SSO
+- sign in with invited email + password credentials
+- reset their password through an invite/reset link flow
 - view books the club has read or plans to read
 - suggest books for future reading
 - participate in book surveys and date surveys
@@ -31,7 +32,7 @@ Success for v1 means a small club can run its full operating workflow in one pla
 | Backend | Node.js, Express |
 | Database | SQLite (via better-sqlite3) |
 | ORM | Drizzle ORM |
-| Auth | Passport.js (Google OAuth 2.0 only in v1) |
+| Auth | Session-based email/password auth with invite + reset links |
 | Email | Nodemailer (SMTP configuration) |
 | Scheduler | node-cron |
 | Monorepo | npm workspaces |
@@ -107,14 +108,15 @@ book-club/
 
 | # | Feature | Acceptance Criteria |
 |---|---------|-------------------|
-| A1 | Google SSO login | Users can sign in via Google OAuth 2.0. No self-registration. |
-| A2 | Apple Sign In | Deferred post-v1. Not implemented in v1. |
+| A1 | Email + password login | Users can sign in with email and password. No self-registration. |
+| A2 | Invite-only password setup | Admin creates a user by email, and the user receives or uses a secure invite/reset link to set their password. |
 | A3 | Initial admin bootstrap | One initial admin can be created via seed/bootstrap flow and can create additional admins or standard users. |
-| A4 | Admin creates users | Admin adds a user by email. Only pre-registered emails can log in via SSO. |
-| A5 | Admin manages users | Admin can list, deactivate, reactivate, and soft-delete users. |
+| A4 | Admin creates users | Admin adds a user by email. Only pre-registered active emails can complete password setup and log in. |
+| A5 | Admin manages users | Admin can list, deactivate, reactivate, soft-delete users, and trigger password reset links. |
 | A6 | Immediate access revocation | Deactivated or soft-deleted users are blocked from existing sessions immediately and cannot log in. |
-| A7 | Historical retention | Ratings, comments, votes, RSVPs, and related historical data remain after user soft-delete. |
-| A8 | Role enforcement | Admin-only actions are blocked for regular users in both API and UI. |
+| A7 | Password reset | Any active invited user can request a password reset link and successfully set a new password before the token expires. |
+| A8 | Historical retention | Ratings, comments, votes, RSVPs, and related historical data remain after user soft-delete. |
+| A9 | Role enforcement | Admin-only actions are blocked for regular users in both API and UI. |
 
 ### Book Management
 
@@ -259,11 +261,16 @@ RSVP
 
 ```text
 Auth
-  GET  /auth/google
-  GET  /auth/google/callback
+  POST /auth/login
   POST /auth/logout
   GET  /auth/me
   GET  /auth/csrf
+  POST /auth/forgot-password
+  POST /auth/reset-password
+
+Admin Auth Utilities
+  POST /api/users/:id/send-invite
+  POST /api/users/:id/send-password-reset
 
 Users
   GET    /api/users
@@ -408,13 +415,13 @@ Required coverage areas:
 ### Ask first
 - Adding new roles beyond `admin` and `user`
 - Changing the core data model or unique constraints
-- Adding third-party services beyond Google OAuth, Open Library, SMTP, and current tooling
+- Adding third-party services beyond Open Library, SMTP, and current tooling
 - Changing auth flow or enabling self-registration
 - Expanding reminders beyond the defined email workflow
 
 ### Never
 - Allow self-registration
-- Store passwords in v1
+- Store plaintext passwords or reusable raw reset tokens
 - Expose private notes to admins or other users
 - Physically delete user historical activity records when a user is soft-deleted
 - Expose internal stack traces or raw internal errors to clients
@@ -424,25 +431,27 @@ Required coverage areas:
 
 The feature is complete when all of the following are true:
 
-1. A seeded initial admin can sign in with Google and create additional users.
-2. Non-registered users cannot log in.
-3. Deactivated and soft-deleted users are blocked immediately, including existing sessions.
-4. Users can suggest books, rate books, write private notes, and write public comments.
-5. Private notes are visible only to their author.
-6. Admins can create a ranked book survey from wishlist books, members can vote once, and tied surveys can be manually resolved by admin.
-7. Winning survey books move from `wishlist` to `pipeline`.
-8. Admins can create a multi-select date survey, confirm a final date, and create or update a meeting.
-9. A book can be attached to only one meeting ever.
-10. Confirming a meeting with a book sets that book to `reading`.
-11. Members can RSVP before reminders, update RSVP until the meeting date, and cannot RSVP after the date closes.
-12. Reminder emails run on the correct date in Europe/Luxembourg timezone, include admins, and respect reminder-only opt-out.
-13. Open Library search supports autofill, stores Open Library ID and description, and degrades gracefully when metadata is incomplete.
-14. Stats pages correctly show books per year and average group ratings.
-15. Admin can export the live SQLite database after a confirmation step, including sensitive/session tables.
-16. `npm run dev`, `npm run build`, `npm run lint`, `npm test`, and `npm run e2e` all succeed.
-17. The primary admin first-run flow is usable end-to-end: invite a user, add a book, create a survey, schedule a meeting, and export a backup with visible success feedback.
-18. Core admin create flows offer contextual next steps after success (for example opening the created survey or meeting).
-19. Core member actions like rating, voting, RSVPing, and commenting provide clear success/error feedback in the UI.
+1. A seeded initial admin can sign in with email and password and create additional users.
+2. Non-registered users cannot log in or complete password setup.
+3. Invited active users can set an initial password through a time-limited invite/reset link.
+4. Users can request a forgot-password reset and successfully sign in with the new password.
+5. Deactivated and soft-deleted users are blocked immediately, including existing sessions.
+6. Users can suggest books, rate books, write private notes, and write public comments.
+7. Private notes are visible only to their author.
+8. Admins can create a ranked book survey from wishlist books, members can vote once, and tied surveys can be manually resolved by admin.
+9. Winning survey books move from `wishlist` to `pipeline`.
+10. Admins can create a multi-select date survey, confirm a final date, and create or update a meeting.
+11. A book can be attached to only one meeting ever.
+12. Confirming a meeting with a book sets that book to `reading`.
+13. Members can RSVP before reminders, update RSVP until the meeting date, and cannot RSVP after the date closes.
+14. Reminder emails run on the correct date in Europe/Luxembourg timezone, include admins, and respect reminder-only opt-out.
+15. Open Library search supports autofill, stores Open Library ID and description, and degrades gracefully when metadata is incomplete.
+16. Stats pages correctly show books per year and average group ratings.
+17. Admin can export the live SQLite database after a confirmation step, including sensitive/session tables.
+18. `npm run dev`, `npm run build`, `npm run lint`, `npm test`, and `npm run e2e` all succeed.
+19. The primary admin first-run flow is usable end-to-end: invite a user, they set a password from a secure link, sign in, then the club can add a book, create a survey, schedule a meeting, and export a backup with visible success feedback.
+20. Core admin create flows offer contextual next steps after success (for example opening the created survey or meeting).
+21. Core member actions like rating, voting, RSVPing, and commenting provide clear success/error feedback in the UI.
 
 ## Open Questions
 
@@ -450,7 +459,7 @@ None for v1 at this time. Apple Sign In is explicitly deferred post-v1.
 
 ## Out of Scope
 
-- Apple Sign In in v1
+- Third-party SSO providers in v1
 - Chat or messaging
 - File sharing
 - Reading progress tracking
