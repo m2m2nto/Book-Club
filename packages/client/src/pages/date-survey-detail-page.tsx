@@ -47,7 +47,7 @@ export const DateSurveyDetailPage = () => {
   return (
     <div className="page-stack">
       <Link
-        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
+        className="text-sm font-semibold text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/meetings"
       >
         ← Back to meetings
@@ -56,7 +56,7 @@ export const DateSurveyDetailPage = () => {
       <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
         <div className="page-header gap-4">
           <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+            <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
               {statusLabel(survey.status)}
             </span>
             <span className="text-[color:var(--color-text-muted)]">
@@ -64,7 +64,7 @@ export const DateSurveyDetailPage = () => {
             </span>
           </div>
           <div className="space-y-3">
-            <h1 className="editorial-title text-balance max-w-4xl">
+            <h1 className="editorial-title text-balance max-w-5xl">
               {survey.title}
             </h1>
             <p className="body-copy max-w-3xl text-[1rem]">
@@ -89,7 +89,7 @@ export const DateSurveyDetailPage = () => {
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[1.25rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                  <p className="text-[1.35rem] font-extrabold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                     {option.proposedDate}
                   </p>
                   <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
@@ -97,7 +97,7 @@ export const DateSurveyDetailPage = () => {
                   </p>
                 </div>
                 {isConfirmed ? (
-                  <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.72)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                  <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[rgba(255,255,255,0.72)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                     Confirmed
                   </span>
                 ) : null}
@@ -107,8 +107,8 @@ export const DateSurveyDetailPage = () => {
                 <button
                   className={
                     isSelected
-                      ? 'pressable mt-5 w-full rounded-[var(--radius-lg)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-accent)]'
-                      : 'pressable mt-5 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]'
+                      ? 'pressable mt-5 w-full rounded-[var(--radius-pill)] border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-accent)]'
+                      : 'pressable mt-5 w-full rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]'
                   }
                   onClick={() =>
                     setSelectedOptionIds((current) =>
@@ -125,7 +125,7 @@ export const DateSurveyDetailPage = () => {
 
               {isAdmin && survey.status === 'open' ? (
                 <button
-                  className="pressable mt-3 w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+                  className="pressable mt-3 w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
                   onClick={() =>
                     closeMutation.mutate(option.id, {
                       onSuccess: () => {
@@ -158,7 +158,7 @@ export const DateSurveyDetailPage = () => {
 
       {survey.status === 'open' ? (
         <button
-          className="pressable w-fit rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+          className="pressable w-full sm:w-fit rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
           onClick={() =>
             voteMutation.mutate(activeSelection, {
               onSuccess: () => {

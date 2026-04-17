@@ -69,7 +69,7 @@ export const BookDetailPage = () => {
   return (
     <div className="page-stack">
       <Link
-        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
+        className="text-sm font-semibold text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/books"
       >
         ← Back to books
@@ -96,7 +96,7 @@ export const BookDetailPage = () => {
           <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
             <div className="page-header gap-4">
               <div className="flex flex-wrap items-center gap-3 text-sm">
-                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+                <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                   {statusLabel(book.status)}
                 </span>
                 <span className="text-[color:var(--color-text-muted)]">
@@ -107,7 +107,7 @@ export const BookDetailPage = () => {
               </div>
 
               <div className="space-y-3">
-                <h1 className="editorial-title editorial-title--serif text-balance max-w-4xl">
+                <h1 className="editorial-title text-balance max-w-5xl">
                   {book.title}
                 </h1>
                 <p className="text-lg text-[color:var(--color-text-secondary)]">
@@ -176,7 +176,7 @@ export const BookDetailPage = () => {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="eyebrow">Admin controls</p>
-                  <h2 className="mt-3 text-[1.45rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                  <h2 className="mt-3 text-[1.55rem] font-extrabold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                     Edit or remove this book
                   </h2>
                   <p className="mt-2 text-sm leading-7 text-[color:var(--color-text-secondary)]">
@@ -185,7 +185,7 @@ export const BookDetailPage = () => {
                   </p>
                 </div>
                 <button
-                  className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                  className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                   onClick={() => {
                     setEditBookMode((current) => !current);
                     setBookForm({
@@ -290,13 +290,13 @@ export const BookDetailPage = () => {
                   </label>
                   <div className="flex flex-wrap gap-3 md:col-span-2">
                     <button
-                      className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+                      className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
                       type="submit"
                     >
                       Save changes
                     </button>
                     <button
-                      className="pressable rounded-[var(--radius-lg)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-error-base)] hover:border-[rgba(160,69,82,0.28)]"
+                      className="pressable rounded-[var(--radius-pill)] border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-error-base)] hover:border-[rgba(180,35,24,0.28)]"
                       onClick={() =>
                         deleteBookMutation.mutate(undefined, {
                           onSuccess: () => {
@@ -342,7 +342,7 @@ export const BookDetailPage = () => {
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="font-medium text-[color:var(--color-text-primary)]">
+                      <p className="font-semibold text-[color:var(--color-text-primary)]">
                         {rating.userName}
                       </p>
                       <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
@@ -409,7 +409,7 @@ export const BookDetailPage = () => {
               Save as private note
             </label>
             <button
-              className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+              className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               Post
@@ -425,7 +425,7 @@ export const BookDetailPage = () => {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-[color:var(--color-text-primary)]">
+                      <p className="font-semibold text-[color:var(--color-text-primary)]">
                         {comment.userName}
                       </p>
                       <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
@@ -438,7 +438,7 @@ export const BookDetailPage = () => {
                       <div className="flex gap-2">
                         {comment.userId === authQuery.data?.id ? (
                           <button
-                            className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] px-2.5 py-1.5 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                            className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                             onClick={() => {
                               setEditCommentId(comment.id);
                               setEditText(comment.text);
@@ -449,7 +449,7 @@ export const BookDetailPage = () => {
                           </button>
                         ) : null}
                         <button
-                          className="pressable rounded-[var(--radius-md)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-2.5 py-1.5 text-xs font-medium text-[color:var(--color-error-base)]"
+                          className="pressable rounded-[var(--radius-pill)] border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-error-base)]"
                           onClick={() =>
                             deleteCommentMutation.mutate(comment.id, {
                               onSuccess: () => {
@@ -513,13 +513,13 @@ export const BookDetailPage = () => {
                       />
                       <div className="flex gap-2">
                         <button
-                          className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-inverse)]"
+                          className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)]"
                           type="submit"
                         >
                           Save
                         </button>
                         <button
-                          className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                          className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                           onClick={() => setEditCommentId(null)}
                           type="button"
                         >

@@ -72,7 +72,7 @@ export const SurveyDetailPage = () => {
   return (
     <div className="page-stack">
       <Link
-        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
+        className="text-sm font-semibold text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/surveys"
       >
         ← Back to surveys
@@ -81,7 +81,7 @@ export const SurveyDetailPage = () => {
       <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
         <div className="page-header gap-4">
           <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+            <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
               {statusLabel(survey.status)}
             </span>
             <span className="text-[color:var(--color-text-muted)]">
@@ -89,7 +89,7 @@ export const SurveyDetailPage = () => {
             </span>
           </div>
           <div className="space-y-3">
-            <h1 className="editorial-title text-balance max-w-4xl">
+            <h1 className="editorial-title text-balance max-w-5xl">
               {survey.title}
             </h1>
             <p className="body-copy max-w-3xl text-[1rem]">
@@ -125,7 +125,7 @@ export const SurveyDetailPage = () => {
               </div>
               <div className="space-y-4 p-5">
                 <div>
-                  <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                  <h2 className="text-xl font-extrabold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                     {option.title}
                   </h2>
                   <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
@@ -138,7 +138,7 @@ export const SurveyDetailPage = () => {
                     Score: {option.score}
                   </span>
                   {selectedIndex >= 0 ? (
-                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                    <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                       Rank #{selectedIndex + 1}
                     </span>
                   ) : null}
@@ -146,7 +146,7 @@ export const SurveyDetailPage = () => {
 
                 {survey.status === 'open' && !hasVoted ? (
                   <button
-                    className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                    className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                     onClick={() => {
                       setSelected((current) => {
                         if (current.includes(option.id)) {
@@ -174,7 +174,7 @@ export const SurveyDetailPage = () => {
                 isAdmin &&
                 tiedOptions.some((item) => item.bookId === option.bookId) ? (
                   <button
-                    className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+                    className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
                     onClick={() =>
                       resolveTieMutation.mutate(option.bookId, {
                         onSuccess: () => {
@@ -209,7 +209,7 @@ export const SurveyDetailPage = () => {
       <div className="flex flex-wrap gap-3">
         {survey.status === 'open' && !hasVoted ? (
           <button
-            className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+            className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             onClick={submitVotes}
             type="button"
           >
@@ -218,7 +218,7 @@ export const SurveyDetailPage = () => {
         ) : null}
         {isAdmin && survey.status === 'open' ? (
           <button
-            className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+            className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
             onClick={() =>
               closeMutation.mutate(undefined, {
                 onSuccess: () => {

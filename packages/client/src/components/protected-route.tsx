@@ -10,8 +10,10 @@ export const ProtectedRoute = ({ children }: PropsWithChildren) => {
   if (authQuery.isLoading) {
     return (
       <div className="page-shell flex min-h-screen items-center justify-center">
-        <div className="surface-base w-full max-w-md px-6 py-6 text-sm text-[color:var(--color-text-secondary)]">
-          Loading your session...
+        <div className="state-card state-card--centered w-full max-w-md">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Checking access</p>
+          <p className="state-title mt-3">Loading your session</p>
+          <p className="state-copy">We&apos;re confirming your sign-in details and preparing your workspace.</p>
         </div>
       </div>
     );

@@ -14,7 +14,7 @@ export const StarRating = ({ value, onChange }: StarRatingProps) => {
         <button
           aria-label={`Rate ${score} star${score === 1 ? '' : 's'}`}
           key={score}
-          className="rounded-md p-1"
+          className="rounded-[var(--radius-md)] p-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(29,78,216,0.22)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           onClick={() => onChange?.(score)}
           type="button"
         >

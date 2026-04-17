@@ -27,24 +27,23 @@ export const WishlistPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Wishlist</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            Keep future reads in one thoughtful, visible suggestion pool.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Keep future reads in one clear, polished suggestion pool.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            Any member can add a book idea here before it becomes part of a
-            survey.
+            Wishlist now follows the same product-style pattern as the rest of the app: easier submission, cleaner featured content, and better scanning across suggestions.
           </p>
         </div>
 
-        <div className="surface-base fade-rise px-5 py-5">
+        <div className="surface-tint fade-rise px-5 py-5">
           <p className="eyebrow">At a glance</p>
           <div className="mt-4">
             <p className="text-sm text-[color:var(--color-text-secondary)]">
               Wishlist suggestions
             </p>
-            <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+            <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
               {wishlistQuery.data?.length ?? 0}
             </p>
           </div>
@@ -171,7 +170,7 @@ export const WishlistPage = () => {
           </label>
 
           <button
-            className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+            className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             type="submit"
           >
             {createMutation.isPending ? 'Saving...' : 'Add to wishlist'}
@@ -198,9 +197,9 @@ export const WishlistPage = () => {
                 <div>
                   <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
                     <Sparkles className="h-4 w-4" />
-                    Recently suggested
+                    Featured suggestion
                   </div>
-                  <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                  <h2 className="mt-5 text-[2rem] font-extrabold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.6rem]">
                     {featuredSuggestion.title}
                   </h2>
                   <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
@@ -235,7 +234,7 @@ export const WishlistPage = () => {
                 </div>
                 <div className="space-y-3 p-5">
                   <div>
-                    <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                    <h2 className="text-xl font-extrabold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                       {book.title}
                     </h2>
                     <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">

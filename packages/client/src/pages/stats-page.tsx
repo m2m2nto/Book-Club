@@ -10,14 +10,13 @@ export const StatsPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Reading stats</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
+          <h1 className="editorial-title text-balance max-w-5xl">
             See club patterns and personal reading habits more clearly.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            Switch between the club-wide view and your own stats to see how the
-            reading rhythm is taking shape.
+            Stats now follows the same cleaner WordPress-style product language: sharper summaries, clearer segmentation, and easier comparison between club and personal views.
           </p>
         </div>
 
@@ -25,8 +24,8 @@ export const StatsPage = () => {
           <button
             className={
               tab === 'club'
-                ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]'
-                : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
+                ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-accent)]'
+                : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
             }
             onClick={() => setTab('club')}
             type="button"
@@ -36,8 +35,8 @@ export const StatsPage = () => {
           <button
             className={
               tab === 'me'
-                ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]'
-                : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
+                ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-accent)]'
+                : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
             }
             onClick={() => setTab('me')}
             type="button"
@@ -60,7 +59,7 @@ export const StatsPage = () => {
                   <p className="text-sm uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                     {entry.year}
                   </p>
-                  <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+                  <p className="mt-3 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                     {entry.count}
                   </p>
                 </div>
@@ -78,7 +77,7 @@ export const StatsPage = () => {
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-medium text-[color:var(--color-text-primary)]">
+                      <p className="font-semibold text-[color:var(--color-text-primary)]">
                         {entry.title}
                       </p>
                       <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
@@ -101,7 +100,7 @@ export const StatsPage = () => {
               <p className="text-sm uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                 Books rated
               </p>
-              <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-3 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {personalStatsQuery.data?.booksRated ?? 0}
               </p>
             </div>
@@ -109,7 +108,7 @@ export const StatsPage = () => {
               <p className="text-sm uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                 Average rating
               </p>
-              <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-3 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {personalStatsQuery.data?.averageRating
                   ? personalStatsQuery.data.averageRating.toFixed(1)
                   : '—'}
@@ -119,7 +118,7 @@ export const StatsPage = () => {
               <p className="text-sm uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
                 Comments
               </p>
-              <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-3 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {personalStatsQuery.data?.commentCount ?? 0}
               </p>
             </div>
@@ -136,7 +135,7 @@ export const StatsPage = () => {
                   <p className="text-sm text-[color:var(--color-text-muted)]">
                     {entry.score}★
                   </p>
-                  <p className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                  <p className="mt-3 font-[var(--font-editorial)] text-3xl font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                     {entry.count}
                   </p>
                 </div>

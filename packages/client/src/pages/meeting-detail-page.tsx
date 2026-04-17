@@ -39,7 +39,7 @@ export const MeetingDetailPage = () => {
   return (
     <div className="page-stack">
       <Link
-        className="text-sm font-medium text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
+        className="text-sm font-semibold text-[color:var(--color-text-accent)] hover:text-[color:var(--color-accent-primary-hover)]"
         to="/meetings"
       >
         ← Back to meetings
@@ -48,7 +48,7 @@ export const MeetingDetailPage = () => {
       <section className="surface-tint px-7 py-7 lg:px-8 lg:py-8">
         <div className="page-header gap-4">
           <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 font-medium text-[color:var(--color-text-accent)]">
+            <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[rgba(255,255,255,0.74)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
               {statusLabel(meeting.status)}
             </span>
             {meeting.bookAuthor ? (
@@ -59,7 +59,7 @@ export const MeetingDetailPage = () => {
           </div>
 
           <div className="space-y-3">
-            <h1 className="editorial-title text-balance max-w-4xl">
+            <h1 className="editorial-title text-balance max-w-5xl">
               {meeting.bookTitle ?? 'General meeting'}
             </h1>
             <p className="body-copy max-w-3xl text-[1rem]">
@@ -95,7 +95,7 @@ export const MeetingDetailPage = () => {
             {(['yes', 'maybe', 'no'] as const).map((status) => (
               <button
                 key={status}
-                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.84)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.84)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={() =>
                   saveRsvpMutation.mutate(status, {
                     onSuccess: () => {
@@ -158,14 +158,14 @@ export const MeetingDetailPage = () => {
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="font-medium text-[color:var(--color-text-primary)]">
+                      <p className="font-semibold text-[color:var(--color-text-primary)]">
                         {rsvp.userName}
                       </p>
                       <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
                         Updated {new Date(rsvp.updatedAt).toLocaleString()}
                       </p>
                     </div>
-                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                    <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                       {statusLabel(rsvp.status)}
                     </span>
                   </div>
@@ -193,7 +193,7 @@ export const MeetingDetailPage = () => {
         <section className="surface-base space-y-4 px-6 py-6">
           <div>
             <p className="eyebrow">Admin controls</p>
-            <h2 className="mt-3 text-[1.45rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+            <h2 className="mt-3 text-[1.55rem] font-extrabold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
               Add a recap or change the meeting state
             </h2>
           </div>
@@ -207,7 +207,7 @@ export const MeetingDetailPage = () => {
           </label>
           <div className="flex flex-wrap gap-3">
             <button
-              className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+              className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               onClick={() =>
                 updateMeetingMutation.mutate(
                   { recap, status: 'completed' },
@@ -236,7 +236,7 @@ export const MeetingDetailPage = () => {
               Save recap + mark completed
             </button>
             <button
-              className="pressable rounded-[var(--radius-lg)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-error-base)] hover:border-[rgba(160,69,82,0.28)]"
+              className="pressable rounded-[var(--radius-pill)] border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-error-base)] hover:border-[rgba(180,35,24,0.28)]"
               onClick={() =>
                 cancelMeetingMutation.mutate(undefined, {
                   onSuccess: () => {

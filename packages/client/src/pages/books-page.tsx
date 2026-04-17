@@ -57,10 +57,10 @@ export const BooksPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Library</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            A cleaner catalog for what the club has read and what comes next.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            A library view with cleaner publishing-product polish.
           </h1>
           <p className="body-copy text-[1.02rem]">{introText}</p>
         </div>
@@ -71,8 +71,8 @@ export const BooksPage = () => {
               key={item.label}
               className={
                 status === item.value
-                  ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]'
-                  : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.78)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
+                  ? 'pressable rounded-[var(--radius-pill)] border border-[rgba(15,95,60,0.12)] bg-[color:var(--color-accent-primary-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-accent)]'
+                  : 'pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,253,249,0.82)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)] hover:text-[color:var(--color-text-primary)]'
               }
               onClick={() => setStatus(item.value)}
               type="button"
@@ -108,9 +108,9 @@ export const BooksPage = () => {
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
                       <Sparkles className="h-4 w-4" />
-                      Featured in this view
+                      Featured title
                     </div>
-                    <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                    <h2 className="mt-5 font-[var(--font-reading)] text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.6rem]">
                       {featuredBook.title}
                     </h2>
                     <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
@@ -157,7 +157,7 @@ export const BooksPage = () => {
                   </div>
                   <div className="space-y-3 p-5">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
                         {statusLabel(book.status)}
                       </span>
                       <span className="text-xs text-[color:var(--color-text-muted)]">
@@ -167,7 +167,7 @@ export const BooksPage = () => {
                       </span>
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                      <h2 className="font-[var(--font-reading)] text-xl font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
                         {book.title}
                       </h2>
                       <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">
@@ -369,9 +369,9 @@ export const BooksPage = () => {
                 <div>
                   <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
                     <Sparkles className="h-4 w-4" />
-                    Featured in this view
+                    Featured title
                   </div>
-                  <h2 className="mt-5 text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.5rem]">
+                  <h2 className="mt-5 font-[var(--font-reading)] text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.6rem]">
                     {featuredBook.title}
                   </h2>
                   <p className="mt-3 text-base text-[color:var(--color-text-secondary)]">
@@ -417,11 +417,11 @@ export const BooksPage = () => {
                   )}
                 </div>
                 <div className="space-y-3 p-5">
-                  <span className="text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-muted)]">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
                     {statusLabel(book.status)}
                   </span>
                   <div>
-                    <h2 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                    <h2 className="font-[var(--font-reading)] text-xl font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
                       {book.title}
                     </h2>
                     <p className="mt-1 text-sm text-[color:var(--color-text-secondary)]">

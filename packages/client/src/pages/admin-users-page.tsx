@@ -95,25 +95,24 @@ export const AdminUsersPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Admin tools</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            Manage member access with a lighter, clearer operations view.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Manage member access with a cleaner, product-style operations view.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            Invite members, adjust roles, revoke access, and restore soft-deleted
-            accounts without losing the thread of who can sign in.
+            Invite members, adjust roles, revoke access, and restore soft-deleted accounts with the same clearer publishing-product UI used across the app.
           </p>
         </div>
 
-        <div className="surface-base fade-rise px-5 py-5">
+        <div className="surface-tint fade-rise px-5 py-5">
           <p className="eyebrow">At a glance</p>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-[color:var(--color-text-secondary)]">
                 Current users
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {usersQuery.data?.length ?? 0}
               </p>
             </div>
@@ -201,7 +200,7 @@ export const AdminUsersPage = () => {
           </label>
 
           <button
-            className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+            className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             type="submit"
           >
             {createUserMutation.isPending ? 'Saving...' : 'Add user'}
@@ -217,7 +216,7 @@ export const AdminUsersPage = () => {
               </p>
             </div>
             <button
-              className="pressable inline-flex items-center gap-2 rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+              className="pressable inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
               onClick={() => usersQuery.refetch()}
               type="button"
             >
@@ -242,7 +241,7 @@ export const AdminUsersPage = () => {
                   return (
                     <tr key={user.id}>
                       <td className="py-4">
-                        <p className="font-medium text-[color:var(--color-text-primary)]">
+                        <p className="font-semibold text-[color:var(--color-text-primary)]">
                           {user.name}
                         </p>
                         <p className="mt-1 text-xs text-[color:var(--color-text-muted)]">
@@ -254,10 +253,10 @@ export const AdminUsersPage = () => {
                         <span
                           className={
                             isDeleted
-                              ? 'rounded-full border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-error-base)]'
+                              ? 'rounded-full border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-error-base)]'
                               : user.active
-                                ? 'rounded-full border border-[rgba(45,107,79,0.16)] bg-[color:var(--color-success-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-success-base)]'
-                                : 'rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]'
+                                ? 'rounded-full border border-[rgba(15,118,110,0.16)] bg-[color:var(--color-success-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-success-base)]'
+                                : 'rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]'
                           }
                         >
                           {isDeleted ? 'Deleted' : user.active ? 'Active' : 'Inactive'}
@@ -267,7 +266,7 @@ export const AdminUsersPage = () => {
                         <div className="flex justify-end gap-2">
                           {!isDeleted ? (
                             <button
-                              className="pressable rounded-[var(--radius-md)] border border-[color:var(--color-border-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                              className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
                               onClick={() =>
                                 patchUserMutation.mutate({
                                   id: user.id,
@@ -281,7 +280,7 @@ export const AdminUsersPage = () => {
                           ) : null}
                           {isDeleted ? (
                             <button
-                              className="pressable rounded-[var(--radius-md)] border border-[rgba(45,107,79,0.16)] bg-[color:var(--color-success-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-success-base)]"
+                              className="pressable rounded-[var(--radius-pill)] border border-[rgba(15,118,110,0.16)] bg-[color:var(--color-success-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-success-base)]"
                               onClick={() => reactivateUserMutation.mutate(user.id)}
                               type="button"
                             >
@@ -289,7 +288,7 @@ export const AdminUsersPage = () => {
                             </button>
                           ) : (
                             <button
-                              className="pressable rounded-[var(--radius-md)] border border-[rgba(160,69,82,0.18)] bg-[color:var(--color-error-soft)] px-3 py-2 text-xs font-medium text-[color:var(--color-error-base)]"
+                              className="pressable rounded-[var(--radius-pill)] border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-error-base)]"
                               onClick={() => {
                                 if (window.confirm(`Soft-delete ${user.name}?`)) {
                                   deleteUserMutation.mutate(user.id);

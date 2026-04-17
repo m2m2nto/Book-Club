@@ -37,18 +37,17 @@ export const AdminExportPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Admin utilities</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            Export the live database with one explicit confirmation step.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Export the live database with a cleaner, explicit confirmation flow.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            This includes sensitive session, reminder, and operational data, so
-            the export flow should stay direct and deliberate.
+            This includes sensitive session, reminder, and operational data, so the export experience stays direct, deliberate, and visually clear.
           </p>
         </div>
 
-        <div className="surface-base fade-rise px-5 py-5">
+        <div className="surface-tint fade-rise px-5 py-5">
           <p className="eyebrow">Sensitive action</p>
           <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-text-accent)]">
             <ShieldCheck className="h-4 w-4" />
@@ -67,7 +66,7 @@ export const AdminExportPage = () => {
         ) : null}
         {!confirming ? (
           <button
-            className="pressable mt-5 rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+            className="pressable mt-5 rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
             onClick={() => setConfirming(true)}
             type="button"
           >
@@ -81,7 +80,7 @@ export const AdminExportPage = () => {
             </div>
             <div className="flex flex-wrap gap-3">
               <button
-                className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isSubmitting}
                 onClick={() => {
                   void handleConfirmDownload();
@@ -91,7 +90,7 @@ export const AdminExportPage = () => {
                 {isSubmitting ? 'Preparing download...' : 'Confirm download'}
               </button>
               <button
-                className="pressable rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
+                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.88)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-primary)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-canvas-subtle)]"
                 onClick={() => setConfirming(false)}
                 type="button"
               >

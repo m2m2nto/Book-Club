@@ -88,31 +88,28 @@ export const DashboardPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_19rem] xl:items-start">
-        <div className="fade-rise page-header max-w-3xl">
-          <p className="eyebrow text-[color:var(--color-text-accent)]">Dashboard</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            A clearer view of what your club needs next.
+        <div className="fade-rise editorial-rule page-header max-w-4xl">
+          <p className="eyebrow text-[color:var(--color-text-accent)]">Overview</p>
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Your book club at a glance, with a cleaner WordPress-style rhythm.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            Keep the next meeting, open votes, and shared momentum in view
-            without scanning every page.
+            The dashboard now feels more like a polished publishing product: clear hierarchy, stronger summaries, and easier scanning from top to bottom.
           </p>
         </div>
 
         {authQuery.data?.role === 'admin' ? (
-          <aside className="surface-base fade-rise p-4">
+          <aside className="surface-base fade-rise p-5">
             <p className="eyebrow">Quick actions</p>
             <div className="mt-4 grid gap-2.5">
               {adminQuickActions.map(([label, href]) => (
                 <Link
-                  className="hover-lift rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.86)] px-4 py-3 text-sm font-medium text-[color:var(--color-text-primary)]"
+                  className="hover-lift flex items-center justify-between border-b border-[rgba(22,20,18,0.08)] px-1 py-3 text-sm font-semibold text-[color:var(--color-text-primary)] last:border-b-0"
                   key={href}
                   to={href}
                 >
-                  <span className="flex items-center justify-between gap-3">
-                    <span>{label}</span>
-                    <ArrowRight className="h-4 w-4 text-[color:var(--color-text-accent)]" />
-                  </span>
+                  <span>{label}</span>
+                  <ArrowRight className="h-4 w-4 text-[color:var(--color-text-accent)]" />
                 </Link>
               ))}
             </div>
@@ -121,25 +118,25 @@ export const DashboardPage = () => {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
-        <article className="surface-tint fade-rise px-7 py-8 lg:px-9 lg:py-9">
+        <article className="surface-tint fade-rise px-7 py-8 lg:px-10 lg:py-10">
           <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
             <Sparkles className="h-4 w-4" />
-            Current focus
+Featured update
           </div>
           <div className="mt-5 max-w-3xl space-y-4">
-            <h2 className="text-[2.1rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[2.8rem]">
+            <h2 className="font-[var(--font-reading)] text-[2.2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[color:var(--color-text-primary)] lg:text-[3rem]">
               {nextMeeting
-                ? 'The next gathering is already taking shape.'
-                : 'Start the next chapter with a clear date and plan.'}
+                ? 'The next gathering already has momentum.'
+                : 'Start the next chapter with a clear date and a polished plan.'}
             </h2>
             <p className="text-base leading-8 text-[color:var(--color-text-secondary)]">
               {nextMeeting
                 ? `${nextMeeting.date} · ${nextMeeting.time} · ${nextMeeting.location}`
-                : 'Create a meeting or date poll to give the club a clear next step.'}
+                : 'Create a meeting or date poll to give the club a clear next step that stands out immediately.'}
             </p>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-[color:rgba(42,93,176,0.08)] bg-[rgba(255,255,255,0.74)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]">
+            <span className="rounded-full border border-[rgba(15,95,60,0.14)] bg-[rgba(255,255,255,0.74)] px-4 py-2 text-sm font-medium text-[color:var(--color-text-accent)]">
               {nextMeeting
                 ? 'Next club session is on the calendar.'
                 : 'No active session yet.'}
@@ -157,7 +154,7 @@ export const DashboardPage = () => {
         <article className="surface-base fade-rise flex flex-col justify-between px-6 py-7 lg:px-7 lg:py-8">
           <div className="space-y-4">
             <p className="eyebrow">Next meeting</p>
-            <h2 className="text-[1.8rem] font-semibold leading-[1.02] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
+            <h2 className="font-[var(--font-reading)] text-[1.8rem] font-semibold leading-[1.06] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
               {nextMeeting ? nextMeeting.date : 'Nothing scheduled yet'}
             </h2>
             <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
@@ -179,7 +176,7 @@ export const DashboardPage = () => {
       <section className="grid gap-4 md:grid-cols-3">
         {summaryCards.map(({ label, value, href, action, icon: Icon, tone }) => (
           <article className="surface-base fade-rise px-6 py-6" key={label}>
-            <div
+            <h2
               className={
                 tone === 'accent'
                   ? 'flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]'
@@ -190,8 +187,8 @@ export const DashboardPage = () => {
             >
               <Icon className="h-4 w-4" />
               {label}
-            </div>
-            <p className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+            </h2>
+            <p className="mt-5 font-[var(--font-reading)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
               {value}
             </p>
             <Link
@@ -211,7 +208,7 @@ export const DashboardPage = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
                 <p className="eyebrow">Admin getting started</p>
-                <h2 className="mt-3 text-[1.7rem] font-semibold leading-[1.04] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
+                <h2 className="mt-3 font-[var(--font-reading)] text-[1.9rem] font-semibold leading-[1.04] tracking-[-0.035em] text-[color:var(--color-text-primary)]">
                   Set the club in motion.
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">

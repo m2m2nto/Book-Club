@@ -30,25 +30,24 @@ export const SurveysPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Book surveys</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            Make the next club read feel deliberate, visible, and collaborative.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Make the next club read feel deliberate, visible, and easy to choose.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            Turn wishlist ideas into a vote and keep the selection process easy
-            to follow.
+            The survey view now matches the cleaner WordPress-style direction: clearer controls, stronger feature cards, and a more product-like voting flow.
           </p>
         </div>
 
-        <div className="surface-base fade-rise px-5 py-5">
+        <div className="surface-tint fade-rise px-5 py-5">
           <p className="eyebrow">At a glance</p>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-[color:var(--color-text-secondary)]">
                 Surveys
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {surveysQuery.data?.length ?? 0}
               </p>
             </div>
@@ -56,7 +55,7 @@ export const SurveysPage = () => {
               <p className="text-sm text-[color:var(--color-text-secondary)]">
                 Wishlist titles
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {wishlistBooks.length}
               </p>
             </div>
@@ -172,7 +171,7 @@ export const SurveysPage = () => {
               )}
             </div>
             <button
-              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+              className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createSurveyMutation.isPending ? 'Saving...' : 'Create survey'}
@@ -193,7 +192,7 @@ export const SurveysPage = () => {
                         <Sparkles className="h-4 w-4" />
                         Vote window
                       </div>
-                      <h2 className="mt-4 text-[1.65rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                      <h2 className="mt-4 text-[1.7rem] font-extrabold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                         {survey.title}
                       </h2>
                       <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
@@ -201,7 +200,7 @@ export const SurveysPage = () => {
                         votes {survey.maxVotes}
                       </p>
                     </div>
-                    <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                    <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                       {statusLabel(survey.status)}
                     </span>
                   </div>
@@ -225,7 +224,7 @@ export const SurveysPage = () => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
+                    <h2 className="text-[1.7rem] font-extrabold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                       {survey.title}
                     </h2>
                     <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-secondary)]">
@@ -233,7 +232,7 @@ export const SurveysPage = () => {
                       votes {survey.maxVotes}
                     </p>
                   </div>
-                  <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                  <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                     {statusLabel(survey.status)}
                   </span>
                 </div>

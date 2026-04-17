@@ -63,25 +63,24 @@ export const MeetingsPage = () => {
   return (
     <div className="page-stack">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_20rem] xl:items-end">
-        <div className="page-header fade-rise max-w-3xl">
+        <div className="page-header editorial-rule fade-rise max-w-4xl">
           <p className="eyebrow text-[color:var(--color-text-accent)]">Meetings</p>
-          <h1 className="editorial-title text-balance max-w-4xl">
-            Keep schedules, date polls, and RSVPs in one calm planning flow.
+          <h1 className="editorial-title text-balance max-w-5xl">
+            Keep schedules, date polls, and RSVPs in one polished planning space.
           </h1>
           <p className="body-copy text-[1.02rem]">
-            See what is upcoming, what still needs availability, and what the
-            club has already completed.
+            This view now follows the same cleaner publishing-product rhythm: key counts up top, stronger planning forms, and easier scanning across upcoming and past sessions.
           </p>
         </div>
 
-        <div className="surface-base fade-rise px-5 py-5">
+        <div className="surface-tint fade-rise px-5 py-5">
           <p className="eyebrow">At a glance</p>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-[color:var(--color-text-secondary)]">
                 Open date polls
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {dateSurveysQuery.data?.length ?? 0}
               </p>
             </div>
@@ -89,7 +88,7 @@ export const MeetingsPage = () => {
               <p className="text-sm text-[color:var(--color-text-secondary)]">
                 Upcoming meetings
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
+              <p className="mt-2 font-[var(--font-editorial)] text-4xl font-semibold tracking-[-0.04em] text-[color:var(--color-text-primary)]">
                 {upcoming.length}
               </p>
             </div>
@@ -199,7 +198,7 @@ export const MeetingsPage = () => {
               </select>
             </label>
             <button
-              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+              className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createMeetingMutation.isPending ? 'Saving...' : 'Create meeting'}
@@ -358,7 +357,7 @@ export const MeetingsPage = () => {
               ))}
             </div>
             <button
-              className="pressable w-full rounded-[var(--radius-lg)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
+              className="pressable w-full rounded-[var(--radius-pill)] border border-[color:var(--color-accent-primary)] bg-[color:var(--color-accent-primary)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--color-text-inverse)] hover:bg-[color:var(--color-accent-primary-hover)]"
               type="submit"
             >
               {createDateSurveyMutation.isPending
@@ -389,10 +388,10 @@ export const MeetingsPage = () => {
               to={`/date-surveys/${survey.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                <h3 className="text-xl font-extrabold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                   {survey.title}
                 </h3>
-                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                   {statusLabel(survey.status)}
                 </span>
               </div>
@@ -424,10 +423,10 @@ export const MeetingsPage = () => {
               to={`/meetings/${meeting.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                <h3 className="text-xl font-extrabold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                   {meeting.bookTitle ?? 'General meeting'}
                 </h3>
-                <span className="rounded-full border border-[rgba(42,93,176,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
+                <span className="rounded-full border border-[rgba(29,78,216,0.1)] bg-[color:var(--color-accent-primary-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-accent)]">
                   {statusLabel(meeting.status)}
                 </span>
               </div>
@@ -470,10 +469,10 @@ export const MeetingsPage = () => {
               to={`/meetings/${meeting.id}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-semibold tracking-[-0.02em] text-[color:var(--color-text-primary)]">
+                <h3 className="text-xl font-extrabold tracking-[-0.03em] text-[color:var(--color-text-primary)]">
                   {meeting.bookTitle ?? 'General meeting'}
                 </h3>
-                <span className="rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]">
+                <span className="rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]">
                   {statusLabel(meeting.status)}
                 </span>
               </div>
