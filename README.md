@@ -88,6 +88,24 @@ Expected local ports:
 - Client: `http://localhost:5173`
 - Server: `http://localhost:3000`
 
+### Run with Docker
+
+Copy the example environment first, then set a strong `SESSION_SECRET` plus your admin bootstrap credentials:
+
+```bash
+cp .env.example .env
+```
+
+Start the full app in a container:
+
+```bash
+docker compose up --build -d
+```
+
+The app is then available at `http://localhost:3000`.
+
+Persistent data is stored in the named Docker volume `book-club-data`, mounted at `/data` inside the container. That means container updates won't erase the SQLite database, because the database lives outside the container filesystem.
+
 ### Run tests
 
 ```bash
@@ -116,6 +134,7 @@ npm run db:smoke
 
 ## Notes
 
+- In container mode, `DATABASE_URL` defaults to `/data/book-club.db` via `docker-compose.yml` so database and session data stay on the external volume.
 - The product specification lives in `SPEC.md`.
 - The UX/UI reference spec lives in `UX_UI_SPEC.md`.
 - The implementation plan lives in `tasks/plan.md`.

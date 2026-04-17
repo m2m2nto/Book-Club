@@ -1,5 +1,8 @@
 import type { ApiResponse } from '@book-club/shared';
 import express, { type Request, type Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
@@ -18,6 +21,10 @@ import { statsRouter } from './routes/stats.js';
 import { usersRouter } from './routes/users.js';
 import { wishlistRouter } from './routes/wishlist.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDistPath = path.resolve(__dirname, '../../client/dist');
+
 const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: env.nodeEnv === 'test' ? 1_000 : 20,
@@ -34,6 +41,10 @@ const apiRateLimit = rateLimit({
 
 export const createApp = () => {
   const app = express();
+
+  if (env.nodeEnv === 'production') {
+    app.set('trust proxy', 1);
+  }
 
   app.use(
     helmet(
@@ -73,6 +84,13 @@ export const createApp = () => {
   app.use('/api/dashboard', dashboardRouter);
   app.use('/api/stats', statsRouter);
   app.use('/api/admin', adminRouter);
+
+  if (env.nodeEnv === 'production' && fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+    app.get(/^(?!\/api|\/auth).*/, (_req, res) => {
+      res.sendFile(path.join(clientDistPath, 'index.html'));
+    });
+  }
 
   app.use(
     (

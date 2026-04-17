@@ -1,0 +1,12 @@
+node_modules
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+packages/client/dist
+packages/server/data
+coverage
+playwright-report
+test-results
+npm-debug.log*
