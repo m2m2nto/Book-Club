@@ -1,5 +1,6 @@
 import { db } from './client.js';
 import {
+  authTokensTable,
   bookSurveyOptionsTable,
   bookSurveyVotesTable,
   bookSurveysTable,
@@ -17,6 +18,7 @@ import {
 
 export const resetDatabase = () => {
   db.delete(reminderDeliveriesTable).run();
+  db.delete(authTokensTable).run();
   db.delete(rsvpsTable).run();
   db.delete(dateSurveyVotesTable).run();
   db.delete(dateSurveyOptionsTable).run();

@@ -12,6 +12,8 @@ export const usersTable = sqliteTable('users', {
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   avatarUrl: text('avatar_url'),
+  passwordHash: text('password_hash'),
+  passwordSetAt: text('password_set_at'),
   role: text('role', { enum: ['admin', 'user'] })
     .notNull()
     .default('user'),
@@ -27,6 +29,30 @@ export const usersTable = sqliteTable('users', {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const authTokensTable = sqliteTable(
+  'auth_tokens',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id),
+    type: text('type', { enum: ['invite', 'password-reset'] }).notNull(),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: text('expires_at').notNull(),
+    consumedAt: text('consumed_at'),
+    createdByUserId: integer('created_by_user_id').references(() => usersTable.id),
+    createdAt: text('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    tokenHashUnique: uniqueIndex('auth_tokens_token_hash_unique').on(
+      table.tokenHash,
+    ),
+    userTypeIndex: index('auth_tokens_user_type_idx').on(table.userId, table.type),
+  }),
+);
 
 export const booksTable = sqliteTable('books', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -295,6 +321,8 @@ export const reminderDeliveriesTable = sqliteTable(
 
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
+export type AuthToken = typeof authTokensTable.$inferSelect;
+export type NewAuthToken = typeof authTokensTable.$inferInsert;
 export type Book = typeof booksTable.$inferSelect;
 export type NewBook = typeof booksTable.$inferInsert;
 export type Rating = typeof ratingsTable.$inferSelect;
