@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { Search, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
@@ -213,11 +214,12 @@ export const WishlistPage = () => {
             </article>
           ) : null}
 
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {remainingSuggestions.map((book) => (
+          <section className="stagger-group grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {remainingSuggestions.map((book, index) => (
               <article
                 key={book.id}
-                className="surface-base overflow-hidden"
+                className="surface-base stagger-item overflow-hidden"
+                style={{ '--stagger-index': index } as CSSProperties}
               >
                 <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">
                   {book.coverUrl ? (

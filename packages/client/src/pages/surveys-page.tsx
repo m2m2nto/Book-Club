@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -178,12 +179,13 @@ export const SurveysPage = () => {
             </button>
           </form>
 
-          <div className="space-y-4">
+          <div className="stagger-group space-y-4">
             {surveysQuery.data?.length ? (
-              surveysQuery.data.map((survey) => (
+              surveysQuery.data.map((survey, index) => (
                 <Link
                   key={survey.id}
-                  className="surface-base hover-lift block px-6 py-6"
+                  className="surface-base hover-lift stagger-item block px-6 py-6"
+                  style={{ '--stagger-index': index } as CSSProperties}
                   to={`/surveys/${survey.id}`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -214,12 +216,13 @@ export const SurveysPage = () => {
           </div>
         </section>
       ) : (
-        <section className="space-y-4">
+        <section className="stagger-group space-y-4">
           {surveysQuery.data?.length ? (
-            surveysQuery.data.map((survey) => (
+            surveysQuery.data.map((survey, index) => (
               <Link
                 key={survey.id}
-                className="surface-base hover-lift block px-6 py-6"
+                className="surface-base hover-lift stagger-item block px-6 py-6"
+                style={{ '--stagger-index': index } as CSSProperties}
                 to={`/surveys/${survey.id}`}
               >
                 <div className="flex items-start justify-between gap-4">

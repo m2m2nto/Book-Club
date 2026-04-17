@@ -76,10 +76,25 @@ const checks = [
   },
   {
     score: 10,
+    ok: has(files.books, /stagger-group/) && has(files.books, /--stagger-index/),
+  },
+  {
+    score: 10,
     ok:
-      [files.books, files.meetings, files.surveys, files.wishlist].filter(
-        (text) => /stagger-group/.test(text) && /--stagger-index/.test(text),
-      ).length >= 2,
+      has(files.meetings, /stagger-group/) &&
+      has(files.meetings, /--stagger-index/),
+  },
+  {
+    score: 10,
+    ok:
+      has(files.surveys, /stagger-group/) &&
+      has(files.surveys, /--stagger-index/),
+  },
+  {
+    score: 10,
+    ok:
+      has(files.wishlist, /stagger-group/) &&
+      has(files.wishlist, /--stagger-index/),
   },
 ];
 
