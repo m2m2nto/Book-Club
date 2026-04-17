@@ -6,7 +6,7 @@ A self-hosted web application for running a small book club.
 
 Book Club Manager is being built to help a club manage its full workflow in one place:
 
-- member access via Google SSO
+- invite-only member access via email and password
 - book history and current reading pipeline
 - wishlist suggestions and book voting
 - meeting scheduling and date surveys
@@ -65,7 +65,7 @@ npm install
 
 ### Environment setup
 
-Copy the example environment file and adjust values as needed:
+Copy the example environment file and adjust values as needed. For local admin bootstrap, set both `ADMIN_EMAIL` and `ADMIN_PASSWORD`:
 
 ```bash
 cp .env.example .env
@@ -92,6 +92,12 @@ Expected local ports:
 
 ```bash
 npm test
+```
+
+### Seed the initial admin user
+
+```bash
+npm run db:seed
 ```
 
 ## Available Commands
