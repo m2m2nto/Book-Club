@@ -1,44 +1,63 @@
 import { eq } from 'drizzle-orm';
 
+import { hashPassword } from '../auth/password-auth.js';
+import { env } from '../env.js';
 import { db, sqlite } from './client.js';
 import { usersTable } from './schema.js';
 
-const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-const adminName = process.env.ADMIN_NAME?.trim() || 'Book Club Admin';
+const run = async () => {
+  if (!env.adminEmail) {
+    throw new Error('ADMIN_EMAIL is required to seed the initial admin user.');
+  }
 
-if (!adminEmail) {
-  throw new Error('ADMIN_EMAIL is required to seed the initial admin user.');
-}
+  if (!env.adminPassword || env.adminPassword.length < 8) {
+    throw new Error('ADMIN_PASSWORD with at least 8 characters is required.');
+  }
 
-const existing = db
-  .select()
-  .from(usersTable)
-  .where(eq(usersTable.email, adminEmail))
-  .get();
+  const passwordHash = await hashPassword(env.adminPassword);
+  const now = new Date().toISOString();
 
-if (existing) {
-  db.update(usersTable)
-    .set({
-      name: adminName,
-      role: 'admin',
-      active: true,
-      deletedAt: null,
-    })
-    .where(eq(usersTable.id, existing.id))
-    .run();
+  const existing = db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, env.adminEmail))
+    .get();
 
-  console.log(`Ensured admin user exists for ${adminEmail}`);
-} else {
-  db.insert(usersTable)
-    .values({
-      email: adminEmail,
-      name: adminName,
-      role: 'admin',
-      active: true,
-    })
-    .run();
+  if (existing) {
+    db.update(usersTable)
+      .set({
+        name: env.adminName,
+        role: 'admin',
+        active: true,
+        deletedAt: null,
+        passwordHash,
+        passwordSetAt: now,
+      })
+      .where(eq(usersTable.id, existing.id))
+      .run();
 
-  console.log(`Created admin user for ${adminEmail}`);
-}
+    console.log(`Ensured admin user exists for ${env.adminEmail}`);
+  } else {
+    db.insert(usersTable)
+      .values({
+        email: env.adminEmail,
+        name: env.adminName,
+        role: 'admin',
+        active: true,
+        passwordHash,
+        passwordSetAt: now,
+      })
+      .run();
 
-sqlite.close();
+    console.log(`Created admin user for ${env.adminEmail}`);
+  }
+};
+
+run()
+  .finally(() => {
+    sqlite.close();
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

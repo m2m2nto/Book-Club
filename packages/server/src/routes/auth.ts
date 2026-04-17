@@ -1,17 +1,24 @@
-import crypto from 'node:crypto';
-
 import type { ApiResponse } from '@book-club/shared';
 import { eq } from 'drizzle-orm';
-import { Router, type RequestHandler, type Response } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 
-import { passportInstance } from '../auth/passport.js';
+import {
+  getLoginUserByEmail,
+  toAuthenticatedUser,
+  verifyPassword,
+} from '../auth/password-auth.js';
 import { db } from '../db/client.js';
 import { usersTable } from '../db/schema.js';
 import { env } from '../env.js';
 import { csrfTokenHandler } from '../middleware/csrf.js';
 
 const router = Router();
+const loginBodySchema = z.object({
+  email: z.string().trim().email(),
+  password: z.string().min(8).max(200),
+});
+
 const testLoginQuerySchema = z.object({
   email: z.string().trim().email(),
 });
@@ -42,54 +49,44 @@ const sendError = (
   res.status(status).json(response);
 };
 
-router.get('/google', (req, res, next) => {
-  if (
-    !env.googleClientId ||
-    !env.googleClientSecret ||
-    !env.googleCallbackUrl
-  ) {
-    sendError(
-      res,
-      503,
-      'GOOGLE_AUTH_NOT_CONFIGURED',
-      'Google OAuth is not configured.',
-    );
+router.post('/login', async (req, res, next) => {
+  const parsedBody = loginBodySchema.safeParse(req.body);
+
+  if (!parsedBody.success) {
+    sendError(res, 422, 'VALIDATION_ERROR', 'Email and password are required.');
     return;
   }
 
-  const state = crypto.randomUUID();
-  req.session.oauthState = state;
+  try {
+    const email = parsedBody.data.email.toLowerCase();
+    const user = getLoginUserByEmail(email);
 
-  passportInstance.authenticate('google', {
-    scope: ['profile', 'email'],
-    state,
-  })(req, res, next);
+    if (
+      !user ||
+      !user.active ||
+      user.deletedAt ||
+      !user.passwordHash ||
+      !(await verifyPassword(parsedBody.data.password, user.passwordHash))
+    ) {
+      sendError(res, 401, 'INVALID_CREDENTIALS', 'Invalid email or password.');
+      return;
+    }
+
+    req.login(toAuthenticatedUser(user), (error) => {
+      if (error) {
+        next(error);
+        return;
+      }
+
+      res.status(200).json({
+        data: { success: true, user: toAuthenticatedUser(user) },
+        error: null,
+      });
+    });
+  } catch (error) {
+    next(error);
+  }
 });
-
-const verifyOAuthState: RequestHandler = (req, res, next) => {
-  const state = typeof req.query.state === 'string' ? req.query.state : '';
-
-  if (!state || !req.session.oauthState || req.session.oauthState !== state) {
-    delete req.session.oauthState;
-    res.redirect(`${env.clientUrl}/login?error=auth_failed`);
-    return;
-  }
-
-  delete req.session.oauthState;
-  next();
-};
-
-router.get(
-  '/google/callback',
-  verifyOAuthState,
-  passportInstance.authenticate('google', {
-    failureRedirect: `${env.clientUrl}/login?error=auth_failed`,
-    session: true,
-  }),
-  (_req, res) => {
-    res.redirect(env.clientUrl);
-  },
-);
 
 router.post('/logout', (req, res, next) => {
   req.logout((error) => {

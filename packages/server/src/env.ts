@@ -15,14 +15,14 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   sessionSecret,
   clientUrl: process.env.CLIENT_URL ?? 'http://localhost:5173',
-  googleClientId: process.env.GOOGLE_CLIENT_ID,
-  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
   smtpHost: process.env.SMTP_HOST,
   smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
   smtpUser: process.env.SMTP_USER,
   smtpPass: process.env.SMTP_PASS,
   smtpFrom: process.env.SMTP_FROM,
+  adminEmail: process.env.ADMIN_EMAIL?.trim().toLowerCase(),
+  adminName: process.env.ADMIN_NAME?.trim() || 'Book Club Admin',
+  adminPassword: process.env.ADMIN_PASSWORD,
   enableTestAuth:
     process.env.ENABLE_TEST_AUTH === 'true' || process.env.NODE_ENV === 'test',
 };

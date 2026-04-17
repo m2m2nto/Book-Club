@@ -2,6 +2,7 @@ import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { hashPassword } from './auth/password-auth.js';
 import { createApp } from './app.js';
 import { db } from './db/client.js';
 import { usersTable } from './db/schema.js';
@@ -42,25 +43,34 @@ describe('createApp', () => {
     });
   });
 
-  it('creates a session through /auth/test-login for an active user', async () => {
+  it('creates a session through /auth/login for an active user with a password', async () => {
     db.insert(usersTable)
       .values({
         email: 'member@example.com',
         name: 'Member',
         role: 'user',
         active: true,
+        passwordHash: await hashPassword('hunter22!'),
+        passwordSetAt: '2026-04-17T10:00:00.000Z',
       })
       .run();
 
     const app = createApp();
     const agent = request.agent(app);
+    const csrfResponse = await agent.get('/auth/csrf');
 
-    const loginResponse = await agent.get(
-      '/auth/test-login?email=member@example.com',
-    );
+    const loginResponse = await agent
+      .post('/auth/login')
+      .set('x-csrf-token', csrfResponse.body.data.csrfToken)
+      .send({ email: 'member@example.com', password: 'hunter22!' });
 
-    expect(loginResponse.status).toBe(302);
-    expect(loginResponse.headers.location).toBe('/');
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body.data.user).toMatchObject({
+      email: 'member@example.com',
+      name: 'Member',
+      role: 'user',
+      active: true,
+    });
 
     const meResponse = await agent.get('/auth/me');
 
@@ -73,6 +83,69 @@ describe('createApp', () => {
     });
   });
 
+  it('rejects invalid credentials and blocked accounts from /auth/login', async () => {
+    const passwordHash = await hashPassword('hunter22!');
+
+    db.insert(usersTable)
+      .values([
+        {
+          email: 'member@example.com',
+          name: 'Member',
+          role: 'user',
+          active: true,
+          passwordHash,
+          passwordSetAt: '2026-04-17T10:00:00.000Z',
+        },
+        {
+          email: 'inactive@example.com',
+          name: 'Inactive',
+          role: 'user',
+          active: false,
+          passwordHash,
+          passwordSetAt: '2026-04-17T10:00:00.000Z',
+        },
+        {
+          email: 'deleted@example.com',
+          name: 'Deleted',
+          role: 'user',
+          active: true,
+          deletedAt: '2026-04-17T10:00:00.000Z',
+          passwordHash,
+          passwordSetAt: '2026-04-17T10:00:00.000Z',
+        },
+      ])
+      .run();
+
+    const app = createApp();
+
+    const invalidAgent = request.agent(app);
+    const invalidCsrf = await invalidAgent.get('/auth/csrf');
+    const invalidResponse = await invalidAgent
+      .post('/auth/login')
+      .set('x-csrf-token', invalidCsrf.body.data.csrfToken)
+      .send({ email: 'member@example.com', password: 'wrong-pass!' });
+    expect(invalidResponse.status).toBe(401);
+    expect(invalidResponse.body.error.code).toBe('INVALID_CREDENTIALS');
+
+    const inactiveAgent = request.agent(app);
+    const inactiveCsrf = await inactiveAgent.get('/auth/csrf');
+    const inactiveResponse = await inactiveAgent
+      .post('/auth/login')
+      .set('x-csrf-token', inactiveCsrf.body.data.csrfToken)
+      .send({ email: 'inactive@example.com', password: 'hunter22!' });
+    expect(inactiveResponse.status).toBe(401);
+    expect(inactiveResponse.body.error.code).toBe('INVALID_CREDENTIALS');
+
+    const deletedAgent = request.agent(app);
+    const deletedCsrf = await deletedAgent.get('/auth/csrf');
+    const deletedResponse = await deletedAgent
+      .post('/auth/login')
+      .set('x-csrf-token', deletedCsrf.body.data.csrfToken)
+      .send({ email: 'deleted@example.com', password: 'hunter22!' });
+    expect(deletedResponse.status).toBe(401);
+    expect(deletedResponse.body.error.code).toBe('INVALID_CREDENTIALS');
+  });
+
   it('rejects state-changing requests without a CSRF token', async () => {
     db.insert(usersTable)
       .values({
@@ -80,13 +153,19 @@ describe('createApp', () => {
         name: 'Member',
         role: 'user',
         active: true,
+        passwordHash: await hashPassword('hunter22!'),
+        passwordSetAt: '2026-04-17T10:00:00.000Z',
       })
       .run();
 
     const app = createApp();
     const agent = request.agent(app);
 
-    await agent.get('/auth/test-login?email=member@example.com');
+    const loginCsrf = await agent.get('/auth/csrf');
+    await agent
+      .post('/auth/login')
+      .set('x-csrf-token', loginCsrf.body.data.csrfToken)
+      .send({ email: 'member@example.com', password: 'hunter22!' });
 
     const rejected = await agent.post('/auth/logout');
     expect(rejected.status).toBe(403);

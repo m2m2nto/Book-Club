@@ -3,7 +3,6 @@ import express, { type Request, type Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
-import { configureGoogleAuth } from './auth/google-auth.js';
 import { env } from './env.js';
 import { passportInstance } from './auth/passport.js';
 import { sessionMiddleware } from './auth/session.js';
@@ -18,8 +17,6 @@ import { meetingsRouter } from './routes/meetings.js';
 import { statsRouter } from './routes/stats.js';
 import { usersRouter } from './routes/users.js';
 import { wishlistRouter } from './routes/wishlist.js';
-
-configureGoogleAuth();
 
 const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
