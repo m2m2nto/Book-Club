@@ -1,4 +1,5 @@
 import type { ApiResponse } from '@book-club/shared';
+import type { CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, ArrowRight, BadgeCheck, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -27,8 +28,11 @@ export const HomePage = () => {
 
   return (
     <div className="page-stack">
-      <section className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_20rem] xl:items-end">
-        <div className="page-header editorial-rule fade-rise max-w-4xl">
+      <section className="stagger-group grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_20rem] xl:items-end">
+        <div
+          className="page-header editorial-rule stagger-item max-w-4xl"
+          style={{ '--stagger-index': 0 } as CSSProperties}
+        >
           <p className="eyebrow text-[color:var(--color-text-accent)]">Welcome</p>
           <h1 className="editorial-title text-balance max-w-5xl">
             A polished publishing-style home for your book club.
@@ -39,7 +43,10 @@ export const HomePage = () => {
           </p>
         </div>
 
-        <div className="surface-tint fade-rise px-5 py-5">
+        <div
+          className="surface-tint stagger-item px-5 py-5"
+          style={{ '--stagger-index': 1 } as CSSProperties}
+        >
           <p className="eyebrow">System status</p>
           <p className="mt-3 stat-number capitalize">{healthStatus}</p>
           <p className="mt-2 text-sm leading-7 text-[color:var(--color-text-secondary)]">
@@ -48,7 +55,10 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="surface-raised fade-rise px-6 py-7 lg:px-8 lg:py-8">
+      <section
+        className="surface-raised stagger-item px-6 py-7 lg:px-8 lg:py-8"
+        style={{ '--stagger-index': 2 } as CSSProperties}
+      >
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-4">
             <p className="eyebrow">Product overview</p>
@@ -71,8 +81,11 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <article className="surface-base px-6 py-6">
+      <section className="stagger-group grid gap-4 md:grid-cols-3">
+        <article
+          className="surface-base stagger-item px-6 py-6"
+          style={{ '--stagger-index': 0 } as CSSProperties}
+        >
           <div className="flex items-center gap-3 text-[color:var(--color-text-accent)]">
             <Activity className="h-5 w-5" />
             <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-text-accent)]">
@@ -85,7 +98,10 @@ export const HomePage = () => {
           </p>
         </article>
 
-        <article className="surface-base px-6 py-6">
+        <article
+          className="surface-base stagger-item px-6 py-6"
+          style={{ '--stagger-index': 1 } as CSSProperties}
+        >
           <div className="flex items-center gap-3 text-[color:var(--color-success-base)]">
             <BadgeCheck className="h-5 w-5" />
             <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-success-base)]">
@@ -100,7 +116,10 @@ export const HomePage = () => {
           </p>
         </article>
 
-        <article className="surface-base px-6 py-6">
+        <article
+          className="surface-base stagger-item px-6 py-6"
+          style={{ '--stagger-index': 2 } as CSSProperties}
+        >
           <div className="flex items-center gap-3 text-[color:var(--color-warning-base)]">
             <Clock3 className="h-5 w-5" />
             <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-warning-base)]">

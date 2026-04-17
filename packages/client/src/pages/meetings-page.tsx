@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { CalendarDays, Clock3, MapPin } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -380,11 +381,12 @@ export const MeetingsPage = () => {
             {dateSurveysQuery.data?.length ?? 0} total
           </span>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {dateSurveysQuery.data?.map((survey) => (
+        <div className="stagger-group grid gap-4 md:grid-cols-2">
+          {dateSurveysQuery.data?.map((survey, index) => (
             <Link
               key={survey.id}
-              className="surface-base hover-lift block px-5 py-5"
+              className="surface-base hover-lift stagger-item block px-5 py-5"
+              style={{ '--stagger-index': index } as CSSProperties}
               to={`/date-surveys/${survey.id}`}
             >
               <div className="flex items-center justify-between gap-3">
@@ -415,11 +417,12 @@ export const MeetingsPage = () => {
             Confirmed gatherings the club can still prepare for.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {upcoming.map((meeting) => (
+        <div className="stagger-group grid gap-4 md:grid-cols-2">
+          {upcoming.map((meeting, index) => (
             <Link
               key={meeting.id}
-              className="surface-base hover-lift block px-5 py-5"
+              className="surface-base hover-lift stagger-item block px-5 py-5"
+              style={{ '--stagger-index': index } as CSSProperties}
               to={`/meetings/${meeting.id}`}
             >
               <div className="flex items-center justify-between gap-3">

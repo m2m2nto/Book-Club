@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { ErrorBoundary } from './components/error-boundary';
+import { PageTransition } from './components/page-transition';
 import { ProtectedLayout } from './components/protected-layout';
 import { ToastProvider } from './components/ui/toast-provider';
 import './index.css';
@@ -32,8 +33,22 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
           <ErrorBoundary>
             <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route
+                path="/login"
+                element={
+                  <PageTransition>
+                    <LoginPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/reset-password"
+                element={
+                  <PageTransition>
+                    <ResetPasswordPage />
+                  </PageTransition>
+                }
+              />
               <Route element={<ProtectedLayout />}>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/books" element={<BooksPage />} />
@@ -51,7 +66,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <Route path="/admin/users" element={<AdminUsersPage />} />
                 <Route path="/admin/export" element={<AdminExportPage />} />
               </Route>
-              <Route path="*" element={<NotFoundPage />} />
+              <Route
+                path="*"
+                element={
+                  <PageTransition>
+                    <NotFoundPage />
+                  </PageTransition>
+                }
+              />
             </Routes>
           </ErrorBoundary>
         </BrowserRouter>

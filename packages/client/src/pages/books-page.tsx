@@ -1,4 +1,5 @@
 import { Search, Sparkles } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -135,11 +136,12 @@ export const BooksPage = () => {
               </Link>
             ) : null}
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {remainingBooks.map((book) => (
+            <div className="stagger-group grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {remainingBooks.map((book, index) => (
                 <Link
-                  className="surface-base hover-lift overflow-hidden"
+                  className="surface-base hover-lift stagger-item overflow-hidden"
                   key={book.id}
+                  style={{ '--stagger-index': index } as CSSProperties}
                   to={`/books/${book.id}`}
                 >
                   <div className="aspect-[4/5] bg-[color:var(--color-canvas-subtle)]">

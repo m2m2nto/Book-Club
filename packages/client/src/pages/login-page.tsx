@@ -1,4 +1,5 @@
 import { ArrowRight, Mail, LogIn } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -86,11 +87,12 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            <div className="grid gap-3.5 sm:max-w-2xl">
+            <div className="stagger-group grid gap-3.5 sm:max-w-2xl">
               {highlights.map((item, index) => (
                 <div
-                  className="grid gap-2 border-b border-[rgba(22,20,18,0.1)] pb-4 last:border-b-0 last:pb-0 sm:grid-cols-[3rem_minmax(0,1fr)]"
+                  className="stagger-item grid gap-2 border-b border-[rgba(22,20,18,0.1)] pb-4 last:border-b-0 last:pb-0 sm:grid-cols-[3rem_minmax(0,1fr)]"
                   key={item}
+                  style={{ '--stagger-index': index } as CSSProperties}
                 >
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
                     0{index + 1}
