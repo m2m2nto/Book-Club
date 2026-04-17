@@ -58,7 +58,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
         {toasts.map((toast) => (
           <div
             className={cn(
-              'pointer-events-auto rounded-[var(--radius-xl)] border bg-[rgba(255,255,255,0.96)] p-4 shadow-[var(--shadow-overlay)] backdrop-blur-md',
+              'toast-enter pointer-events-auto rounded-[var(--radius-xl)] border bg-[rgba(255,255,255,0.96)] p-4 shadow-[var(--shadow-overlay)] backdrop-blur-md',
               toast.variant === 'success' &&
                 'border-[color:color-mix(in_srgb,var(--color-success-base)_18%,white)]',
               toast.variant === 'error' &&

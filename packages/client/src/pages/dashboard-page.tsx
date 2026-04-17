@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import {
   ArrowRight,
   CalendarDays,
@@ -173,9 +174,13 @@ Featured update
         </article>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        {summaryCards.map(({ label, value, href, action, icon: Icon, tone }) => (
-          <article className="surface-base fade-rise px-6 py-6" key={label}>
+      <section className="stagger-group grid gap-4 md:grid-cols-3">
+        {summaryCards.map(({ label, value, href, action, icon: Icon, tone }, index) => (
+          <article
+            className="surface-base stagger-item px-6 py-6"
+            key={label}
+            style={{ '--stagger-index': index } as CSSProperties}
+          >
             <h2
               className={
                 tone === 'accent'
@@ -222,11 +227,12 @@ Featured update
               </p>
             </div>
 
-            <div className="mt-6 grid gap-3 md:grid-cols-2">
-              {completedChecklist.map((item) => (
+            <div className="stagger-group mt-6 grid gap-3 md:grid-cols-2">
+              {completedChecklist.map((item, index) => (
                 <Link
-                  className="hover-lift rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.84)] px-4 py-4"
+                  className="hover-lift stagger-item rounded-[var(--radius-lg)] border border-[color:var(--color-border-soft)] bg-[rgba(255,255,255,0.84)] px-4 py-4"
                   key={item.label}
+                  style={{ '--stagger-index': index } as CSSProperties}
                   to={item.href}
                 >
                   <div className="flex items-start justify-between gap-3">

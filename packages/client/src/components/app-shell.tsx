@@ -54,9 +54,12 @@ export const AppShell = ({
       <div className="page-shell">
         <div className="grid min-h-screen gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
           <aside
+            data-state={menuOpen ? 'open' : 'closed'}
             className={cn(
-              'h-fit border-b border-[rgba(15,23,40,0.08)] pb-6 pr-0 lg:sticky lg:top-8 lg:block lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8',
-              menuOpen ? 'block' : 'hidden lg:block',
+              'menu-panel h-fit overflow-hidden border-b border-[rgba(15,23,40,0.08)] pb-6 pr-0 lg:sticky lg:top-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8',
+              menuOpen
+                ? 'max-h-[72rem] translate-y-0 opacity-100'
+                : 'pointer-events-none max-h-0 -translate-y-2 opacity-0 lg:pointer-events-auto lg:max-h-none lg:translate-y-0 lg:opacity-100',
             )}
           >
             <div className="editorial-rule space-y-5 pb-8">

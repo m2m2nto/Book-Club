@@ -61,8 +61,10 @@
   --motion-duration-fast: 140ms;
   --motion-duration-base: 220ms;
   --motion-duration-slow: 320ms;
+  --motion-duration-xslow: 520ms;
   --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
   --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
   background: var(--color-canvas-default);
   color: var(--color-text-primary);
@@ -338,6 +340,31 @@ body::before {
       both;
   }
 
+  .page-transition {
+    animation: page-enter var(--motion-duration-base) var(--motion-ease-standard)
+      both;
+    transform-origin: top center;
+  }
+
+  .stagger-group > .stagger-item {
+    --stagger-index: 0;
+    animation: fade-rise var(--motion-duration-slow) var(--motion-ease-standard)
+      both;
+    animation-delay: calc(var(--stagger-index) * 20ms);
+  }
+
+  .toast-enter {
+    animation: toast-enter var(--motion-duration-slow)
+      var(--motion-ease-emphasized) both;
+  }
+
+  .menu-panel {
+    transition:
+      max-height var(--motion-duration-slow) var(--motion-ease-standard),
+      opacity var(--motion-duration-base) var(--motion-ease-standard),
+      transform var(--motion-duration-base) var(--motion-ease-standard);
+  }
+
   .hover-lift {
     transition:
       transform var(--motion-duration-base) var(--motion-ease-standard),
@@ -371,6 +398,30 @@ body::before {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

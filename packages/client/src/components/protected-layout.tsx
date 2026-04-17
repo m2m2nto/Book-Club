@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 
 import { useAuth, useLogout } from '../hooks/use-auth';
 import { AppShell } from './app-shell';
+import { PageTransition } from './page-transition';
 import { ProtectedRoute } from './protected-route';
 
 export const ProtectedLayout = () => {
@@ -14,7 +15,9 @@ export const ProtectedLayout = () => {
         currentUser={authQuery.data ?? null}
         onLogout={() => logoutMutation.mutate()}
       >
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </AppShell>
     </ProtectedRoute>
   );

@@ -1,4 +1,4 @@
-import { ArrowRight, KeyRound, Mail, LogIn } from 'lucide-react';
+import { ArrowRight, Mail, LogIn } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

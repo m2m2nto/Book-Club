@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@book-club/shared';
-import { and, eq, isNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 
@@ -20,11 +20,7 @@ import { db } from '../db/client.js';
 import { usersTable } from '../db/schema.js';
 import { env } from '../env.js';
 import { csrfTokenHandler } from '../middleware/csrf.js';
-import {
-  renderInviteEmail,
-  renderPasswordResetEmail,
-  sendEmail,
-} from '../services/email.js';
+import { renderPasswordResetEmail, sendEmail } from '../services/email.js';
 
 const router = Router();
 const loginBodySchema = z.object({
