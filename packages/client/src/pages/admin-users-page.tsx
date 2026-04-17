@@ -11,11 +11,19 @@ type AdminUser = {
   email: string;
   name: string;
   avatarUrl: string | null;
+  hasPassword: boolean;
   role: 'admin' | 'user';
   active: boolean;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
+};
+
+type AuthLinkResponse = {
+  success: boolean;
+  expiresAt: string;
+  deliveryMode: 'smtp' | 'dev-log';
+  resetUrl: string | null;
 };
 
 const usersQueryKey = ['admin', 'users'] as const;
@@ -49,8 +57,8 @@ export const AdminUsersPage = () => {
     onSuccess: async (createdUser) => {
       setForm({ email: '', name: '', role: 'user' });
       showToast({
-        title: `Invited ${createdUser.email}.`,
-        description: 'They can now sign in with Google.',
+        title: `Created ${createdUser.email}.`,
+        description: 'Send them an invite link so they can set a password.',
         variant: 'success',
       });
       await refreshUsers();
@@ -82,6 +90,40 @@ export const AdminUsersPage = () => {
     mutationFn: (id: number) =>
       apiFetch<{ success: boolean }>(`/api/users/${id}`, { method: 'DELETE' }),
     onSuccess: refreshUsers,
+  });
+
+  const sendInviteMutation = useMutation({
+    mutationFn: (id: number) =>
+      apiFetch<AuthLinkResponse>(`/api/users/${id}/send-invite`, {
+        method: 'POST',
+      }),
+    onSuccess: async (result) => {
+      showToast({
+        title: 'Invite link sent.',
+        description:
+          result.resetUrl ??
+          'The user can now open the link from their email to set a password.',
+        variant: 'success',
+      });
+      await refreshUsers();
+    },
+  });
+
+  const sendPasswordResetMutation = useMutation({
+    mutationFn: (id: number) =>
+      apiFetch<AuthLinkResponse>(`/api/users/${id}/send-password-reset`, {
+        method: 'POST',
+      }),
+    onSuccess: async (result) => {
+      showToast({
+        title: 'Password reset sent.',
+        description:
+          result.resetUrl ??
+          'The user can now open the reset link from their email.',
+        variant: 'success',
+      });
+      await refreshUsers();
+    },
   });
 
   if (authQuery.data?.role !== 'admin') {
@@ -151,7 +193,7 @@ export const AdminUsersPage = () => {
             <div className="space-y-2">
               <h2 className="section-title">Invite someone new</h2>
               <p className="text-sm leading-7 text-[color:var(--color-text-secondary)]">
-                Users must be invited before they can sign in with Google.
+                Add the member here, then send them an invite link so they can set a password.
               </p>
             </div>
           </div>
@@ -231,6 +273,7 @@ export const AdminUsersPage = () => {
                 <tr>
                   <th className="pb-3 font-medium">User</th>
                   <th className="pb-3 font-medium">Role</th>
+                  <th className="pb-3 font-medium">Password</th>
                   <th className="pb-3 font-medium">Status</th>
                   <th className="pb-3 text-right font-medium">Actions</th>
                 </tr>
@@ -252,6 +295,17 @@ export const AdminUsersPage = () => {
                       <td className="py-4">
                         <span
                           className={
+                            user.hasPassword
+                              ? 'rounded-full border border-[rgba(15,118,110,0.16)] bg-[color:var(--color-success-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-success-base)]'
+                              : 'rounded-full border border-[color:var(--color-border-soft)] bg-[color:var(--color-canvas-subtle)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-text-secondary)]'
+                          }
+                        >
+                          {user.hasPassword ? 'Set' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="py-4">
+                        <span
+                          className={
                             isDeleted
                               ? 'rounded-full border border-[rgba(180,35,24,0.18)] bg-[color:var(--color-error-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-error-base)]'
                               : user.active
@@ -263,20 +317,62 @@ export const AdminUsersPage = () => {
                         </span>
                       </td>
                       <td className="py-4">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex flex-wrap justify-end gap-2">
                           {!isDeleted ? (
-                            <button
-                              className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
-                              onClick={() =>
-                                patchUserMutation.mutate({
-                                  id: user.id,
-                                  payload: { active: !user.active },
-                                })
-                              }
-                              type="button"
-                            >
-                              {user.active ? 'Deactivate' : 'Activate'}
-                            </button>
+                            <>
+                              <button
+                                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                                onClick={() =>
+                                  sendInviteMutation.mutate(user.id, {
+                                    onError: (error) => {
+                                      showToast({
+                                        title: 'Could not send the invite.',
+                                        description:
+                                          error instanceof Error
+                                            ? error.message
+                                            : 'Please try again.',
+                                        variant: 'error',
+                                      });
+                                    },
+                                  })
+                                }
+                                type="button"
+                              >
+                                Send invite
+                              </button>
+                              <button
+                                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                                onClick={() =>
+                                  sendPasswordResetMutation.mutate(user.id, {
+                                    onError: (error) => {
+                                      showToast({
+                                        title: 'Could not send the reset link.',
+                                        description:
+                                          error instanceof Error
+                                            ? error.message
+                                            : 'Please try again.',
+                                        variant: 'error',
+                                      });
+                                    },
+                                  })
+                                }
+                                type="button"
+                              >
+                                Reset password
+                              </button>
+                              <button
+                                className="pressable rounded-[var(--radius-pill)] border border-[color:var(--color-border-soft)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-canvas-subtle)]"
+                                onClick={() =>
+                                  patchUserMutation.mutate({
+                                    id: user.id,
+                                    payload: { active: !user.active },
+                                  })
+                                }
+                                type="button"
+                              >
+                                {user.active ? 'Deactivate' : 'Activate'}
+                              </button>
+                            </>
                           ) : null}
                           {isDeleted ? (
                             <button

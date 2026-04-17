@@ -39,6 +39,33 @@ const updateUserSchema = z
     message: 'No valid fields to update.',
   });
 
+const serializeAdminUser = (
+  user: Pick<
+    typeof usersTable.$inferSelect,
+    | 'id'
+    | 'email'
+    | 'name'
+    | 'avatarUrl'
+    | 'passwordHash'
+    | 'role'
+    | 'active'
+    | 'deletedAt'
+    | 'createdAt'
+    | 'updatedAt'
+  >,
+) => ({
+  id: user.id,
+  email: user.email,
+  name: user.name,
+  avatarUrl: user.avatarUrl,
+  hasPassword: Boolean(user.passwordHash),
+  role: user.role,
+  active: user.active,
+  deletedAt: user.deletedAt,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+});
+
 router.use(requireAdmin);
 
 router.get('/', (_req, res) => {
@@ -48,6 +75,7 @@ router.get('/', (_req, res) => {
       email: usersTable.email,
       name: usersTable.name,
       avatarUrl: usersTable.avatarUrl,
+      passwordHash: usersTable.passwordHash,
       role: usersTable.role,
       active: usersTable.active,
       deletedAt: usersTable.deletedAt,
@@ -58,7 +86,7 @@ router.get('/', (_req, res) => {
     .orderBy(usersTable.createdAt)
     .all();
 
-  res.json({ data: users, error: null });
+  res.json({ data: users.map(serializeAdminUser), error: null });
 });
 
 const sendAuthLinkResponse = async ({
@@ -180,7 +208,10 @@ router.post('/', (req, res) => {
       .from(usersTable)
       .where(eq(usersTable.id, existing.id))
       .get();
-    res.status(200).json({ data: user, error: null });
+    res.status(200).json({
+      data: user ? serializeAdminUser(user) : null,
+      error: null,
+    });
     return;
   }
 
@@ -195,7 +226,7 @@ router.post('/', (req, res) => {
     .returning()
     .get();
 
-  res.status(201).json({ data: created, error: null });
+  res.status(201).json({ data: serializeAdminUser(created), error: null });
 });
 
 router.patch('/:id', (req, res) => {
@@ -250,7 +281,7 @@ router.patch('/:id', (req, res) => {
     .where(eq(usersTable.id, id))
     .get();
 
-  res.json({ data: updated, error: null });
+  res.json({ data: updated ? serializeAdminUser(updated) : null, error: null });
 });
 
 router.delete('/:id', (req, res) => {
@@ -395,7 +426,7 @@ router.post('/:id/reactivate', (req, res) => {
     .from(usersTable)
     .where(eq(usersTable.id, id))
     .get();
-  res.json({ data: updated, error: null });
+  res.json({ data: updated ? serializeAdminUser(updated) : null, error: null });
 });
 
 export const usersRouter = router;
